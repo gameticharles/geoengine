@@ -74,7 +74,7 @@ Add this to your package's `pubspec.yaml` file:
 
 ```yaml
 dependencies:
-  geoengine: ^1.0.0
+  geoengine: any
 ```
 
 ### Usage
