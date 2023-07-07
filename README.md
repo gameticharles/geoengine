@@ -102,10 +102,24 @@ For detailed documentation and examples for each feature, please visit the [GeoE
 
 Contributions are welcome! If you find a bug or would like to request a new feature, please open an issue. For major changes, please open an issue first to discuss what you would like to change.
 
+## Testing
+
+Tests are located in the test directory. To run tests, execute dart test in the project root.
+
+## Features and bugs
+
+Please file feature requests and bugs at the [issue tracker][tracker].
+
+[tracker]: https://github.com/gameticharles/geoengine/issues
+
+## Author
+
+Charles Gameti: [gameticharles@GitHub][github_cg].
+
+[github_cg]: https://github.com/gameticharles
+
 ## License
 
-GeoEngine is licensed under the [MIT License](link-to-license).
+GeoEngine is licensed under the [Apache License - Version 2.0][apache_license].
 
----
-
-Please note that you will need to replace placeholders like `link-to-logo.png`, `link-to-documentation`, and `link-to-license` with actual URLs. Also, you can add more examples and details as needed.
+[apache_license]: https://www.apache.org/licenses/LICENSE-2.0.txt
