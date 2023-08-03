@@ -1,0 +1,162 @@
+[
+    {
+        "EllipsoidName": "WGS 84",
+        "InverseFlattening": "298.2572236",
+        "SemiMajorAxis": "6378137"
+    },
+    {
+        "EllipsoidName": "WGS 72",
+        "InverseFlattening": "298.26",
+        "SemiMajorAxis": "6378135"
+    },
+    {
+        "EllipsoidName": "Australian 1965",
+        "InverseFlattening": "298.2497323",
+        "SemiMajorAxis": "6378160"
+    },
+    {
+        "EllipsoidName": "Krasovsky 1940",
+        "InverseFlattening": "298.3",
+        "SemiMajorAxis": "6378245"
+    },
+    {
+        "EllipsoidName": "North American 1927",
+        "InverseFlattening": "294.9786982",
+        "SemiMajorAxis": "6378206.4"
+    },
+    {
+        "EllipsoidName": "International 1924",
+        "InverseFlattening": "297",
+        "SemiMajorAxis": "6378388"
+    },
+    {
+        "EllipsoidName": "Hayford 1909",
+        "InverseFlattening": "296.9993621",
+        "SemiMajorAxis": "6378388"
+    },
+    {
+        "EllipsoidName": "Clarke 1880",
+        "InverseFlattening": "293.465",
+        "SemiMajorAxis": "6378249.145"
+    },
+    {
+        "EllipsoidName": "Clarke 1866",
+        "InverseFlattening": "294.9786982",
+        "SemiMajorAxis": "6378206.4"
+    },
+    {
+        "EllipsoidName": "Airy 1830",
+        "InverseFlattening": "299.3249646",
+        "SemiMajorAxis": "6377563.396"
+    },
+    {
+        "EllipsoidName": "Bessel 1841",
+        "InverseFlattening": "299.1528128",
+        "SemiMajorAxis": "6377397.155"
+    },
+    {
+        "EllipsoidName": "Everest 1830",
+        "InverseFlattening": "300.8017",
+        "SemiMajorAxis": "6377276.345"
+    },
+    {
+        "EllipsoidName": "Ghana War Office",
+        "InverseFlattening": "296",
+        "SemiMajorAxis": "6378299.996"
+    },
+    {
+        "EllipsoidName": "WGS 66",
+        "InverseFlattening": "298.25",
+        "SemiMajorAxis": "6378145"
+    },
+    {
+        "EllipsoidName": "WGS 60",
+        "InverseFlattening": "298.3",
+        "SemiMajorAxis": "6378165"
+    },
+    {
+        "EllipsoidName": "South American 1969",
+        "InverseFlattening": "298.25",
+        "SemiMajorAxis": "6378160"
+    },
+    {
+        "EllipsoidName": "Modified Fischer 1960",
+        "InverseFlattening": "298.3",
+        "SemiMajorAxis": "6378155"
+    },
+    {
+        "EllipsoidName": "Modified Everest 1830",
+        "InverseFlattening": "300.8017",
+        "SemiMajorAxis": "6377304.063"
+    },
+    {
+        "EllipsoidName": "Modified Airy",
+        "InverseFlattening": "299.3249646",
+        "SemiMajorAxis": "6377340.189"
+    },
+    {
+        "EllipsoidName": "Hough",
+        "InverseFlattening": "297",
+        "SemiMajorAxis": "6378270"
+    },
+    {
+        "EllipsoidName": "Helmert 1906",
+        "InverseFlattening": "298.3",
+        "SemiMajorAxis": "6378200"
+    },
+    {
+        "EllipsoidName": "GRS 1980",
+        "InverseFlattening": "298.2572221",
+        "SemiMajorAxis": "6378137"
+    },
+    {
+        "EllipsoidName": "GRS 1967",
+        "InverseFlattening": "298.2471674",
+        "SemiMajorAxis": "6378160"
+    },
+    {
+        "EllipsoidName": "Fischer 1968",
+        "InverseFlattening": "298.3",
+        "SemiMajorAxis": "6378150"
+    },
+    {
+        "EllipsoidName": "Fischer 1960 (Mercury)",
+        "InverseFlattening": "298.3",
+        "SemiMajorAxis": "6378166"
+    },
+    {
+        "EllipsoidName": "Bessel 1841 (Nambia)",
+        "InverseFlattening": "299.1528128",
+        "SemiMajorAxis": "6377483.865"
+    },
+    {
+        "EllipsoidName": "Clarke 1878",
+        "InverseFlattening": "293.465998",
+        "SemiMajorAxis": "6378190"
+    },
+    {
+        "EllipsoidName": "IERS 1989",
+        "InverseFlattening": "298.257",
+        "SemiMajorAxis": "6378136"
+    },
+    {
+        "EllipsoidName": "IERS 2003",
+        "InverseFlattening": "298.25642",
+        "SemiMajorAxis": "6378136.6"
+    },
+    {
+        "EllipsoidName": "New International (1967)",
+        "InverseFlattening": "298.2496154",
+        "SemiMajorAxis": "6378157.5"
+    },
+    {
+        "EllipsoidName": "Plessis 1817",
+        "InverseFlattening": "308.64",
+        "SemiMajorAxis": "6376523"
+    },
+    {
+        "EllipsoidName": "Maupertuis",
+        "InverseFlattening": "191",
+        "SemiMajorAxis": "6397300"
+    }
+]

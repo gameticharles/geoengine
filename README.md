@@ -31,15 +31,13 @@ GeoEngine is a comprehensive Dart library designed for geospatial and geomatic c
 ### Coordinate Systems
 - **Coordinate Conversion**: Convert between different coordinate systems, such as latitude/longitude to UTM or MGRS.
 - **Datum Transformations**: Transform coordinates between different geodetic datums.
+- **Map Projections**: Support for various map projections and functions to transform coordinates between different projections.
 
 ### Geocoding
 - **Geocoding and Reverse Geocoding**: Convert addresses into geographic coordinates and vice versa.
 
 ### Polygon Operations
 - **Polygon Operations**: Create, manipulate, and analyze polygons, including point-in-polygon checks, area calculations, and finding centroids.
-
-### Map Projections
-- **Map Projections**: Support for various map projections and functions to transform coordinates between different projections.
 
 ### Spatial Indexing
 - **Spatial Indexing**: Utilize spatial indexing techniques like R-trees or Quad-trees for efficient querying of spatial data.

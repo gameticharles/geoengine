@@ -3,6 +3,7 @@ import 'package:test/test.dart';
 
 void main() {
   test('calculate', () {
-    expect(calculate(), 42);
+    var t = Triangle(a: 3, b: 4, c: 5);
+    expect(t.area(AreaMethod.heron), 6);
   });
 }
