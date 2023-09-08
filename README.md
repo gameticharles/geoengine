@@ -21,48 +21,6 @@
 
 GeoEngine is a comprehensive Dart library designed for geospatial and geomatic calculations. It provides a wide range of functionalities including distance calculations, coordinate conversions, geocoding, polygon operations, geodetic network analysis, and much more. Whether you are a GIS professional, a geomatics engineer, or a developer working on geospatial applications, GeoEngine is the ultimate toolkit for all your geospatial needs.
 
-## Features
-
-### Core Calculations
-- **Distance Calculation**: Calculate the distance between two geographic coordinates using various algorithms like Haversine, Vincenty, and Great Circle.
-- **Bearing Calculation**: Calculate the initial and final bearing between two points on the Earth's surface.
-- **Geodesic Calculations**: Find the shortest path between two points on the Earth's surface, taking into account the Earth's curvature.
-
-### Coordinate Systems
-- **Coordinate Conversion**: Convert between different coordinate systems, such as latitude/longitude to UTM or MGRS.
-- **Datum Transformations**: Transform coordinates between different geodetic datums.
-- **Map Projections**: Support for various map projections and functions to transform coordinates between different projections.
-
-### Geocoding
-- **Geocoding and Reverse Geocoding**: Convert addresses into geographic coordinates and vice versa.
-
-### Polygon Operations
-- **Polygon Operations**: Create, manipulate, and analyze polygons, including point-in-polygon checks, area calculations, and finding centroids.
-
-### Spatial Indexing
-- **Spatial Indexing**: Utilize spatial indexing techniques like R-trees or Quad-trees for efficient querying of spatial data.
-
-### Geomatic Calculations
-- **Error Propagation**: Estimate the uncertainty in spatial measurements.
-- **Least Squares Adjustment**: Perform least squares adjustment for surveying measurements.
-- **Traverse Calculations**: Perform closed and open traverse calculations.
-- **Geodetic Networks**: Design and analyze geodetic networks.
-- **Land Parcel Management**: Manage land parcels including subdivision and legal description generation.
-
-### Remote Sensing
-- **Remote Sensing Calculations**: Perform calculations such as NDVI, radiometric correction, and image classification.
-
-### Digital Elevation Models
-- **DEM Analysis**: Work with Digital Elevation Models, including slope, aspect, and watershed analysis.
-
-### Route Planning
-- **Route Planning**: Algorithms for route planning and optimization.
-
-### GIS File Support
-- **GIS File Support**: Read and write common GIS file formats like Shapefiles, GeoJSON, and KML.
-
-### Integration with Mapping Services
-- **Integration with Mapping Services**: Integrate with popular mapping services like Google Maps, OpenStreetMap, and Bing Maps.
 
 ## Getting Started
 
@@ -86,11 +44,508 @@ void main() {
   var point1 = LatLng(37.7749, -122.4194);
   var point2 = LatLng(34.0522, -118.2437);
 
-  var distance = GeoEngine.calculateDistance(point1, point2);
+  var distance = Distance.haversine(point1, point2);
 
   print('Distance between points is: ${distance} meters');
 }
 ```
+
+## Features
+
+<details>
+<summary>Core Calculations</summary>
+
+# Distance and Bearings
+
+These are ported implementations of the java codes provided by [Movable Type Scripts]. This page presents a variety of calculations for lati­tude/longi­tude points, with the formulas and code fragments for implementing them.
+
+[Movable Type Scripts]:https://www.movable-type.co.uk/scripts/latlong.html
+
+- **Distance Calculation**: Calculate the distance between two geographic coordinates using various algorithms like Haversine, Vincenty, and Great Circle.
+
+```dart
+var point1 = LatLng(dms2Degree(50, 03, 59), dms2Degree(-5, 42, 53));
+var point2 = LatLng(dms2Degree(58, 38, 38), dms2Degree(-3, 04, 12));
+
+print('Distance (Haversine): ${point1.distanceTo(point2, method: DistanceMethod.haversine)!.valueInUnits(LengthUnits.kilometers)} km');
+print('Distance (Great Circle): ${point1.distanceTo(point2, method: DistanceMethod.greatCircle)!.valueInUnits(LengthUnits.kilometers)} km');
+print('Distance (Vincenty): ${point1.distanceTo(point2, method: DistanceMethod.vincenty)!.valueInUnits(LengthUnits.kilometers)} km');
+
+// Distance (Haversine): 968.8535467131387 km
+// Distance (Great Circle): 968.8535467131394 km
+// Distance (Vincenty): 969.9329875845247 km
+```
+
+- **Bearing Calculation**: Calculate the initial and final bearing between two points on the Earth's surface.
+
+```dart
+var point1 = LatLng(dms2Degree(50, 03, 59), dms2Degree(-5, 42, 53));
+var point2 = LatLng(dms2Degree(58, 38, 38), dms2Degree(-3, 04, 12));
+
+print('Initial Bearing: ${point1.initialBearingTo(point2)}');
+print('Final Bearing: ${point1.finalBearingTo(point2)}');
+print('Mid Point: ${point1.midPointTo(point2)}');
+
+// Initial Bearing: 9.119818104504077° or 0.15917085310658177 rad or 009° 07' 11.34518"
+// Final Bearing: 11.275201271425715° or 0.19678938601142623 rad or 011° 16' 30.72458"
+// Mid Point: 054° 21' 44.233" N, 004° 31' 50.421"
+```
+
+- **Destination Point**: Given a start point, initial bearing, and distance, this will calculate the destina­tion point and final bearing travelling along a (shortest distance) great circle arc.
+
+```dart
+var startPoint = LatLng(53.3206, -1.7297); // 53°19′14″N, 001°43′47″W
+double bearing = 96.022222; // 096°01′18″
+double distance = 124800; // 124.8 km
+
+LatLng destinationPoint = startPoint.destinationPoint(distance, bearing);
+var finalBearing = startPoint.finalBearingTo(destinationPoint);
+
+print('Destination point: $destinationPoint');
+print('Final bearing: $finalBearing');
+
+// Destination point: 053° 11' 17.891" N, 000° 07' 59.875" E
+// Final bearing: 97.51509150337512° or 1.7019594171174142 rad or 097° 30' 54.32941"
+```
+
+- **Interception**: Intersection of two paths given start points and bearings
+This is a rather more complex calculation than most others on this page, but I've been asked for it a number of times. This comes from Ed William’s aviation formulary. 
+
+```dart
+var point1 = LatLng(51.8853, 0.2545);
+var bearing1 = 108.55;
+var point2 = LatLng(49.0034, 2.5735);
+var bearing2 = 32.44;
+
+var intercept = LatLng.intersectionPoint(point1, bearing1, point2, bearing2)!;
+  
+print('Interception Point: $intercept');
+
+// Interception Point: 050° 54' 27.387" N, 004° 30' 30.869" E
+```
+
+- **Rhumb line**: A ‘rhumb line’ (or loxodrome) is a path of constant bearing, which crosses all meridians at the same angle.
+
+Sailors used to (and sometimes still) navigate along rhumb lines since it is easier to follow a constant compass bearing than to be continually adjusting the bearing, as is needed to follow a great circle. Rhumb lines are straight lines on a Mercator Projec­tion map (also helpful for naviga­tion).
+
+```dart
+var startPoint = LatLng(50.3667, -4.1340); // 50 21 59N, 004 08 02W
+var endPoint = LatLng(42.3511, -71.0408); // 42 21 04N, 071 02 27W
+
+var rhumbDist = startPoint.rhumbLineDistance(endPoint);
+Bearing rhumbBearing = startPoint.rhumbLineBearing(endPoint);
+LatLng rhumbMid = startPoint.rhumbMidpoint(endPoint);
+
+print('Rhumb distance: ${rhumbDist.valueInUnits(LengthUnits.kilometers)} km');
+print('Rhumb bearing: $rhumbBearing');
+print('Rhumb midpoint: $rhumbMid');
+```
+
+Given a start point and a distance d along constant bearing θ, this will calculate the destina­tion point. If you maintain a constant bearing along a rhumb line, you will gradually spiral in towards one of the poles.
+
+```dart
+var sPt = LatLng(dms2Degree(51, 07, 32), dms2Degree(1, 20, 17));
+var dist = 40230;
+var bearing = dms2Degree(116, 38, 10);
+print('Rhumb Destination: ${sPt.rhumbDestinationPoint(dist, bearing)}');
+```
+
+- **Geodesic Calculations**: Find the shortest path between two points on the Earth's surface, taking into account the Earth's curvature which uses the Vincenty approach.
+
+</details>
+
+<details>
+<summary>Coordinate Systems</summary>
+
+# Coordinate Systems
+
+- **Coordinate Conversion**: Convert between different coordinate systems, such as latitude/longitude to UTM or MGRS.
+
+Get the UTM zone number and letter
+```dart
+var u = UTMZones();
+var uZone = u.getZone(latitude: 6.5655, longitude: -1.5646);
+
+print(uZone); // 30P
+print(u.getHemisphere(uZone)); // N
+print(u.getLatZone(6.5655)); // P
+```
+
+Parse MGRS coordinates
+
+```dart
+print(MGRS.parse('31U DQ 48251 11932')); // 31U DQ 48251 11932
+print(MGRS.parse('31UDQ4825111932'));  // 31U DQ 48251 11932
+```
+
+Coordinate conversions
+
+```dart
+var ll = LatLng(6.5655, -1.5646);
+print(ll.toMGRS());
+print(ll.toUTM());
+
+// 30N XN 58699 25944
+// 30 N 658699.0 725944.0 0.0
+
+print('');
+var utm = UTM.fromMGRS(ll.toMGRS());
+print(utm);
+print(utm.toLatLng());
+print(utm.toMGRS());
+
+// 30 N 658699.0 725944.0 0.0
+// 006° 33' 55.795" N, 001° 33' 52.586" W
+// 30N XN 58699 25944
+
+print('');
+var mgrs = MGRS.parse(ll.toMGRS());
+print(mgrs.toLatLng());
+print(mgrs.toUTM());
+print(mgrs);
+
+// 006° 33' 55.795" N, 001° 33' 52.586" W
+// 30 N 658699.0 725944.0
+// 30N XN 58699 25944
+```
+
+- **Datum Transformations**: Transform coordinates between different geodetic datums.
+
+```dart
+final LatLng pp = LatLng(6.65412, -1.54651, 200);
+
+CoordinateConversion transCoordinate = CoordinateConversion();
+
+Projection sourceProjection = Projection.get('EPSG:4326')!; // Geodetic
+// Add a new CRS from WKT
+Projection targetProjection = Projection.parse(
+      'PROJCS["Accra / Ghana National Grid",GEOGCS["Accra",DATUM["Accra",SPHEROID["War Office",6378300,296,AUTHORITY["EPSG","7029"]],TOWGS84[-199,32,322,0,0,0,0],AUTHORITY["EPSG","6168"]],PRIMEM["Greenwich",0,AUTHORITY["EPSG","8901"]],UNIT["degree",0.0174532925199433,AUTHORITY["EPSG","9122"]],AUTHORITY["EPSG","4168"]],PROJECTION["Transverse_Mercator"],PARAMETER["latitude_of_origin",4.666666666666667],PARAMETER["central_meridian",-1],PARAMETER["scale_factor",0.99975],PARAMETER["false_easting",900000],PARAMETER["false_northing",0],UNIT["Gold Coast foot",0.3047997101815088,AUTHORITY["EPSG","9094"]],AXIS["Easting",EAST],AXIS["Northing",NORTH],AUTHORITY["EPSG","2136"]]');
+
+var res = transCoordinate.convert(
+  point: pp,
+  projSrc: sourceProjection,
+  projDst: targetProjection,
+  conversion: ConversionType.geodeticToGeodetic, // Geodetic to Geodetic conversion
+);
+
+print(pp);  
+// 006° 39' 14.832" N, 001° 32' 47.436" W, 200.000
+print(res);
+// Longitude: -1.5467507060856318
+// Latitude: 6.651358083497148
+// Altitude: 200.3305643312633
+```
+
+- **Map Projections**: Support for various map projections and functions to transform coordinates between different projections.
+
+```dart
+final LatLng pp = LatLng(6.65412, -1.54651, 200);
+
+CoordinateConversion transCoordinate = CoordinateConversion();
+CoordinateType sourceCoordinateType = CoordinateType.geodetic;
+CoordinateType targetCoordinateType = CoordinateType.projected;
+
+// Get WGS84 Geographic Coordinate System
+Projection sourceProjection = Projection.get('EPSG:4326')!;
+// Get UTM CRS
+Projection targetProjectionUTM =
+    transCoordinate.getUTMProjection(pp.longitude); 
+
+var res = transCoordinate.convert(
+  point: pp,
+  projSrc: sourceProjection,
+  projDst: targetProjectionUTM,
+  conversion: transCoordinate.getConversionType(
+      sourceCoordinateType, targetCoordinateType),
+  //conversion: ConversionType.geodeticToProjected,
+);
+
+print(pp);  
+// 006° 39' 14.832" N, 001° 32' 47.436" W, 200.000
+print(res);
+// Eastings: 660671.6505858237
+// Northings: 735749.4963174305
+// Height: 200.0
+```
+
+</details>
+
+<details>
+<summary>Julian Dates</summary>
+
+# Julian Date Functions
+
+The `JulianDate` class in GeoEngine provides an interface to work with Julian Dates, a continuous count of days since the beginning of the Julian Period on January 1, 4713 BCE. This system is widely used in astronomy and other fields. Here's how you can utilize some of the main functions of this class:
+
+## Initialization
+
+You can create a `JulianDate` object in different ways:
+
+### From a specific date:
+
+```dart
+JulianDate date1 = JulianDate.fromDate(year: 2023, month: 8, day: 15);
+```
+
+### Using a DateTime object:
+
+```dart
+var date = DateTime(2023, 8, 15);
+JulianDate originalDate = JulianDate(date);
+```
+
+## Comparing Julian Dates
+
+You can compare two `JulianDate` objects using the common comparison operators:
+
+```dart
+JulianDate date2 = JulianDate.fromDate(year: 2023, month: 8, day: 20);
+
+print(date1 == date2); // false
+print(date1 < date2);  // true
+print(date1 <= date2); // true
+print(date1 > date2);  // false
+print(date1 >= date2); // false
+```
+
+## Conversion Functions
+
+### To Julian Date:
+
+```dart
+double jd = originalDate.toJulianDate();
+print('Julian Date: $jd');
+```
+
+### To Modified Julian Date:
+
+The Modified Julian Date (MJD) is calculated by subtracting 2,400,000.5 from the Julian Date. It's used for convenience and starts from November 17, 1858.
+
+```dart
+print('Modified Julian Date (1858/11/17): ${originalDate.toModifiedJulianDate()}');
+```
+
+### Referenced Julian Date:
+
+You can also get a referenced Julian Date by specifying a reference date:
+
+```dart
+print('Referenced Julian Date (1960/01/01): ${originalDate.toModifiedJulianDate(referenceDate: DateTime(1960, 1, 1))}');
+```
+
+## Converting Back to DateTime
+
+If you have a Julian Date and wish to get the corresponding Gregorian date:
+
+```dart
+JulianDate convertedDate = JulianDate.fromJulianDate(jd);
+print(convertedDate.dateTime);
+```
+
+## Example:
+
+To get the Modified Julian Date with a specific reference date:
+
+```dart
+print(JulianDate(DateTime(2023, 1, 1)).toModifiedJulianDate(referenceDate: DateTime(1960, 1, 11)));
+```
+
+Remember, always refer to the documentation or source code for any additional functions or nuances with the `JulianDate` class in the GeoEngine library.
+
+</details>
+
+<details>
+<summary>Least Squares Adjustment</summary>
+
+# Least Squares Adjustment
+
+The `LeastSquaresAdjustment` class in GeoEngine provides a robust way to perform least squares adjustments on geodetic and other types of data. This documentation breaks down the core components and usage of the class.
+
+## Overview
+
+Least squares adjustment is a statistical method to solve an overdetermined system of equations. In the context of GeoEngine, this class can handle various scaling methods, and can be utilized for various geodetic computations including network adjustments.
+
+## Initialization
+
+To initialize the `LeastSquaresAdjustment` class, you need to provide the design matrix `A`, the observation vector `B`, and an optional weight matrix `W`.
+
+```dart
+var lsa = LeastSquaresAdjustment(A: A, B: B);
+```
+
+## Key Properties
+
+Here are some of the core properties of the class:
+
+- `x`: Unknown parameters.
+- `v`: Residuals.
+- `uv`: Unit variance.
+- `N`: The normal matrix.
+- `qxx`: Misclosure matrix
+- `standardDeviation`: Standard deviation of the observations.
+- `standardError`: Standard error of the observations.
+- `standardErrorsOfUnknowns`: Standard errors of the unknowns.
+- `standardErrorsOfResiduals`: Standard errors of the residuals.
+- `standardErrorsOfObservations`: Standard errors of the observations.
+- `chiSquared`: Chi-squared value for the least squares adjustment.
+- `rejectionCriterion`: Rejection criterion for outlier detection, using the specified confidence level.
+- `outliers`: List of boolean values indicating whether each observation is an outlier (true) or not (false).
+
+## Methods
+
+### Chi-Square Test
+
+To perform a Chi-Square goodness-of-fit test:
+
+```dart
+var chiSquareTest = lsa.chiSquareTest();
+```
+
+### Covariance
+
+To compute the covariance matrix:
+
+```dart
+var covMatrix = lsa.covariance();
+```
+
+### Error Ellipse
+
+Compute error ellipse parameters:
+
+```dart
+var eig = lsa.errorEllipse();
+```
+
+### Outliers
+
+Automatically remove outliers:
+
+```dart
+var newLsa = lsa.removeOutliersIteratively();
+print(newLsa.getResults());
+```
+
+### Confidence Intervals
+
+Compute confidence intervals for the unknown parameters:
+
+```dart
+var lsa = LeastSquaresAdjustment(A: A, B: B);
+var intervals = lsa.computeConfidenceIntervals();
+print(intervals);  // Output: [(lower1, upper1), (lower2, upper2), ...]
+```
+
+### Custom Auto Scaling
+
+Automatically scales or normalizes the matrices based on custom functions:
+
+```dart
+var scaledLsa = lsa.customAutoScale(
+  matrixNormalizationFunction: (Matrix A) => A.normalize(),
+  columnNormalizationFunction: (Column B) => B.normalize(),
+  diagonalNormalizationFunction: (Diagonal W) => W.normalize()
+);
+```
+
+## Examples
+
+Here's an example to get you started:
+
+```dart
+var A = Matrix([
+  [-1, 0, 0, 0],
+  [-1, 1, 0, 0],
+  [0, -1, 1, 0],
+  [0, 0, -1, 0],
+  [0, 0, -1, 1],
+  [0, 0, 0, -1],
+  [1, 0, 0, -1],
+]);
+var W = Diagonal([1 / 16, 1 / 9, 1 / 49, 1 / 36, 1 / 16, 1 / 9, 1 / 25]);
+var B = Column([0, 0, 0.13, 0, 0, -0.32, -0.53]);
+
+var lsa = LeastSquaresAdjustment(A: A, B: B, W: W, confidenceLevel: 50);
+var c = lsa.chiSquareTest();
+print(c); // (chiSquared: 0.00340817748488164, degreesOfFreedom: 3)
+
+print(lsa.getResults());
+// Least Squares Adjustment Results:
+// ---------------------------------
+// Unknown Parameters (x):
+// Matrix: 4x1
+// ┌  -0.06513489902716646 ┐
+// │ -0.045703714070040764 │
+// │    0.1900882929187552 │
+// └   0.30911630747309227 ┘
+// 
+// Residuals (v):
+// Matrix: 7x1
+// ┌  0.06513489902716646 ┐
+// │ 0.019431184957125695 │
+// │  0.10579200698879596 │
+// │  -0.1900882929187552 │
+// │  0.11902801455433706 │
+// │  0.01088369252690774 │
+// └   0.1557487934997413 ┘
+// 
+// Unit Variance (σ²): 0.0011360591616272134
+// 
+// Standard Deviation (σ): 0.033705476730454556
+// 
+// Chi-squared value(χ²): 0.00340817748488164
+// 
+// Standard Errors of Unknowns (Cx): 
+// [0.10509275934271714, 0.13339652325953671, 0.11787096037126248, 0.08536738678162376]
+// 
+// Standard Errors of Residuals (Cv): 
+// [0.08445388398273435, 0.0340385190674456, 0.1853208260338704, 0.16433066214111094, 0.08042190803509813, 0.054193558000204894, 0.12767979681503475]
+// 
+// Standard Errors of Observations (Cl): 
+// [0.10509275934271714, 0.09521508112867448, 0.1460242800285535, 0.11787096037126248, 0.1082093493836352, 0.08536738678162376, 0.1099970387144662]
+// 
+// Rejection Criterion (Confidence Level 50.0): 0.022723866371655164
+// 
+// Outliers (false = accepted, true = rejected): 
+// [false, false, false, false, false, false, false]
+// 
+// Error Ellipse: 
+// [0.029441222484548304, 0.01187530402393495, 0.005032048784758579, 0.0036716992155236177]
+```
+
+</details>
+
+## TODOs
+
+### Geomatic Calculations
+
+- **Error Propagation**: Estimate the uncertainty in spatial measurements.
+- **Traverse Calculations**: Perform closed and open traverse calculations.
+- **Geodetic Networks**: Design and analyze geodetic networks.
+- **Land Parcel Management**: Manage land parcels including subdivision and legal description generation.
+### Geocoding
+- **Geocoding and Reverse Geocoding**: Convert addresses into geographic coordinates and vice versa.
+
+### Polygon Operations
+- **Polygon Operations**: Create, manipulate, and analyze polygons, including point-in-polygon checks, area calculations, and finding centroids.
+
+### Spatial Indexing
+- **Spatial Indexing**: Utilize spatial indexing techniques like R-trees or Quad-trees for efficient querying of spatial data.
+
+### Remote Sensing
+- **Remote Sensing Calculations**: Perform calculations such as NDVI, radiometric correction, and image classification.
+
+### Digital Elevation Models
+- **DEM Analysis**: Work with Digital Elevation Models, including slope, aspect, and watershed analysis.
+
+### Route Planning
+- **Route Planning**: Algorithms for route planning and optimization.
+
+### GIS File Support
+- **GIS File Support**: Read and write common GIS file formats like Shapefiles, GeoJSON, and KML.
+
+### Integration with Mapping Services
+- **Integration with Mapping Services**: Integrate with popular mapping services like Google Maps, OpenStreetMap, and Bing Maps.
 
 ## Documentation
 

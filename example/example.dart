@@ -1,50 +1,33 @@
 import 'package:geoengine/geoengine.dart';
 
-//https://www.movable-type.co.uk/scripts/latlong.html
-
 void main() {
-  // var p1 = Point(1223, 1186.5);
-  // var p2 = Point(1400, 1186.5);
+  final LatLng pp = LatLng(6.65412, -1.54651, 200);
 
-  // print(p1.distanceTo(p2));
-  // var bear = p1.bearingTo(p2);
-  // print(bear);
-
-  // var delta_e = p2.x - p1.x;
-  // var delta_n = p2.y - p1.y;
-  // print('$delta_e  $delta_n');
-  // var angle = toDegrees(atan2(delta_e, delta_n));
-  // var bearing = angle >= 0 ? angle : 360 + angle;
-  // print(bearing);
-
-  //  var wcb = (Angle(deg: 240) + Angle.fromDegMinSec(240, 1, 0)) as Angle;
-
-  // // print(wcb);
-  // print(Angle(deg: wcb.normalize()));
-
-  //----------------------------------------------------------------
-
-  final LatLng pp = LatLng(6.65412, -1.54651);
   CoordinateConversion transCoordinate = CoordinateConversion();
-  CoordinateType sourceCoordinateType = CoordinateType.geodetic;
-  CoordinateType targetCoordinateType = CoordinateType.projected;
 
-  Projection sourceProjection = Projection.get('EPSG:4326')!;
-  Projection targetProjection = Projection.get('EPSG:4326')!;
-  Projection targetProjectionUTM =
-      transCoordinate.getUTMProjection(pp.longitude);
+  Projection sourceProjection = Projection.get('EPSG:4326')!; // Geodetic
+  Projection targetProjection = Projection.parse(
+      'PROJCS["Accra / Ghana National Grid",GEOGCS["Accra",DATUM["Accra",SPHEROID["War Office",6378300,296,AUTHORITY["EPSG","7029"]],TOWGS84[-199,32,322,0,0,0,0],AUTHORITY["EPSG","6168"]],PRIMEM["Greenwich",0,AUTHORITY["EPSG","8901"]],UNIT["degree",0.0174532925199433,AUTHORITY["EPSG","9122"]],AUTHORITY["EPSG","4168"]],PROJECTION["Transverse_Mercator"],PARAMETER["latitude_of_origin",4.666666666666667],PARAMETER["central_meridian",-1],PARAMETER["scale_factor",0.99975],PARAMETER["false_easting",900000],PARAMETER["false_northing",0],UNIT["Gold Coast foot",0.3047997101815088,AUTHORITY["EPSG","9094"]],AXIS["Easting",EAST],AXIS["Northing",NORTH],AUTHORITY["EPSG","2136"]]');
 
-  var res = CoordinateConversion().convert(
+  var res = transCoordinate.convert(
     point: pp,
     projSrc: sourceProjection,
-    projDst: targetProjectionUTM,
-    conversion: transCoordinate.getConversionType(
-        sourceCoordinateType, targetCoordinateType),
+    projDst: targetProjection,
+    conversion: ConversionType.geodeticToGeodetic,
   );
 
   print(res);
   print(pp.toTimeZone());
 
-  // Shows: 51° 31' 10.11" N, 19° 22' 32.00" W
-  print(pp.toSexagesimal(decPlaces: 3));
+  var startPoint = LatLng(51.8853, 0.2545);
+  var endPoint = LatLng(49.0034, 2.5735);
+  var thirdPoint = LatLng(50.9640, 1.8523);
+
+  var crossTrackDist = thirdPoint.crossTrackDistanceTo(startPoint, endPoint);
+  var alongTrackDist = thirdPoint.alongTrackDistanceTo(startPoint, endPoint);
+
+  print(
+      'Cross-track distance: ${crossTrackDist.valueInUnits(LengthUnits.kilometers)} km');
+  print(
+      'Along-track distance: ${alongTrackDist.valueInUnits(LengthUnits.kilometers)} km');
 }

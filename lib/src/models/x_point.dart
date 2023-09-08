@@ -93,10 +93,6 @@ class PointX extends Point {
     return Point.withZ(x: x, y: y, z: z);
   }
 
-  Point toPointZ() {
-    return Point.withZ(x: x, y: y, z: z);
-  }
-
   List<dynamic> toDataArray() {
     var res = [name, x, y];
     if (z != null) {
@@ -107,23 +103,6 @@ class PointX extends Point {
       }
     }
     return res;
-  }
-
-  LatLng toLatLng() {
-    return LatLng(y, x);
-  }
-
-  Wpt toWPT() {
-    var wpt = Wpt();
-    wpt.desc = desc;
-    wpt.name = name;
-    wpt.lat = y;
-    wpt.lon = x;
-    wpt.ele = z;
-
-    //wpt.src = crs!.projName;
-
-    return wpt;
   }
 
   dynamic getValue(PointXPart part) {
@@ -152,11 +131,14 @@ class PointX extends Point {
         type == null ? ["x", "y", "z"] : getCoordinateHeaderLabels(type!);
 
     return """
-name: $name
-${headerLabels[0]}: $x , ${headerLabels[1]}: $y, ${headerLabels[2]}: $z
+${headerLabels[0]}: $x
+${headerLabels[1]}: $y
+${headerLabels[2]}: $z
 ${m == null ? "" : "m: $m"}
 crsCode: $crsCode
+name: $name
 description: $desc
+Coordinate type: ${type!.name}
 """;
   }
 }

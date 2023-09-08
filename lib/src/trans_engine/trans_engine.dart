@@ -115,11 +115,9 @@ class CoordinateConversion {
     var centralMeridian = UTMZones().getLongZone(longitude);
     return Projection.parse(
         "PROJCS[\"WGS 84 / UTM \",GEOGCS[\"WGS 84\",DATUM[\"WGS_1984\",SPHEROID[\"WGS 84\",6378137,298.257223563,AUTHORITY[\"EPSG\",\"7030\"]],AUTHORITY[\"EPSG\",\"6326\"]],PRIMEM[\"Greenwich\",0,AUTHORITY[\"EPSG\",\"8901\"]],UNIT[\"toDegrees\",0.0174532925199433,AUTHORITY[\"EPSG\",\"9122\"]],AUTHORITY[\"EPSG\",\"4326\"]],PROJECTION[\"Transverse_Mercator\"],PARAMETER[\"latitude_of_origin\",0],PARAMETER[\"central_meridian\",$centralMeridian],PARAMETER[\"scale_factor\",0.9996],PARAMETER[\"false_easting\",500000],PARAMETER[\"false_northing\",0],UNIT[\"metre\",1,AUTHORITY[\"EPSG\",\"9001\"]],AXIS[\"Easting\",EAST],AXIS[\"Northing\",NORTH],AUTHORITY[\"EPSG\",\"200000\"]]");
-    // return Projection.add("EPSG:${200500 + centralMeridian}",
-    //       "PROJCS[\"WGS 84 / UTM \",GEOGCS[\"WGS 84\",DATUM[\"WGS_1984\",SPHEROID[\"WGS 84\",6378137,298.257223563,AUTHORITY[\"EPSG\",\"7030\"]],AUTHORITY[\"EPSG\",\"6326\"]],PRIMEM[\"Greenwich\",0,AUTHORITY[\"EPSG\",\"8901\"]],UNIT[\"toDegrees\",0.0174532925199433,AUTHORITY[\"EPSG\",\"9122\"]],AUTHORITY[\"EPSG\",\"4326\"]],PROJECTION[\"Transverse_Mercator\"],PARAMETER[\"latitude_of_origin\",0],PARAMETER[\"central_meridian\",$centralMeridian],PARAMETER[\"scale_factor\",0.9996],PARAMETER[\"false_easting\",500000],PARAMETER[\"false_northing\",0],UNIT[\"metre\",1,AUTHORITY[\"EPSG\",\"9001\"]],AXIS[\"Easting\",EAST],AXIS[\"Northing\",NORTH],AUTHORITY[\"EPSG\",\"200000\"]]");
   }
 
-  /// Convert a point from geocentric coordinates to geocentric coordinates of another CRS.
+  /// Convert a point from geocentric coordinates (XYZ) to geocentric coordinates (XYZ) of another CRS.
   ///
   /// [point]: The input point in geocentric coordinates.
   /// [projSrc]: The source CRS projection.
@@ -142,7 +140,7 @@ class CoordinateConversion {
         : p;
   }
 
-  /// Convert a point from geocentric coordinates to geodetic coordinates.
+  /// Convert a point from geocentric coordinates (XYZ) to geodetic coordinates.
   ///
   /// [point]: The input point in geocentric coordinates.
   /// [projSrc]: The source CRS projection.
@@ -191,7 +189,7 @@ class CoordinateConversion {
     return p;
   }
 
-  /// Convert a point from geodetic coordinates to geocentric coordinates in meters.
+  /// Convert a point from geodetic coordinates to geocentric coordinates(XYZ) in meters.
   ///
   /// [point]: The input point in geodetic coordinates.
   /// [projection]: The CRS projection.
@@ -248,21 +246,17 @@ class CoordinateConversion {
   /// [projSrc]: The source CRS projection.
   /// [projDst]: The target CRS projection.
   /// [conversion]: The type of conversion to be performed.
-  /// [isProjection]: If true, indicates that the source and target projections are the same (used internally).
   /// Returns the converted point with the updated CRS and type information.
   PointX convert({
     required PointX point,
     required Projection projSrc,
     required Projection projDst,
     required ConversionType conversion,
-    bool isProjection = false,
   }) {
     Point result = Point.withZ(x: 0, y: 0, z: 0);
 
     // Check for correct values
     utils.checkSanity(point.toPoint());
-
-    if (isProjection) projDst = projSrc;
 
     switch (conversion) {
       case ConversionType.geocentricToGeocentric:
@@ -330,9 +324,13 @@ class CoordinateConversion {
           ? result.z!
           : result.z! / projDst.to_meter!,
       crs: projDst,
-      type: CoordinateType.values.firstWhere((e) =>
-          e.toString().split('.')[1] ==
-          conversion.toString().split('To')[1].toLowerCase()),
+      crsCode: '',
+      name: projDst.projName,
+      type: conversion.name.contains('Geodetic')
+          ? CoordinateType.geodetic
+          : conversion.name.contains('Geocentric')
+              ? CoordinateType.geocentric
+              : CoordinateType.projected,
     );
   }
 }
