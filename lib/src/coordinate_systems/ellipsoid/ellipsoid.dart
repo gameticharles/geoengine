@@ -1,12 +1,29 @@
 part of geoengine;
 
 class Ellipsoid extends Info {
-  final double a; // semi-major axis
-  final double f; // flattening
-  final double invF; // inverse flattening
-  final double b; // semi-minor axis
+  /// semi-major axis
+  final double a;
+
+  /// flattening
+  final double f;
+
+  /// inverse flattening
+  final double invF;
+
+  /// semi-minor axis
+  final double b;
+
   /// Eccentricity of the ellipsoid.
-  double eccentricitySq;
+  double eSq;
+
+  /// First eccentricity
+  double get e => sqrt(eSq);
+
+  /// Second eccentricity
+  double get ePrime => e / sqrt(1 - eSq);
+
+  /// Polar Radius of Curvature
+  double get rho => a * (1 - eSq);
 
   /// Tells if the Inverse Flattening is definitive for this ellipsoid.
   bool isIvfDefinitive;
@@ -25,7 +42,7 @@ class Ellipsoid extends Info {
     this.isIvfDefinitive = true,
   })  : f = 1 / invF,
         b = a * (1 - (1 / invF)),
-        eccentricitySq = (2 * (1 / invF)) - ((1 / invF) * (1 / invF)),
+        eSq = (2 * (1 / invF)) - ((1 / invF) * (1 / invF)),
         super(
           name: name,
           authority: authority,
@@ -34,6 +51,42 @@ class Ellipsoid extends Info {
           abbreviation: abbreviation,
           remarks: remarks,
         );
+
+  /// Surface Area Calculation
+  double surfaceArea() {
+    return 4 * pi * a * b;
+  }
+
+  /// Volume Calculation
+  double volume() {
+    return (4 / 3) * pi * a * a * b;
+  }
+
+  // Similarity Check
+  bool isSimilar(Ellipsoid other, {double tolerance = 0.1}) {
+    return (a - other.a).abs() <= tolerance &&
+        (f - other.f).abs() <= tolerance &&
+        (b - other.b).abs() <= tolerance;
+  }
+
+  // Validation
+  bool isValid() {
+    // Check for positive, non-zero values
+    if (a <= 0 || b <= 0 || f <= 0 || invF <= 0) {
+      return false;
+    }
+
+    // Check consistency between parameters
+    if ((1 / invF) != f) {
+      return false;
+    }
+
+    if (a * (1 - f) != b) {
+      return false;
+    }
+
+    return true;
+  }
 
   // Define a constant for WGS-84 outside the class
   static final Ellipsoid wgs84 = Ellipsoid(

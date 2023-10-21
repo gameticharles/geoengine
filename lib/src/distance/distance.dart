@@ -246,7 +246,7 @@ class Distance extends Length {
     return [s, fwdAz, revAz];
   }
 
-  // Calculate the cross-track distance to the great-circle path between point1 and point2
+  /// Calculate the cross-track distance to the great-circle path between point1 and point2
   Length crossTrackDistanceTo(LatLng point1, LatLng point2, LatLng point3) {
     var delta13 =
         Distance.shortestPath(point1, point3)! / R; // angular distance
@@ -260,7 +260,7 @@ class Distance extends Length {
     return Length(m: dXt);
   }
 
-  // Calculate the along-track distance to the point closest to the third point on the great-circle path between point1 and point2
+  /// Calculate the along-track distance to the point closest to the third point on the great-circle path between point1 and point2
   Length alongTrackDistanceTo(LatLng point1, LatLng point2, LatLng point3) {
     var delta13 =
         Distance.shortestPath(point1, point3)! / R; // angular distance
