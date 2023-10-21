@@ -13,24 +13,6 @@ class CoordinateConversion {
     return (type == consts.PJD_3PARAM || type == consts.PJD_7PARAM);
   }
 
-  /// Get the conversion type from the source coordinate type to the target coordinate type.
-  ///
-  /// [sourceCoordinateType]: The source coordinate type.
-  /// [targetCoordinateType]: The target coordinate type.
-  /// Returns the `ConversionType` enum representing the conversion type.
-  ConversionType getConversionType(CoordinateType sourceCoordinateType,
-      CoordinateType targetCoordinateType) {
-    var conversionType = ConversionType.geodeticToGeodetic;
-
-    String conv =
-        '${sourceCoordinateType.toString().split('.')[1].toLowerCase()}To${targetCoordinateType.toString().split('.')[1].capitalize()}';
-
-    conversionType = ConversionType.values
-        .firstWhere((e) => e.toString().split('.')[1] == conv);
-
-    return conversionType;
-  }
-
   /// Convert a point from radians to degrees.
   ///
   /// [point]: The input point in radians.
@@ -111,10 +93,103 @@ class CoordinateConversion {
   ///
   /// [longitude]: The longitude of the point.
   /// Returns the UTM projection.
-  Projection getUTMProjection(double longitude) {
-    var centralMeridian = UTMZones().getLongZone(longitude);
+  Projection getUTM84ProjectionFromLon(double latitude, double longitude) {
     return Projection.parse(
-        "PROJCS[\"WGS 84 / UTM \",GEOGCS[\"WGS 84\",DATUM[\"WGS_1984\",SPHEROID[\"WGS 84\",6378137,298.257223563,AUTHORITY[\"EPSG\",\"7030\"]],AUTHORITY[\"EPSG\",\"6326\"]],PRIMEM[\"Greenwich\",0,AUTHORITY[\"EPSG\",\"8901\"]],UNIT[\"toDegrees\",0.0174532925199433,AUTHORITY[\"EPSG\",\"9122\"]],AUTHORITY[\"EPSG\",\"4326\"]],PROJECTION[\"Transverse_Mercator\"],PARAMETER[\"latitude_of_origin\",0],PARAMETER[\"central_meridian\",$centralMeridian],PARAMETER[\"scale_factor\",0.9996],PARAMETER[\"false_easting\",500000],PARAMETER[\"false_northing\",0],UNIT[\"metre\",1,AUTHORITY[\"EPSG\",\"9001\"]],AXIS[\"Easting\",EAST],AXIS[\"Northing\",NORTH],AUTHORITY[\"EPSG\",\"200000\"]]");
+      _generateWGSUtmCrsWkt(
+        UTMZones().getCentralMeridian(longitude),
+        UTMZones().getLongZone(longitude),
+        UTMZones().getLatZone(latitude),
+      ),
+    );
+  }
+
+  /// Get the UTM projection based on the Zone number.
+  ///
+  /// [zoneNumber]: The Zone number of the UTM point.
+  /// Returns the UTM projection.
+  Projection getUTM84ProjectionFromZone(int zoneNumber, String zoneLetter) {
+    var centralMeridian = ((zoneNumber - 1) * 6) - 180 + 3; // +3 puts origin;
+
+    return Projection.parse(
+      _generateWGSUtmCrsWkt(
+        centralMeridian,
+        zoneNumber,
+        zoneLetter,
+      ),
+    );
+  }
+
+  /// Helper function to generate the WGSUtmCrsWkt
+  String _generateWGSUtmCrsWkt(
+      int centralMeridian, int zoneNumber, String zoneLetter,
+      [UTMEllipsoid? utmEllipsoid]) {
+    utmEllipsoid ??= UTMEllipsoid.wgs84;
+
+    // Define the base WKT string for UTM CRS
+    String wktBase =
+        'PROJCS["\${utmEllipsoid} / UTM Zone \${zoneNumber}\${hemisphere}",'
+        'GEOGCS["\${utmEllipsoid}",DATUM["\${utmYear}", SPHEROID["\${spheroidName}",\${ellipsoidA},\${ellipsoidF},'
+        'AUTHORITY["EPSG","7030"]], AUTHORITY["EPSG","6326"]], PRIMEM["Greenwich",0,AUTHORITY["EPSG","8901"]],'
+        'UNIT["degree",0.0174532925199433, AUTHORITY["EPSG","9122"]], AUTHORITY["EPSG","4326"]],'
+        'PROJECTION["Transverse_Mercator"],PARAMETER["latitude_of_origin",0],'
+        'PARAMETER["central_meridian",\${centralMeridian}],'
+        'PARAMETER["scale_factor",0.9996],'
+        'PARAMETER["false_easting",500000],'
+        'PARAMETER["false_northing",\${falseNorthing}],'
+        'UNIT["metre",1, AUTHORITY["EPSG","9001"]],'
+        'AXIS["Easting",EAST], AXIS["Northing",NORTH],'
+        'AUTHORITY["EPSG","\${authorityCode}"]]';
+
+    double falseNorthing = 0;
+
+    // Calculate false northing based on the hemisphere
+    var hemisphere = UTMZones().getHemisphere(zoneLetter);
+    String authorityCode = '';
+    if (hemisphere == 'N') {
+      falseNorthing = 0;
+      authorityCode =
+          '32${utmEllipsoid == UTMEllipsoid.wgs84 ? 6 : utmEllipsoid == UTMEllipsoid.wgs72 ? 2 : 4}${zoneNumber.toString().padLeft(2, '0')}';
+    } else {
+      falseNorthing = 10000000;
+      authorityCode =
+          '32${utmEllipsoid == UTMEllipsoid.wgs84 ? 7 : utmEllipsoid == UTMEllipsoid.wgs72 ? 3 : 5}${zoneNumber.toString().padLeft(2, '0')}';
+    }
+
+    // Format the WKT string with the calculated values
+    String wkt = wktBase.replaceAllMapped(
+      RegExp(r'\${(\w+)}'),
+      (match) {
+        String key = match.group(1)!;
+        switch (key) {
+          case 'utmEllipsoid':
+            return utmEllipsoid.toString();
+          case 'utmYear':
+            return utmEllipsoid!.year;
+          case 'spheroidName':
+            return utmEllipsoid!.spheroidName;
+          case 'zoneNumber':
+            return zoneNumber.toString();
+          case 'zoneLetter':
+            return zoneLetter;
+          case 'hemisphere':
+            return hemisphere;
+          case 'ellipsoidA':
+            return utmEllipsoid!.ellipsoid.a.toString();
+          case 'ellipsoidF':
+            return utmEllipsoid!.ellipsoid.invF.toString();
+          case 'centralMeridian':
+            return centralMeridian.toString();
+          case 'falseNorthing':
+            return falseNorthing.toString();
+          case 'authorityCode':
+            return authorityCode;
+          default:
+            return match.group(0)!;
+        }
+      },
+    );
+
+    return wkt;
   }
 
   /// Convert a point from geocentric coordinates (XYZ) to geocentric coordinates (XYZ) of another CRS.

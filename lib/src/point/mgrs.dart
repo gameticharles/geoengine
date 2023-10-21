@@ -38,7 +38,7 @@ class MGRS {
   ///
   /// Example:
   /// ```dart
-  ///   var mgrsRef = new Mgrs(31, 'U', 'D', 'Q', 48251, 11932);
+  ///   var mgrsRef = new MGRS(31, 'U', 'D', 'Q', 48251, 11932);
   ///  // 31U DQ 48251 11932
   /// ```
   MGRS(this.zone, this.band, this.e100k, this.n100k, this.easting,
@@ -69,7 +69,7 @@ class MGRS {
   ///
   /// Example:
   /// ```dart
-  ///   var mgrsRef = Mgrs.parse('31U DQ 48251 11932');
+  ///   var mgrsRef = MGRS.parse('31U DQ 48251 11932');
   ///   var utmCoord = mgrsRef.toUtm(); // 31 N 448251 5411932
   /// ```
   UTM toUTM() {
@@ -98,8 +98,15 @@ class MGRS {
       n2M += 2000000;
     }
 
-    return UTM(zone, hemisphere, (e100kNum + easting).toDouble(),
-        (n2M + n100kNum + northing.toDouble()));
+    return UTM(
+      zoneNumber: zone,
+      zoneLetter: hemisphere,
+      easting: (e100kNum + easting).toDouble(),
+      northing: (n2M + n100kNum + northing.toDouble()),
+    );
+
+    // return UTM(zone, hemisphere, (e100kNum + easting).toDouble(),
+    //     (n2M + n100kNum + northing.toDouble()));
   }
 
   /// Converts UTM zone/easting/northing coordinate to latitude/longitude.
@@ -111,12 +118,11 @@ class MGRS {
   ///
   /// Example
   /// ```dart
-  ///   var grid = new Utm(31, 'N', 448251.795, 5411932.678);
+  ///   var grid = new UTM(31, 'N', 448251.795, 5411932.678);
   ///   var latlong = grid.toLatLon(); // 48°51′29.52″N, 002°17′40.20″E
   /// ```
   LatLng toLatLng() {
-    var ll = mgrs_dart.Mgrs.toPoint(toString());
-    return LatLng(ll[1], ll[0]);
+    return toUTM().toLatLng();
   }
 
   /// Parses string representation of MGRS grid reference.
@@ -133,8 +139,8 @@ class MGRS {
   ///
   ///  Example
   ///  ```dart
-  ///    var mgrsRef = Mgrs.parse('31U DQ 48251 11932');
-  ///    var mgrsRef = Mgrs.parse('31UDQ4825111932');
+  ///    var mgrsRef = MGRS.parse('31U DQ 48251 11932');
+  ///    var mgrsRef = MGRS.parse('31UDQ4825111932');
   ///    //  mgrsRef: { zone:31, band:'U', e100k:'D', n100k:'Q', easting:48251, northing:11932 }
   /// ```
   static MGRS parse(String mgrsGridRef) {

@@ -1,25 +1,5 @@
 part of geoengine;
 
-enum DistanceMethod {
-  haversine,
-  greatCircle,
-  vincenty,
-}
-
-class Ellipsoid {
-  final double a; // semi-major axis
-  final double f; // flattening
-  final double b; // semi-minor axis
-
-  Ellipsoid(this.a, this.f) : b = a * (1 - f);
-
-  // Define a constant for WGS-84 outside the class
-  const Ellipsoid.wgs84()
-      : a = 6378137,
-        f = 1 / 298.257223563,
-        b = 6378137 * (1 - (1 / 298.257223563));
-}
-
 class Distance extends Length {
   static double R = 6371000; // Earth radius in meters
 
@@ -55,9 +35,10 @@ class Distance extends Length {
     return vincenty(point1, point2); // Assuming Vincenty is the most accurate
   }
 
-  static Length? vincenty(LatLng point1, LatLng point2) {
-    double a = 6378137, f = 1 / 298.257223563; // WGS-84 ellipsiod parameters
-    double b = (1 - f) * a;
+  static Length? vincenty(LatLng point1, LatLng point2,
+      {Ellipsoid? ellipsoid}) {
+    ellipsoid ??= Ellipsoid.wgs84;
+    double a = ellipsoid.a, b = ellipsoid.b, f = ellipsoid.f;
 
     double lat1 = toRadians(point1.latitude);
     double lon1 = toRadians(point1.longitude);
@@ -127,7 +108,8 @@ class Distance extends Length {
   }
 
   LatLng vincentyDirect(LatLng point, double distance, double initialBearing,
-      {Ellipsoid ellipsoid = const Ellipsoid.wgs84()}) {
+      {Ellipsoid? ellipsoid}) {
+    ellipsoid ??= Ellipsoid.wgs84;
     double a = ellipsoid.a, b = ellipsoid.b, f = ellipsoid.f;
     double s = distance;
     double alpha1 = toRadians(initialBearing);
@@ -190,7 +172,8 @@ class Distance extends Length {
   }
 
   List<double>? vincentyInverse(LatLng point1, LatLng point2,
-      {Ellipsoid ellipsoid = const Ellipsoid.wgs84()}) {
+      {Ellipsoid? ellipsoid}) {
+    ellipsoid ??= Ellipsoid.wgs84;
     double a = ellipsoid.a, b = ellipsoid.b, f = ellipsoid.f;
     double phi1 = toRadians(point1.latitude);
     double lambda1 = toRadians(point1.longitude);
@@ -286,44 +269,5 @@ class Distance extends Length {
 
     double dAt = acos(cos(delta13) / cos(deltaXt)) * R;
     return Length(m: dAt);
-  }
-}
-
-class Bearing extends Angle {
-  final double degrees;
-
-  Bearing(this.degrees) : super(deg: degrees);
-
-  static Bearing initialBearing(LatLng point1, LatLng point2) {
-    double lat1 = toRadians(point1.latitude);
-    double lon1 = toRadians(point1.longitude);
-    double lat2 = toRadians(point2.latitude);
-    double lon2 = toRadians(point2.longitude);
-
-    double dLon = lon2 - lon1;
-
-    double x = cos(lat2) * sin(dLon);
-    double y = cos(lat1) * sin(lat2) - sin(lat1) * cos(lat2) * cos(dLon);
-
-    double initialBearing = atan2(x, y);
-
-    // Convert to degrees
-    initialBearing = initialBearing * 180 / pi;
-
-    // Normalize
-    initialBearing = (initialBearing + 360) % 360;
-
-    return Bearing(initialBearing);
-  }
-
-  static Bearing finalBearing(LatLng point1, LatLng point2) {
-    // Final bearing is simply the initial bearing from point2 to point1 reversed by 180 degrees
-    var initial = initialBearing(point2, point1);
-    return Bearing((initial.deg + 180) % 360);
-  }
-
-  @override
-  String toString() {
-    return super.toString().replaceAll('Angle: ', '');
   }
 }

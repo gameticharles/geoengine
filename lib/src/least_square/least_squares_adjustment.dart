@@ -2,16 +2,6 @@
 
 part of geoengine;
 
-enum ScalingMethod {
-  none,
-  minMax,
-  standardization,
-  unitVector,
-  uniformWeights,
-  inverseVariance,
-  logTransformation,
-}
-
 /// `LeastSquaresAdjustment` class provides methods for performing a least squares adjustment.
 ///
 /// The class accepts the design matrix [A], the observation vector [B], and an optional weight matrix [W].
@@ -46,6 +36,9 @@ class LeastSquaresAdjustment {
   Matrix? _x;
   Matrix? _v;
   double? _uv;
+  Matrix? _cx;
+  Matrix? _cv;
+  Matrix? _cl;
   double? _standardDeviation;
   EquationMethod method;
   late final LinearSystemMethod _linear;
@@ -53,8 +46,10 @@ class LeastSquaresAdjustment {
 
   /// Constructs a `LeastSquaresAdjustment` object.
   ///
-  /// [A] is the design matrix, [B] is the observation vector,
-  /// [W] is the optional weight matrix, and [confidenceLevel] is the optional confidence level in percentage.
+  /// [A] is the design matrix,
+  /// [B] is the observation vector,
+  /// [W] is the optional weight matrix, and
+  /// [confidenceLevel] is the optional confidence level in percentage.
   LeastSquaresAdjustment({
     required this.A,
     required this.B,
@@ -134,6 +129,12 @@ class LeastSquaresAdjustment {
   double get uv =>
       _uv ??= ((v.transpose() * W * v) / (A.rowCount - A.columnCount))[0][0];
 
+  Matrix get cx => _cx ??= nInv * uv;
+
+  Matrix get cv => _cv ??= qxx * uv;
+
+  Matrix get cl => _cl ??= A * cx * A.transpose();
+
   /// Standard deviation.
   double get standardDeviation => _standardDeviation ??= sqrt(uv);
 
@@ -143,15 +144,15 @@ class LeastSquaresAdjustment {
 
   /// Standard errors of the unknowns.
   List<dynamic> get standardErrorsOfUnknowns =>
-      (nInv * uv).diagonal().map((e) => sqrt(e)).toList();
+      cx.diagonal().map((e) => sqrt(e)).toList();
 
   /// Standard errors of the residuals.
   List<dynamic> get standardErrorsOfResiduals =>
-      (qxx * uv).diagonal().map((e) => sqrt(e)).toList();
+      cv.diagonal().map((e) => sqrt(e)).toList();
 
   /// Standard errors of the observations.
   List<dynamic> get standardErrorsOfObservations =>
-      (A * nInv * uv * A.transpose()).diagonal().map((e) => sqrt(e)).toList();
+      cl.diagonal().map((e) => sqrt(e)).toList();
 
   /// Chi-squared (χ²) value for the least squares adjustment.
   double get chiSquared => (v.transpose() * W * v)[0][0];
@@ -205,7 +206,7 @@ class LeastSquaresAdjustment {
   dynamic get rejectionCriterion {
     // Convert confidence level to z-value using the standard normal distribution
     double zValue = ZScore.computeZScore(confidenceLevel);
-    return sqrt(uv) * zValue;
+    return zValue * standardDeviation;
   }
 
   /// List of boolean values indicating whether each observation is an outlier (true) or not (false).
@@ -218,16 +219,21 @@ class LeastSquaresAdjustment {
     return results;
   }
 
-  String getResults() {
+  @override
+  String toString() {
     var results = StringBuffer();
 
     results.writeln('Least Squares Adjustment Results:');
     results.writeln('---------------------------------');
+    results.writeln('Normal (N):\n$N\n');
     results.writeln('Unknown Parameters (x):\n$x\n');
     results.writeln('Residuals (v):\n$v\n');
     results.writeln('Unit Variance (σ²): $uv\n');
     results.writeln('Standard Deviation (σ): $standardDeviation\n');
-    results.writeln('Chi-squared value(χ²): $chiSquared\n');
+    results.writeln('Chi-squared Test (Goodness-of-fit Test):');
+    var cst = chiSquareTest();
+    results.writeln('Chi-squared value(χ²): ${cst.chiSquared}');
+    results.writeln('Degrees of Freedom: ${cst.degreesOfFreedom}\n');
     results.writeln(
         'Standard Errors of Unknowns (Cx): \n$standardErrorsOfUnknowns\n');
     results.writeln(
@@ -257,7 +263,7 @@ class LeastSquaresAdjustment {
   ///   As: [A1, A2],
   ///   Bs: [B1, B2],
   ///   Ws: [W1, W2],
-  ///   confidenceLevels: [ConfidenceLevel.p99_9, ConfidenceLevel.p95]
+  ///   confidenceLevels: [99, 95]
   /// );
   /// ```
   static List<LeastSquaresAdjustment> batchAdjust({

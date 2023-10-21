@@ -2,15 +2,20 @@
 
 part of geoengine;
 
-enum PointXPart { name, x, y, z }
-
 class PointX extends Point {
   CoordinateType? type;
   String? status;
+
+  /// The name of the point. This field will be transferred to and from
+  /// the conversion.
   String? name;
+
+  /// A text description of the element. Holds additional information about the
+  /// element intended for the user.
   String? desc;
   String? country;
   String? crsCode;
+
   Projection? crs;
   bool selected;
 
@@ -89,6 +94,10 @@ class PointX extends Point {
     return PointX.withM(x: x, y: y, z: z!, m: m!);
   }
 
+  LatLng asLatLng() {
+    return LatLng(y, x, z);
+  }
+
   Point toPoint() {
     return Point.withZ(x: x, y: y, z: z);
   }
@@ -138,7 +147,7 @@ ${m == null ? "" : "m: $m"}
 crsCode: $crsCode
 name: $name
 description: $desc
-Coordinate type: ${type!.name}
+Coordinate type: ${type == null ? '' : type!.name}
 """;
   }
 }

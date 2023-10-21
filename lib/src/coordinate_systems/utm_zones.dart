@@ -70,11 +70,22 @@ class UTMZones {
   ///
   /// [longitude]: The longitude value in decimal degrees.
   /// Returns the central meridian value for the UTM zone.
-  int getLongZone(double longitude) {
+  int getCentralMeridian(double longitude) {
     final int longZone = longitude < 0.0
         ? ((180 + longitude) ~/ 6.0) + 1
         : (longitude ~/ 6) + 31;
     return (6 * longZone) - 183;
+  }
+
+  /// Get the Zone Number from the Longitude
+  ///
+  /// [longitude]: The longitude value in decimal degrees.
+  /// Returns the Zone Number for the LatLon point.
+  int getLongZone(double longitude) {
+    final int longZone = longitude < 0.0
+        ? ((180 + longitude) ~/ 6.0) + 1
+        : (longitude ~/ 6) + 31;
+    return longZone;
   }
 
   /// Get the latitude zone letter based on the given latitude.

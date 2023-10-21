@@ -1,31 +1,36 @@
 part of geoengine;
 
 class LatLng extends PointX {
+  /// The longitude of the point. This is always in decimal degrees
   final double latitude;
+
+  /// The longitude of the point. This is always in decimal degrees.
   final double longitude;
-  final double? height;
+
+  /// The elevation (in meters) of the point.
+  final double? elevation;
 
   static const double R = 6371000; // Earth radius in meters
 
   /// Default constructor
-  LatLng(this.latitude, this.longitude, [this.height])
+  LatLng(this.latitude, this.longitude, [this.elevation])
       : assert(latitude >= -90 && latitude <= 90),
         assert(longitude >= -180 && longitude <= 180),
         super(
             y: latitude,
             x: longitude,
-            z: height,
+            z: elevation,
             type: CoordinateType.geodetic);
 
   /// Named constructor that creates a LatLng from a Map
   LatLng.fromMap(Map<String, double> map)
       : latitude = map['latitude']!,
         longitude = map['longitude']!,
-        height = map['height']!,
+        elevation = map['elevation']!,
         super(
             y: map['latitude']!,
             x: map['longitude']!,
-            z: map['height']!,
+            z: map['elevation']!,
             type: CoordinateType.geodetic);
 
   /// Named constructor that creates a LatLng from a List
@@ -33,7 +38,7 @@ class LatLng extends PointX {
       : assert(list.length >= 2),
         latitude = list[0],
         longitude = list[1],
-        height = list.length == 3 ? list[2] : null,
+        elevation = list.length == 3 ? list[2] : null,
         super(
           y: list[0],
           x: list[1],
@@ -41,12 +46,12 @@ class LatLng extends PointX {
           type: CoordinateType.geodetic,
         );
 
-  /// Named constructor that creates a LatLng from a string (e.g., "40.7128,-74.0060")
+  /// Named constructor that creates a LatLng from a string (e.g.: "40.7128,-74.0060")
   LatLng.fromString(String latLngAsString)
       : assert(latLngAsString.split(',').length >= 2),
         latitude = double.parse(latLngAsString.split(',')[0]),
         longitude = double.parse(latLngAsString.split(',')[1]),
-        height = latLngAsString.split(',').length == 3
+        elevation = latLngAsString.split(',').length == 3
             ? double.parse(latLngAsString.split(',')[2])
             : null,
         super(
@@ -155,31 +160,6 @@ class LatLng extends PointX {
     }
 
     return decimal;
-  }
-
-  /// Convert MGRS to lat/lon.
-  ///
-  ///
-  /// [mgrsString]: UPPERCASE coordinate string is expected in MGRS
-  /// Return an object literal with easting, northing, zoneLetter, zoneNumber and accuracy (in meters) properties
-  static fromMGRS(String mgrsString) {
-    var ll = mgrs_dart.Mgrs.toPoint(mgrsString);
-    return LatLng(ll[1], ll[0]);
-  }
-
-  /// Convert lat/lon to MGRS.
-  ///
-  /// [accuracy] Accuracy in digits (0-5). Accuracy in digits (5 for 1 m, 4 for 10 m, 3 for
-  ///  100 m, 2 for 1 km, 1 for 10 km or 0 for 100 km). Optional, default is 5.
-  ///
-  /// Returns MGRS string for the given location and accuracy
-  @override
-  String toMGRS([int accuracy = 5]) {
-    return MGRS
-        .parse(
-          mgrs_dart.Mgrs.forward([longitude, latitude], accuracy),
-        )
-        .toString();
   }
 
   LatLng midPointTo(LatLng point) {
@@ -394,32 +374,72 @@ class LatLng extends PointX {
     var wpt = Wpt();
     wpt.desc = desc;
     wpt.name = name;
-    wpt.lat = y;
-    wpt.lon = x;
-    wpt.ele = z;
+    wpt.lat = latitude;
+    wpt.lon = longitude;
+    wpt.ele = elevation;
 
     //wpt.src = crs!.projName;
 
     return wpt;
   }
 
+  /// Convert MGRS to lat/lon.
+  ///
+  /// [mgrsString]: UPPERCASE coordinate string is expected in MGRS
+  /// Return an object literal with easting, northing, zoneLetter, zoneNumber and accuracy (in meters) properties
+  static fromMGRS(String mgrsString) {
+    var ll = mgrs_dart.Mgrs.toPoint(mgrsString);
+    return LatLng(ll[1], ll[0]);
+  }
+
+  /// Convert lat/lon to MGRS.
+  ///
+  /// [accuracy] Accuracy in digits (0-5). Accuracy in digits (5 for 1 m, 4 for 10 m, 3 for
+  ///  100 m, 2 for 1 km, 1 for 10 km or 0 for 100 km). Optional, default is 5.
+  ///
+  /// Returns MGRS string for the given location and accuracy
+  @override
+  String toMGRS([int accuracy = 5]) {
+    return MGRS
+        .parse(
+          mgrs_dart.Mgrs.forward([longitude, latitude], accuracy),
+        )
+        .toString();
+  }
+
   /// Return the Latitude and Longitude to UTM coordinates
   UTM toUTM() {
-    var utm = mgrs_dart.Mgrs.LLtoUTM(latitude, longitude);
+    // var utm = mgrs_dart.Mgrs.LLtoUTM(latitude, longitude);
+
+    // return UTM(
+    //   zoneNumber: utm.zoneNumber,
+    //   zoneLetter: utm.zoneLetter,
+    //   easting: utm.easting,
+    //   northing: utm.northing,
+    //   height: 0,
+    //   accuracy: utm.accuracy,
+    // );
+
+    var utm = CoordinateConversion().convert(
+      point: this,
+      projSrc: Projection.WGS84,
+      projDst:
+          CoordinateConversion().getUTM84ProjectionFromLon(latitude, longitude),
+      conversion: ConversionType.geodeticToProjected,
+    );
 
     return UTM(
-      utm.zoneNumber,
-      utm.zoneLetter,
-      utm.easting,
-      utm.northing,
-      0,
-      utm.accuracy,
+      zoneNumber: UTMZones().getLongZone(longitude),
+      zoneLetter: UTMZones().getLatZone(latitude),
+      easting: utm.x,
+      northing: utm.y,
+      height: utm.z,
     );
   }
 
   @override
   String toString() {
     return toSexagesimal() +
-        (height != null ? ', ${height!.toStringAsFixed(3)}' : "");
+        (elevation != null ? ', ${elevation!.toStringAsFixed(3)}' : "");
   }
 }

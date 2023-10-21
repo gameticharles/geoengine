@@ -4,12 +4,13 @@ version: 0.1.0
 repository: https://github.com/gameticharles/geoengine
 
 environment:
-  sdk: ^3.0.5
+  sdk: ^3.1.3
 
 # Add regular dependencies here.
 dependencies:
-  advance_math: ^3.3.0
+  advance_math: ^3.3.4
   geoxml: ^2.5.2
+  mgrs_dart: ^2.0.0
   proj4dart: ^2.1.0
   xml2json: ^6.1.0
 

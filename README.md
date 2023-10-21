@@ -46,7 +46,7 @@ void main() {
 
   var distance = Distance.haversine(point1, point2);
 
-  print('Distance between points is: ${distance} meters');
+  print('Distance between points is: ${distance.valueSI} meters');
 }
 ```
 
@@ -139,6 +139,10 @@ LatLng rhumbMid = startPoint.rhumbMidpoint(endPoint);
 print('Rhumb distance: ${rhumbDist.valueInUnits(LengthUnits.kilometers)} km');
 print('Rhumb bearing: $rhumbBearing');
 print('Rhumb midpoint: $rhumbMid');
+
+// Rhumb distance: 5197.982109842136 km
+// Rhumb bearing: Bearing: 256.66558069454646° or 4.479659459662955 rad or 256° 39' 56.09050"
+// Rhumb midpoint: 047° 50' 9.060" N, 038° 13' 28.378" W
 ```
 
 Given a start point and a distance d along constant bearing θ, this will calculate the destina­tion point. If you maintain a constant bearing along a rhumb line, you will gradually spiral in towards one of the poles.
@@ -148,6 +152,8 @@ var sPt = LatLng(dms2Degree(51, 07, 32), dms2Degree(1, 20, 17));
 var dist = 40230;
 var bearing = dms2Degree(116, 38, 10);
 print('Rhumb Destination: ${sPt.rhumbDestinationPoint(dist, bearing)}');
+
+// Rhumb Destination: 050° 57' 48.074" N, 001° 51' 8.774" E
 ```
 
 - **Geodesic Calculations**: Find the shortest path between two points on the Earth's surface, taking into account the Earth's curvature which uses the Vincenty approach.
@@ -230,10 +236,8 @@ var res = transCoordinate.convert(
 
 print(pp);  
 // 006° 39' 14.832" N, 001° 32' 47.436" W, 200.000
-print(res);
-// Longitude: -1.5467507060856318
-// Latitude: 6.651358083497148
-// Altitude: 200.3305643312633
+print(res.asLatLng());
+// 006° 39' 4.889" N, 001° 32' 48.303" W, 200.331
 ```
 
 - **Map Projections**: Support for various map projections and functions to transform coordinates between different projections.
@@ -315,6 +319,8 @@ print(date1 >= date2); // false
 ```dart
 double jd = originalDate.toJulianDate();
 print('Julian Date: $jd');
+
+// Julian Date: 2460171.5
 ```
 
 ### To Modified Julian Date:
@@ -323,6 +329,8 @@ The Modified Julian Date (MJD) is calculated by subtracting 2,400,000.5 from the
 
 ```dart
 print('Modified Julian Date (1858/11/17): ${originalDate.toModifiedJulianDate()}');
+
+// Modified Julian Date (1858/11/17): 60171.0
 ```
 
 ### Referenced Julian Date:
@@ -331,6 +339,8 @@ You can also get a referenced Julian Date by specifying a reference date:
 
 ```dart
 print('Referenced Julian Date (1960/01/01): ${originalDate.toModifiedJulianDate(referenceDate: DateTime(1960, 1, 1))}');
+
+// Referenced Julian Date (1960/01/01): 23237.0
 ```
 
 ## Converting Back to DateTime
@@ -340,6 +350,8 @@ If you have a Julian Date and wish to get the corresponding Gregorian date:
 ```dart
 JulianDate convertedDate = JulianDate.fromJulianDate(jd);
 print(convertedDate.dateTime);
+
+// 2023-08-15 00:00:00.000
 ```
 
 ## Example:
@@ -348,6 +360,8 @@ To get the Modified Julian Date with a specific reference date:
 
 ```dart
 print(JulianDate(DateTime(2023, 1, 1)).toModifiedJulianDate(referenceDate: DateTime(1960, 1, 11)));
+
+// 23001.0
 ```
 
 Remember, always refer to the documentation or source code for any additional functions or nuances with the `JulianDate` class in the GeoEngine library.
@@ -423,7 +437,7 @@ Automatically remove outliers:
 
 ```dart
 var newLsa = lsa.removeOutliersIteratively();
-print(newLsa.getResults());
+print(newLsa);
 ```
 
 ### Confidence Intervals
@@ -465,13 +479,20 @@ var A = Matrix([
 var W = Diagonal([1 / 16, 1 / 9, 1 / 49, 1 / 36, 1 / 16, 1 / 9, 1 / 25]);
 var B = Column([0, 0, 0.13, 0, 0, -0.32, -0.53]);
 
-var lsa = LeastSquaresAdjustment(A: A, B: B, W: W, confidenceLevel: 50);
+var lsa = LeastSquaresAdjustment(A: A, B: B, W: W, confidenceLevel: 40);
 var c = lsa.chiSquareTest();
 print(c); // (chiSquared: 0.00340817748488164, degreesOfFreedom: 3)
 
-print(lsa.getResults());
+print(lsa);
 // Least Squares Adjustment Results:
 // ---------------------------------
+// Normal (N):
+// Matrix: 4x4
+// ┌  0.2136111111111111  -0.1111111111111111                  0.0              -0.04 ┐
+// │ -0.1111111111111111  0.13151927437641722 -0.02040816326530612                0.0 │
+// │                 0.0 -0.02040816326530612   0.1106859410430839            -0.0625 │
+// └               -0.04                  0.0              -0.0625 0.2136111111111111 ┘
+// 
 // Unknown Parameters (x):
 // Matrix: 4x1
 // ┌  -0.06513489902716646 ┐
@@ -493,7 +514,9 @@ print(lsa.getResults());
 // 
 // Standard Deviation (σ): 0.033705476730454556
 // 
+// Chi-squared Test (Goodness-of-fit Test):
 // Chi-squared value(χ²): 0.00340817748488164
+// Degrees of Freedom: 3
 // 
 // Standard Errors of Unknowns (Cx): 
 // [0.10509275934271714, 0.13339652325953671, 0.11787096037126248, 0.08536738678162376]
@@ -502,15 +525,17 @@ print(lsa.getResults());
 // [0.08445388398273435, 0.0340385190674456, 0.1853208260338704, 0.16433066214111094, 0.08042190803509813, 0.054193558000204894, 0.12767979681503475]
 // 
 // Standard Errors of Observations (Cl): 
-// [0.10509275934271714, 0.09521508112867448, 0.1460242800285535, 0.11787096037126248, 0.1082093493836352, 0.08536738678162376, 0.1099970387144662]
+// [0.10509275934271714, 0.09521508112867448, 0.14602428002855353, 0.11787096037126248, 0.10820934938363522, 0.08536738678162376, 0.1099970387144662]
 // 
-// Rejection Criterion (Confidence Level 50.0): 0.022723866371655164
+// Rejection Criterion (Confidence Level 40.0): 0.01766173284889808
 // 
 // Outliers (false = accepted, true = rejected): 
-// [false, false, false, false, false, false, false]
+// [false, true, false, false, true, false, false]
 // 
 // Error Ellipse: 
 // [0.029441222484548304, 0.01187530402393495, 0.005032048784758579, 0.0036716992155236177]
+// 
+// ---------------------------------
 ```
 
 </details>

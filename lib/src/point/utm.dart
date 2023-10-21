@@ -7,8 +7,13 @@ class UTM extends PointX {
 
   LatLng? _latLng;
   Projection? _utmProjection;
-  UTM(this.zoneNumber, this.zoneLetter, double easting, double northing,
-      [double? height, this.accuracy])
+  UTM(
+      {required this.zoneNumber,
+      required this.zoneLetter,
+      required double easting,
+      required double northing,
+      double? height,
+      this.accuracy})
       : super(x: easting, y: northing, z: height);
 
   /// Create a UTM coordinate system from Latitude and longitude
@@ -35,35 +40,55 @@ class UTM extends PointX {
   /// Get the latitude zone letter based on the given latitude.
   String get latitudeZone => UTMZones().getLatZone(latLng.latitude);
 
-  /// Returns the Projected coordinate system of the current coordinate.
+  /// Get the UTM zone identifier based on the point.
+  String get zone => UTMZones()
+      .getZone(latitude: latLng.latitude, longitude: latLng.longitude);
+
+  /// Returns the UTM coordinate system of the current coordinate.
   Projection get utmProjection => _utmProjection ??=
-      CoordinateConversion().getUTMProjection(latLng.longitude);
+      CoordinateConversion().getUTM84ProjectionFromZone(zoneNumber, zoneLetter);
 
   /// Convert the UTM coordinate system to Latitude and Longitude
   LatLng toLatLng() {
-    // return LatLng(res.y, res.x, res.z);
-    var ll = mgrs_dart.Mgrs.UTMtoLL(mgrs_dart.UTM(
-        easting: easting,
-        northing: northing,
+    var ll = CoordinateConversion()
+        .convert(
+          point: this,
+          projSrc: utmProjection,
+          projDst: Projection.WGS84,
+          conversion: ConversionType.projectedToGeodetic,
+        )
+        .asLatLng();
+
+    if (accuracy != null) {
+      var llTR = UTM(
+        easting: easting + accuracy!,
+        northing: northing + accuracy!,
         zoneLetter: zoneLetter,
-        zoneNumber: zoneNumber));
-    return LatLng(ll.lat, ll.lon);
+        zoneNumber: zoneNumber,
+        accuracy: null,
+      ).toLatLng();
+
+      return LatLng((llTR.latitude + ll.latitude) / 2,
+          (llTR.longitude + ll.longitude) / 2);
+    } else {
+      return ll;
+    }
+
+    // var l = mgrs_dart.Mgrs.toPoint(toMGRS());
+    // return LatLng(l[1], l[0], height);
   }
 
   /// Convert MGRS to UTM coordinates
   ///
+  /// Example
+  ///```dart
+  ///   var utm = UTM.fromMGRS('31U DQ 48251 11932');
+  ///   print(utm); // 31 N 448251.0 5411932.0
+  ///```
   /// [mgrsString]: UPPERCASE coordinate string is expected in MGRS
   /// Return an object literal with easting, northing, zoneLetter, zoneNumber and accuracy (in meters) properties
   factory UTM.fromMGRS(String mgrsString) {
-    var utm = mgrs_dart.Mgrs.decode(mgrsString);
-    return UTM(
-      utm.zoneNumber,
-      utm.zoneLetter,
-      utm.easting,
-      utm.northing,
-      0,
-      utm.accuracy,
-    );
+    return MGRS.parse(mgrsString).toUTM();
   }
 
   /// UTM location as MGRS string.
