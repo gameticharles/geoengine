@@ -1,6 +1,8 @@
 import 'dart:io';
 import 'dart:core';
 
+import 'package:advance_math/advance_math.dart';
+
 import '../../geoengine.dart';
 
 class IGRF {
@@ -62,9 +64,9 @@ List<List<double>> synthValues(List<double> coeffs, List<double> radius,
   List<double> rN =
       List.filled(radius.length, pow(radius[0] / 6371.2, -(nmin + 2)));
 
-  List<List<double>> Pnm = legendrePoly(nmax, theta);
+  List<List<double>> pnm = legendrePoly(nmax, theta);
 
-  List<double> sinth = List.filled(Pnm[0].length, Pnm[1][1]);
+  List<double> sinth = List.filled(pnm[0].length, pnm[1][1]);
 
   phi = phi.map((p) => toRadians(p)).toList();
   List<List<dynamic>> cmp = [];
@@ -83,11 +85,11 @@ List<List<double>> synthValues(List<double> coeffs, List<double> radius,
 
   for (var n = nmin; n <= nmax; n++) {
     for (var i = 0; i < radius.length; i++) {
-      BRadius[i] += (n + 1) * Pnm[n][0] * rN[i] * coeffs[num];
+      BRadius[i] += (n + 1) * pnm[n][0] * rN[i] * coeffs[num];
     }
 
     for (var i = 0; i < theta.length; i++) {
-      BTheta[i] += -Pnm[0][n + 1] * rN[i] * coeffs[num];
+      BTheta[i] += -pnm[0][n + 1] * rN[i] * coeffs[num];
     }
 
     num++;
@@ -95,20 +97,20 @@ List<List<double>> synthValues(List<double> coeffs, List<double> radius,
     for (var m = 1; m <= n; m++) {
       for (var i = 0; i < radius.length; i++) {
         BRadius[i] += (n + 1) *
-            Pnm[n][m] *
+            pnm[n][m] *
             rN[i] *
             (coeffs[num] * cmp[m][i] + coeffs[num + 1] * smp[m][i]);
-        BTheta[i] += -Pnm[m][n + 1] *
+        BTheta[i] += -pnm[m][n + 1] *
             rN[i] *
             (coeffs[num] * cmp[m][i] + coeffs[num + 1] * smp[m][i]);
 
         double divPnm;
         if (theta[i] == 0.0) {
-          divPnm = Pnm[m][n + 1];
+          divPnm = pnm[m][n + 1];
         } else if (theta[i] == 180.0) {
-          divPnm = -Pnm[m][n + 1];
+          divPnm = -pnm[m][n + 1];
         } else {
-          divPnm = Pnm[n][m] / sinth[i];
+          divPnm = pnm[n][m] / sinth[i];
         }
 
         BPhi[i] += m *

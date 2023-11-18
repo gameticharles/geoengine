@@ -19,17 +19,17 @@ part of geoengine;
 ///   [0, 0, 0, -1],
 ///   [1, 0, 0, -1],
 /// ]);
-/// var B = Column([0, 0, 0.13, 0, 0, -0.32, -0.53]);
-/// var W = Diagonal([1 / 16, 1 / 9, 1 / 49, 1 / 36, 1 / 16, 1 / 9, 1 / 25]);
+/// var B = ColumnMatrix([0, 0, 0.13, 0, 0, -0.32, -0.53]);
+/// var W = DiagonalMatrix([1 / 16, 1 / 9, 1 / 49, 1 / 36, 1 / 16, 1 / 9, 1 / 25]);
 ///
 /// var lsa = LeastSquaresAdjustment(A: A, B: B);
 /// print(lsa.x); // Output: [values]
 /// ```
 class LeastSquaresAdjustment {
   final Matrix A;
-  final Column B;
+  final ColumnMatrix B;
   final double confidenceLevel;
-  Diagonal W;
+  DiagonalMatrix W;
 
   Matrix? _nInv;
   Matrix? _qxx;
@@ -53,13 +53,13 @@ class LeastSquaresAdjustment {
   LeastSquaresAdjustment({
     required this.A,
     required this.B,
-    Diagonal? W,
+    DiagonalMatrix? W,
     this.confidenceLevel = 99.9,
     this.method = EquationMethod.linear,
     LinearSystemMethod linear = LinearSystemMethod.leastSquares,
     DecompositionMethod decomposition = DecompositionMethod.cholesky,
     ScalingMethod scalingMethod = ScalingMethod.none,
-  })  : W = W ?? Diagonal(List.filled(A.rowCount, 1.0)),
+  })  : W = W ?? DiagonalMatrix(List.filled(A.rowCount, 1.0)),
         _linear = linear,
         _decomposition = decomposition {
     // 1. Check for dimension mismatch between A and B
@@ -268,8 +268,8 @@ class LeastSquaresAdjustment {
   /// ```
   static List<LeastSquaresAdjustment> batchAdjust({
     required List<Matrix> As,
-    required List<Column> Bs,
-    List<Diagonal>? Ws,
+    required List<ColumnMatrix> Bs,
+    List<DiagonalMatrix>? Ws,
     List<double>? confidenceLevels,
   }) {
     if (As.length != Bs.length) {
@@ -350,8 +350,9 @@ class LeastSquaresAdjustment {
 
     // Create new matrices and vectors with rows removed
     Matrix newA = A.removeRows(indicesToRemove);
-    Column newB = B.removeRows(indicesToRemove).column(0);
-    Diagonal newW = Diagonal(W.removeRows(indicesToRemove).diagonal());
+    ColumnMatrix newB = B.removeRows(indicesToRemove).column(0);
+    DiagonalMatrix newW =
+        DiagonalMatrix(W.removeRows(indicesToRemove).diagonal());
 
     // Create a new LeastSquaresAdjustment object with the modified data
     return LeastSquaresAdjustment(
@@ -409,8 +410,8 @@ class LeastSquaresAdjustment {
   /// var lsa = LeastSquaresAdjustment(A: A, B: B);
   /// var scaledLsa = lsa.customAutoScale(
   ///   matrixNormalizationFunction: (Matrix A) => A.normalize(),
-  ///   columnNormalizationFunction: (Column B) => B.normalize(),
-  ///   diagonalNormalizationFunction: (Diagonal W) => W.normalize()
+  ///   columnNormalizationFunction: (ColumnMatrix B) => B.normalize(),
+  ///   diagonalNormalizationFunction: (DiagonalMatrix W) => W.normalize()
   /// );
   /// ```
   ///
@@ -422,8 +423,8 @@ class LeastSquaresAdjustment {
   }) {
     // Apply the custom normalization functions to A and B
     Matrix newA = matrixNormalizationFunction(A);
-    Column newB = columnNormalizationFunction(B);
-    Diagonal newW = diagonalNormalizationFunction(W);
+    ColumnMatrix newB = columnNormalizationFunction(B);
+    DiagonalMatrix newW = diagonalNormalizationFunction(W);
 
     // Create a new LeastSquaresAdjustment object with the normalized data
     return LeastSquaresAdjustment(
@@ -451,32 +452,34 @@ class LeastSquaresAdjustment {
 /// ```
 typedef MatrixNormalizationFunction = Matrix Function(Matrix matrix);
 
-/// A typedef for a function that takes a [Column] object and returns a new,
-/// normalized [Column] object.
+/// A typedef for a function that takes a [ColumnMatrix] object and returns a new,
+/// normalized [ColumnMatrix] object.
 ///
 /// This is used for customizing the normalization behavior of the observation vector
 /// in a [LeastSquaresAdjustment] object.
 ///
 /// Example:
 /// ```dart
-/// Column myNormalizationFunction(Column B) {
+/// ColumnMatrix myNormalizationFunction(ColumnMatrix B) {
 ///   // Perform custom normalization on B and return a new Column
 ///   return B;  // Replace with actual normalization logic
 /// }
 /// ```
-typedef ColumnNormalizationFunction = Column Function(Column column);
+typedef ColumnNormalizationFunction = ColumnMatrix Function(
+    ColumnMatrix column);
 
-/// A typedef for a function that takes a [Diagonal] object and returns a new,
-/// normalized [Diagonal] object.
+/// A typedef for a function that takes a [DiagonalMatrix] object and returns a new,
+/// normalized [DiagonalMatrix] object.
 ///
 /// This is used for customizing the normalization behavior of the weight matrix
 /// in a [LeastSquaresAdjustment] object.
 ///
 /// Example:
 /// ```dart
-/// Diagonal myNormalizationFunction(Diagonal W) {
+/// DiagonalMatrix myNormalizationFunction(DiagonalMatrix W) {
 ///   // Perform custom normalization on W and return a new Diagonal
 ///   return W;  // Replace with actual normalization logic
 /// }
 /// ```
-typedef DiagonalNormalizationFunction = Diagonal Function(Diagonal diagonal);
+typedef DiagonalNormalizationFunction = DiagonalMatrix Function(
+    DiagonalMatrix diagonal);

@@ -221,6 +221,7 @@ class PrimeMeridian extends Info {
     );
   }
 
+  @override
   bool equal(Object obj) {
     if (obj is! PrimeMeridian) return false;
     final prime = obj;
@@ -240,5 +241,5 @@ class PrimeMeridian extends Info {
 
   @override
   String get xml =>
-      '<CS_PrimeMeridian Longitude="$longitude">${infoXml}${angularUnit.xml}</CS_PrimeMeridian>';
+      '<CS_PrimeMeridian Longitude="$longitude">$infoXml${angularUnit.xml}</CS_PrimeMeridian>';
 }

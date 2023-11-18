@@ -1,3 +1,7 @@
+## 0.1.1
+* Fixed bugs
+* Removed the export of the included `advance_math` module
+
 ## 0.1.0
 * Added support for MGRS convertions between UTM and LatLng.
 * Added different Point types (Point, PointX, UTM, LatLng, MGRS).

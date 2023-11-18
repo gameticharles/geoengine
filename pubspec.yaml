@@ -1,6 +1,6 @@
 name: geoengine
-description: GeoEngine is a potent Dart library for geospatial analysis and geomatic. It has precise distance calculations, coordinates conversions, geodetic processing, and GIS support in Dart.
-version: 0.1.0
+description: GeoEngine is a Dart library for geospatial analysis and geometry. It has precise distance calculations, coordinates conversions, geodetic processing, and GIS support in Dart.
+version: 0.1.1
 repository: https://github.com/gameticharles/geoengine
 
 environment:
@@ -8,7 +8,7 @@ environment:
 
 # Add regular dependencies here.
 dependencies:
-  advance_math: ^3.3.4
+  advance_math: ^3.3.6
   geoxml: ^2.5.2
   mgrs_dart: ^2.0.0
   proj4dart: ^2.1.0

@@ -146,7 +146,7 @@ class Ellipsoid extends Info {
 
   @override
   String get xml {
-    return '<CS_Ellipsoid SemiMajorAxis="$a" SemiMinorAxis="$b" InverseFlattening="$invF" IvfDefinitive="${isIvfDefinitive ? 1 : 0}">${infoXml}${linearUnit.xml}</CS_Ellipsoid>';
+    return '<CS_Ellipsoid SemiMajorAxis="$a" SemiMinorAxis="$b" InverseFlattening="$invF" IvfDefinitive="${isIvfDefinitive ? 1 : 0}">$infoXml${linearUnit.xml}</CS_Ellipsoid>';
   }
 
   /// Checks whether the values of this instance are equal to the values of another instance.

@@ -457,8 +457,8 @@ Automatically scales or normalizes the matrices based on custom functions:
 ```dart
 var scaledLsa = lsa.customAutoScale(
   matrixNormalizationFunction: (Matrix A) => A.normalize(),
-  columnNormalizationFunction: (Column B) => B.normalize(),
-  diagonalNormalizationFunction: (Diagonal W) => W.normalize()
+  columnNormalizationFunction: (ColumnMatrix B) => B.normalize(),
+  diagonalNormalizationFunction: (DiagonalMatrix W) => W.normalize()
 );
 ```
 
@@ -476,8 +476,8 @@ var A = Matrix([
   [0, 0, 0, -1],
   [1, 0, 0, -1],
 ]);
-var W = Diagonal([1 / 16, 1 / 9, 1 / 49, 1 / 36, 1 / 16, 1 / 9, 1 / 25]);
-var B = Column([0, 0, 0.13, 0, 0, -0.32, -0.53]);
+var W = DiagonalMatrix([1 / 16, 1 / 9, 1 / 49, 1 / 36, 1 / 16, 1 / 9, 1 / 25]);
+var B = ColumnMatrix([0, 0, 0.13, 0, 0, -0.32, -0.53]);
 
 var lsa = LeastSquaresAdjustment(A: A, B: B, W: W, confidenceLevel: 40);
 var c = lsa.chiSquareTest();

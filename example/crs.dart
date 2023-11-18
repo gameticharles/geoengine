@@ -15,8 +15,8 @@ Set<Ellipsoid> extractEllipsoidsFromWKTStrings(List<String> wktStrings) {
   for (String wktString in wktStrings) {
     // Extract relevant information from the WKT string (You may need to adjust this parsing logic)
     final RegExp regExp = RegExp(
-        r'SPHEROID\["(.+?)",(\d+\.\d+),(\d+\.\d+),AUTHORITY\["(.+?)","(.+?)"\]\]' +
-            r'.*?UNIT\["(.+?)",(\d+\.\d+),AUTHORITY\["(.+?)","(.+?)"\]\]');
+        r'SPHEROID\["(.+?)",(\d+\.\d+),(\d+\.\d+),AUTHORITY\["(.+?)","(.+?)"\]\]'
+        r'.*?UNIT\["(.+?)",(\d+\.\d+),AUTHORITY\["(.+?)","(.+?)"\]\]');
     final Match? match = regExp.firstMatch(wktString);
 
     if (match != null) {

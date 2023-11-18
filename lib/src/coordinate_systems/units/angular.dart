@@ -93,7 +93,7 @@ class AngularUnit extends Info {
   /// Gets an XML representation of this object.
   @override
   String get xml {
-    return '<CS_AngularUnit RadiansPerUnit="$radiansPerUnit">${infoXml}</CS_AngularUnit>';
+    return '<CS_AngularUnit RadiansPerUnit="$radiansPerUnit">$infoXml</CS_AngularUnit>';
   }
 
   /// Checks whether the values of this instance are equal to the values of another instance.

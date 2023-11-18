@@ -54,32 +54,32 @@ class MultipleRegressionEquationParams {
   }
 
   /// Set MRE parsing matrix containing values
-  void setMREParams(List<double> MREParams) {
-    if (MREParams.length != 20) {
+  void setMREParams(List<double> mreParams) {
+    if (mreParams.length != 20) {
       throw ArgumentError("MREParams must have exactly 20 elements.");
     }
 
-    a00 = MREParams[0];
-    a10 = MREParams[1];
-    a01 = MREParams[2];
-    a20 = MREParams[3];
-    a11 = MREParams[4];
-    a02 = MREParams[5];
-    a30 = MREParams[6];
-    a21 = MREParams[7];
-    a12 = MREParams[8];
-    a03 = MREParams[9];
+    a00 = mreParams[0];
+    a10 = mreParams[1];
+    a01 = mreParams[2];
+    a20 = mreParams[3];
+    a11 = mreParams[4];
+    a02 = mreParams[5];
+    a30 = mreParams[6];
+    a21 = mreParams[7];
+    a12 = mreParams[8];
+    a03 = mreParams[9];
 
-    b00 = MREParams[10];
-    b10 = MREParams[11];
-    b01 = MREParams[12];
-    b20 = MREParams[13];
-    b11 = MREParams[14];
-    b02 = MREParams[15];
-    b30 = MREParams[16];
-    b21 = MREParams[17];
-    b12 = MREParams[18];
-    b03 = MREParams[19];
+    b00 = mreParams[10];
+    b10 = mreParams[11];
+    b01 = mreParams[12];
+    b20 = mreParams[13];
+    b11 = mreParams[14];
+    b02 = mreParams[15];
+    b30 = mreParams[16];
+    b21 = mreParams[17];
+    b12 = mreParams[18];
+    b03 = mreParams[19];
   }
 
   /// Set MRE parsing all individual values
