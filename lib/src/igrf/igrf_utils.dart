@@ -3,8 +3,6 @@ import 'dart:core';
 
 import 'package:advance_math/advance_math.dart';
 
-import '../../geoengine.dart';
-
 class IGRF {
   late List<double> time;
   late List<List<double>> coeffs;

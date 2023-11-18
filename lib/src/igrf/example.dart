@@ -1,7 +1,5 @@
-import 'dart:io';
 import 'igrf_utils.dart' as iut;
 import 'io_options.dart' as ioo;
-import 'package:advance_math/advance_math.dart';
 
 void main() {
   var igrf = iut.loadSHCFile('assets/data/igrf_model/IGRF13.shc');
