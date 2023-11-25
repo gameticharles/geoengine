@@ -1,3 +1,12 @@
+## 0.1.2
+
+* **[BREAKING]** Removed padding from the division text
+* **[FEATURE]** Implemented Geocoding (Google, OpenstreetMap, and Local Data)
+* **[FEATURE]** Added compute distance in UTM
+* **[IMPROVEMENT]** Wrote documentation on the remaining classes
+* **[IMPROVEMENT]** Improved computation performance
+* **[BUG_FIX]** CoordinateType not set to UTM
+
 ## 0.1.1
 * Fixed bugs
 * Removed the export of the included `advance_math` module

@@ -1,14 +1,5 @@
 part of geoengine;
 
-const String latBands = 'CDEFGHJKLMNPQRSTUVWXX';
-
-const List<String> e100kLetters = ['ABCDEFGH', 'JKLMNPQR', 'STUVWXYZ'];
-
-const List<String> n100kLetters = [
-  'ABCDEFGHJKLMNPQRSTUV',
-  'FGHJKLMNPQRSTUVABCDE'
-];
-
 /// Military Grid Reference System (MGRS/NATO) grid references provides with methods to parse references, and
 /// to convert to UTM coordinates and latitude/longitude.
 ///
@@ -24,6 +15,15 @@ class MGRS {
   final String n100k;
   final int easting;
   final int northing;
+
+  final String _latBands = 'CDEFGHJKLMNPQRSTUVWXX';
+
+  final List<String> _e100kLetters = ['ABCDEFGH', 'JKLMNPQR', 'STUVWXYZ'];
+
+  final List<String> _n100kLetters = [
+    'ABCDEFGHJKLMNPQRSTUV',
+    'FGHJKLMNPQRSTUVABCDE'
+  ];
 
   /// Creates an Mgrs grid reference object.
   ///
@@ -47,15 +47,15 @@ class MGRS {
       throw ArgumentError('Invalid MGRS zone');
     }
 
-    if (!latBands.contains(band) || band.length != 1) {
+    if (!_latBands.contains(band) || band.length != 1) {
       throw ArgumentError('Invalid MGRS band');
     }
 
-    if (!e100kLetters[(zone - 1) % 3].contains(e100k) || e100k.length != 1) {
+    if (!_e100kLetters[(zone - 1) % 3].contains(e100k) || e100k.length != 1) {
       throw ArgumentError('Invalid MGRS 100km grid square column');
     }
 
-    if (!n100kLetters[(zone - 1) % 2].contains(n100k) || n100k.length != 1) {
+    if (!_n100kLetters[(zone - 1) % 2].contains(n100k) || n100k.length != 1) {
       throw ArgumentError('Invalid MGRS 100km grid square row');
     }
   }
@@ -77,15 +77,15 @@ class MGRS {
     String hemisphere = band.compareTo('N') >= 0 ? 'N' : 'S';
 
     // Get easting specified by e100k
-    int col = e100kLetters[(zone - 1) % 3].indexOf(e100k) + 1;
+    int col = _e100kLetters[(zone - 1) % 3].indexOf(e100k) + 1;
     int e100kNum = col * 100000; // e100k in meters
 
     // Get northing specified by n100k
-    int row = n100kLetters[(zone - 1) % 2].indexOf(n100k);
+    int row = _n100kLetters[(zone - 1) % 2].indexOf(n100k);
     int n100kNum = row * 100000; // n100k in meters
 
     // Get latitude of the bottom of the band
-    int latBand = (latBands.indexOf(band) - 10) * 8;
+    int latBand = (_latBands.indexOf(band) - 10) * 8;
 
     // Get northing of the bottom of the band (this part might require extra implementation)
     int nBand =

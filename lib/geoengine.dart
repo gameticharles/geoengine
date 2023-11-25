@@ -13,11 +13,11 @@ import 'package:mgrs_dart/mgrs_dart.dart' as mgrs_dart;
 export 'package:geoxml/geoxml.dart';
 export 'package:proj4dart/proj4dart.dart' hide Point;
 
-part 'src/point/x_point.dart';
-part 'src/point/mgrs.dart';
-part 'src/point/latlng.dart';
-part 'src/point/utm.dart';
-part 'src/point/x_point_part_enum.dart';
+part 'src/points/x_point.dart';
+part 'src/points/mgrs.dart';
+part 'src/points/latlng.dart';
+part 'src/points/utm.dart';
+part 'src/points/x_point_part_enum.dart';
 
 part 'src/coordinate_systems/trans_engine.dart';
 part 'src/coordinate_systems/utm_zones.dart';

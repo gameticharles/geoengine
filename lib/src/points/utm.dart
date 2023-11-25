@@ -1,12 +1,31 @@
 part of geoengine;
 
+/// Represents a point in the Universal Transverse Mercator (UTM) coordinate system.
+///
+/// This class extends PointX and is specifically designed for UTM coordinates,
+/// with additional properties for zone information and conversion methods
+/// to and from geodetic coordinates (latitude and longitude).
 class UTM extends PointX {
+  /// The UTM zone letter.
   final String zoneLetter;
+
+  /// The UTM zone number.
   final int zoneNumber;
+
+  /// The accuracy of the UTM coordinates, in meters.
   int? accuracy;
 
   LatLng? _latLng;
   Projection? _utmProjection;
+
+  /// Constructs a UTM instance with specified zone information and coordinates.
+  ///
+  /// [zoneNumber]: The UTM zone number.
+  /// [zoneLetter]: The UTM zone letter.
+  /// [easting]: The easting component of the UTM coordinate.
+  /// [northing]: The northing component of the UTM coordinate.
+  /// [height]: The elevation component of the UTM coordinate (optional).
+  /// [accuracy]: The accuracy of the UTM coordinate in meters (optional).
   UTM(
       {required this.zoneNumber,
       required this.zoneLetter,
@@ -14,13 +33,17 @@ class UTM extends PointX {
       required double northing,
       double? height,
       this.accuracy})
-      : super(x: easting, y: northing, z: height);
+      : super(
+          x: easting,
+          y: northing,
+          z: height,
+          type: CoordinateType.projected,
+        );
 
-  /// Create a UTM coordinate system from Latitude and longitude
+  /// Creates a UTM instance from latitude and longitude coordinates.
   ///
-  /// [latLng] - Latitude and longitude coordinates
-  ///
-  /// Returns a UTM coordinate system
+  /// [latLng]: The latitude and longitude coordinates.
+  /// Returns a UTM instance representing the same location.
   factory UTM.fromLatLng(LatLng latLng) {
     return latLng.toUTM();
   }
@@ -48,7 +71,10 @@ class UTM extends PointX {
   Projection get utmProjection => _utmProjection ??=
       CoordinateConversion().getUTM84ProjectionFromZone(zoneNumber, zoneLetter);
 
-  /// Convert the UTM coordinate system to Latitude and Longitude
+  /// Converts the UTM coordinate to a LatLng (latitude and longitude) coordinate.
+  ///
+  /// This method performs a coordinate conversion from UTM to geodetic.
+  /// Returns a LatLng instance representing the geodetic coordinates.
   LatLng toLatLng() {
     var ll = CoordinateConversion()
         .convert(
@@ -78,7 +104,7 @@ class UTM extends PointX {
     // return LatLng(l[1], l[0], height);
   }
 
-  /// Convert MGRS to UTM coordinates
+  /// Creates a UTM instance from an MGRS (Military Grid Reference System) string.
   ///
   /// Example
   ///```dart
@@ -111,6 +137,17 @@ class UTM extends PointX {
               accuracy),
         )
         .toString();
+  }
+
+  /// Calculates the distance to another point using a specified method.
+  ///
+  /// [point]: The point to which the distance is calculated.
+  /// Returns the calculated distance as a Length object.
+  Length? distanceTo(UTM point) {
+    return Length(
+        m: sqrt(
+      pow(easting - point.easting, 2) + pow(northing - point.northing, 2),
+    ));
   }
 
   /// Returns a string representation of an UTM Coordinate.
