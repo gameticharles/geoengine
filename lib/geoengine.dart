@@ -10,15 +10,14 @@ import 'package:proj4dart/src/common/utils.dart' as utils;
 import 'package:proj4dart/src/constants/values.dart' as consts;
 import 'package:mgrs_dart/mgrs_dart.dart' as mgrs_dart;
 
-export 'package:advance_math/advance_math.dart';
 export 'package:geoxml/geoxml.dart';
 export 'package:proj4dart/proj4dart.dart' hide Point;
 
-part 'src/point/x_point.dart';
-part 'src/point/mgrs.dart';
-part 'src/point/latlng.dart';
-part 'src/point/utm.dart';
-part 'src/point/x_point_part_enum.dart';
+part 'src/points/x_point.dart';
+part 'src/points/mgrs.dart';
+part 'src/points/latlng.dart';
+part 'src/points/utm.dart';
+part 'src/points/x_point_part_enum.dart';
 
 part 'src/coordinate_systems/trans_engine.dart';
 part 'src/coordinate_systems/utm_zones.dart';
@@ -39,9 +38,9 @@ part 'src/coordinate_systems/units/linear.dart';
 
 part 'src/julian_date/julian_date.dart';
 
-part 'src/distance/enum.dart';
-part 'src/distance/distance.dart';
-part 'src/distance/bearing.dart';
+part 'src/distance_bearing/enum.dart';
+part 'src/distance_bearing/distance.dart';
+part 'src/distance_bearing/bearing.dart';
 
 part 'src/least_square/least_squares_adjustment.dart';
 part 'src/least_square/scaling_method.dart';

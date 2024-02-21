@@ -1,4 +1,4 @@
-part of geoengine;
+part of '../../../geoengine.dart';
 
 /// Definition of angular units.
 class AngularUnit extends Info {
@@ -11,20 +11,13 @@ class AngularUnit extends Info {
   /// Initializes a new instance of an angular unit with additional information.
   AngularUnit(
     this.radiansPerUnit, {
-    required String name,
-    required String authority,
-    required int authorityCode,
-    String? alias,
-    String? abbreviation,
-    String? remarks,
-  }) : super(
-          name: name,
-          authority: authority,
-          authorityCode: authorityCode,
-          alias: alias,
-          abbreviation: abbreviation,
-          remarks: remarks,
-        );
+    required super.name,
+    required super.authority,
+    required super.authorityCode,
+    super.alias,
+    super.abbreviation,
+    super.remarks,
+  });
 
   /// Predefined angular unit for degrees.
   static AngularUnit get degrees {
@@ -93,7 +86,7 @@ class AngularUnit extends Info {
   /// Gets an XML representation of this object.
   @override
   String get xml {
-    return '<CS_AngularUnit RadiansPerUnit="$radiansPerUnit">${infoXml}</CS_AngularUnit>';
+    return '<CS_AngularUnit RadiansPerUnit="$radiansPerUnit">$infoXml</CS_AngularUnit>';
   }
 
   /// Checks whether the values of this instance are equal to the values of another instance.

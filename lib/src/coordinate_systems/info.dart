@@ -1,4 +1,4 @@
-part of geoengine;
+part of '../../geoengine.dart';
 
 /// The Info object defines the standard information
 /// stored with spatial reference objects.

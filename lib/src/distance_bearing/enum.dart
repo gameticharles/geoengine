@@ -1,4 +1,4 @@
-part of geoengine;
+part of '../../geoengine.dart';
 
 enum DistanceMethod {
   haversine,

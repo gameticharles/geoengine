@@ -1,4 +1,4 @@
-part of geoengine;
+part of '../../geoengine.dart';
 
 /// A class that provides methods to calculate UTM (Universal Transverse Mercator) zones and related information.
 class UTMZones {

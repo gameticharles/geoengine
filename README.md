@@ -396,6 +396,9 @@ Here are some of the core properties of the class:
 - `uv`: Unit variance.
 - `N`: The normal matrix.
 - `qxx`: Misclosure matrix
+- `cx`: Variance-Covariance of the Adjusted Heights
+- `cv`: Variance-Covariance of the Residuals
+- `cl`: Variance-Covariance of the Observations
 - `standardDeviation`: Standard deviation of the observations.
 - `standardError`: Standard error of the observations.
 - `standardErrorsOfUnknowns`: Standard errors of the unknowns.
@@ -457,8 +460,8 @@ Automatically scales or normalizes the matrices based on custom functions:
 ```dart
 var scaledLsa = lsa.customAutoScale(
   matrixNormalizationFunction: (Matrix A) => A.normalize(),
-  columnNormalizationFunction: (Column B) => B.normalize(),
-  diagonalNormalizationFunction: (Diagonal W) => W.normalize()
+  columnNormalizationFunction: (ColumnMatrix B) => B.normalize(),
+  diagonalNormalizationFunction: (DiagonalMatrix W) => W.normalize()
 );
 ```
 
@@ -476,8 +479,8 @@ var A = Matrix([
   [0, 0, 0, -1],
   [1, 0, 0, -1],
 ]);
-var W = Diagonal([1 / 16, 1 / 9, 1 / 49, 1 / 36, 1 / 16, 1 / 9, 1 / 25]);
-var B = Column([0, 0, 0.13, 0, 0, -0.32, -0.53]);
+var W = DiagonalMatrix([1 / 16, 1 / 9, 1 / 49, 1 / 36, 1 / 16, 1 / 9, 1 / 25]);
+var B = ColumnMatrix([0, 0, 0.13, 0, 0, -0.32, -0.53]);
 
 var lsa = LeastSquaresAdjustment(A: A, B: B, W: W, confidenceLevel: 40);
 var c = lsa.chiSquareTest();
@@ -540,55 +543,374 @@ print(lsa);
 
 </details>
 
-## TODOs
+<details>
+<summary>Levelling</summary>
 
-### Geomatic Calculations
+# Levelling
 
-- **Error Propagation**: Estimate the uncertainty in spatial measurements.
-- **Traverse Calculations**: Perform closed and open traverse calculations.
-- **Geodetic Networks**: Design and analyze geodetic networks.
-- **Land Parcel Management**: Manage land parcels including subdivision and legal description generation.
-### Geocoding
-- **Geocoding and Reverse Geocoding**: Convert addresses into geographic coordinates and vice versa.
+This file describes the `Levelling` class, which represents a levelling survey. It allows you to define various parameters and perform calculations related to the survey. The class contains properties for the starting benchmark (TBM), closing TBM, accuracy, rounding digits, levelling method, etc. You can add measurements, compute reduced levels, get arithmetic checks, and print a summary of the results.
 
-### Polygon Operations
-- **Polygon Operations**: Create, manipulate, and analyze polygons, including point-in-polygon checks, area calculations, and finding centroids.
+## Initialization
 
-### Spatial Indexing
-- **Spatial Indexing**: Utilize spatial indexing techniques like R-trees or Quad-trees for efficient querying of spatial data.
+To initialize the `Levelling` class, you need to provide the accuracy `accuracy`, method `method`, starting TBM and an optional closing TBM.
 
-### Remote Sensing
-- **Remote Sensing Calculations**: Perform calculations such as NDVI, radiometric correction, and image classification.
+```dart
+var levelling = Levelling(
+  startingTBM: 100.0,
+  accuracy: 3,
+  roundDigits: 3,
+  method: LevellingMethod.riseFall,
+);
+```
 
-### Digital Elevation Models
-- **DEM Analysis**: Work with Digital Elevation Models, including slope, aspect, and watershed analysis.
+## Usage
 
-### Route Planning
-- **Route Planning**: Algorithms for route planning and optimization.
+You can start with or with the closing TBM.
 
-### GIS File Support
-- **GIS File Support**: Read and write common GIS file formats like Shapefiles, GeoJSON, and KML.
+```dart
+// Initialize with starting TBM
+final startingTBM = 100.000;
 
-### Integration with Mapping Services
-- **Integration with Mapping Services**: Integrate with popular mapping services like Google Maps, OpenStreetMap, and Bing Maps.
+// Initialize with closing TBM
+final closingTBM = 98.050;
+
+// Create a new instance of Levelling with starting TBM, closing TBM, accuracy, method, rounding digits
+final leveling = Levelling(
+  startingTBM: startingTBM,
+  closingTBM: closingTBM,
+  accuracy: 5,
+  method: LevellingMethod.riseFall,
+  roundDigits: 3,
+);
+```
+
+The can be in a form of `List<List<Object?>>` or list of `LevellingMeasurement` objects.
+
+```dart
+// Create the sample observation data
+final data = [
+  ['A', 1.751, null, null],
+  ['B', null, 0.540, null],
+  ['C', 0.300, null, 2.100],
+  ['D', null, 1.100, null],
+  ['E', null, 1.260, null],
+  ['F', 1.500, null, 2.300],
+  ['G', null, null, 1.110]
+];
+
+// Add the data to the levelling object
+for (int i = 0; i < data.length; i++) {
+  final row = data[i];
+  levelling.addMeasurement(LevellingMeasurement(
+      bs: row[1], is_: row[2], fs: row[3], station: row[0]));
+}
+
+// or use this
+for (var entry in data) {
+  leveling.addData(entry[0].toString(), entry[1], entry[2], entry[3]);
+}
+```
+
+You can get the result as a data frame or as a list of maps.
+
+```dart
+leveling.computeReducedLevels();
+print("Rise & Fall:");
+print(leveling.getDataFrame());
+
+// Calculate reduced levels using Rise & Fall algorithm
+leveling.computeReducedLevels(LevellingMethod.hpc);
+
+print("\n\nHPC:");
+print(leveling.getDataFrame());
+```
+
+Once the data are added to the `Levelling` object, you can perform calculations. You can access all the results through the `Levelling` object. 
+You can access all the properties of the object.
+
+```dart
+print(leveling.numberSTN); // 3
+print(leveling.allowableMisclose); // 5.196
+print(leveling.misclose); // -0.009
+print(leveling.correction); // 0.009
+print(leveling.adjustmentPerStation); // 0.003
+print(leveling.reducedLevels); // [100.0, 101.211, 99.651, 98.851, 98.691, 97.651, 98.041]
+print(leveling.isWorkAccepted); // Work is not accepted
+
+print(leveling.arithmeticCheckResult);
+// Arithmetic Checks:
+// Sum of BS = 3.551
+// Sum of FS = 5.510
+// First RL = 100.000
+// Last RL = 98.041
+// Sum of BS - Sum of FS = -1.959
+// Last RL - First RL = -1.959
+// Arithmetic Checks are OK.
+```
+
+This can simply be printed by just calling the `levelling` object for more detailed result.
+
+```dart
+print(leveling);
+
+// ------ Levelling Summary -------
+// 
+// Total measurements = 7
+// Number of instrument stations = 3
+// Starting TBM = 100.0
+// Closing TBM = 98.05
+// 
+// Allowable misclose = 8.660 mm
+// Misclose = -0.009 m (-9.000 mm)
+// Correction = 0.009
+// Adjustment per station = 0.003
+// Leveling Status: Work is not accepted.
+// 
+// Arithmetic Checks:
+// Sum of BS = 3.551
+// Sum of FS = 5.510
+// First RL = 100.000
+// Last RL = 98.041
+// Sum of BS - Sum of FS = -1.959
+// Last RL - First RL = -1.959
+// Arithmetic Checks are OK.
+// 
+// BS     IS	   FS	  Rise	  Fall 	  Reduced Level (RL)  Adjustment	 Adjusted RL  Remarks
+// ---------------------------------------------------------------------
+// 1.751	  	  	    	    	               100.000	      0.000	        100.000	      A
+//   	  0.540	  	    1.211	    	           101.211	      0.003	        101.214	      B
+// 0.300	  	2.100	    	-1.560	            99.651	      0.006	         99.657	      C
+//   	  1.100	  	    	    -0.800	            98.851	      0.006	         98.857	      D
+//   	  1.260	  	    	    -0.160	            98.691	      0.006	         98.697	      E
+// 1.500	  	2.300	    	-1.040	            97.651	      0.009	         97.660	      F
+//   	  	    1.110	0.390	    	            98.041	      0.009	         98.050	      G
+```
+
+</details>
+
+<details>
+<summary>Geocoding</summary>
+
+# Geocoding
+
+Geocoding is the process of converting addresses or place names into geographic coordinates (latitude and longitude). This allows you to perform various spatial operations, such as finding distances between locations or visualizing data on a map. In this readme, I will introduce a Dart class library for geocoding that provides different strategies for using geocoding services.
+
+## initialize Geocoding
+
+The GeoCoding library is designed to help you easily perform geocoding tasks in your Dart applications. It provides a set of classes and methods for working with geographic coordinates, addresses, and place names. The library supports multiple geocoding services and allows you to switch between them based on your needs.
+
+```dart
+Geocoder({
+  required Map<String, dynamic> strategyFactory,
+  Map<String, dynamic> config = const {},
+  Duration throttleDuration = const Duration(seconds: 1),
+})
+```
+
+## Strategies
+
+The `GeoCoder` library offers different strategies for using geocoding services:
+
+1. `GoogleStrategy`: This strategy uses the Google Maps Geocoding API to perform geocoding. You will need an API key from Google Cloud Platform to use this strategy.
+2. `OpenStreetMapStrategy`: This strategy uses the OpenStreetMap Nominatim service for geocoding. It is a free and open-source service that does not require any API keys.
+3. `LocalStrategy`: This strategy uses the local database of the device to perform geocoding. It is a fast and efficient way to perform geocoding.
+4. `CustomStrategy`: This strategy allows you to provide your own geocoding service implementation. You can create a custom class that implements the required methods and use it as a strategy in the `GeoCoding` library.
+
+## Usage GoogleStrategy
+
+Google strategy is the default strategy that is used by the `GeoCoder` library. It uses the Google Maps Geocoding API to perform geocoding. You will need an API key from Google Cloud Platform to use this strategy.
+
+```dart
+ var point2 = LatLng(6, 0.7);
+
+var googleGeocoder = Geocoder(
+  strategyFactory: GoogleStrategy.create('YOUR_GOOGLE_API_KEY'),
+  config: {
+    // Common Configurations
+    'language': 'en',
+    'requestTimeout': const Duration(seconds: 10),
+
+    // Google-Specific Configurations
+    'regionBias': 'US',
+    'resultType': 'address',
+    'locationType': 'ROOFTOP',
+    'components': 'country:US',
+    'rateLimit': 10, // Requests per second
+    }
+);
+
+GeocoderRequestResponse search = await googleGeocoder.search('Kotei');
+print(search);
+print('');
+
+GeocoderRequestResponse rev = await googleGeocoder.reverse(point2);
+print(rev);
+print('');
+```
+
+## Usage OpenStreetMapStrategy
+
+```dart
+var openStreetMapGeocoder =
+    Geocoder(strategyFactory: OpenStreetMapStrategy.create(), config: {
+  // Common Configurations
+  'language': 'en',
+  'requestTimeout': const Duration(seconds: 10),
+
+  // OpenStreetMap-Specific Configurations
+  'email': 'contact@example.com', // For Nominatim usage policy
+  'countryCodes': 'us,uk',
+  'viewBox': 'left,bottom,right,top',
+  'boundedViewBox': '1', //bounded to viewbox
+  'limit': 5,
+  'addressDetails': 1,
+});
+
+// Geocode an address
+GeocoderRequestResponse search = await openStreetMapGeocoder.search('KNUST');
+print(search);
+print('');
+
+// Reverse geocode coordinates to get the address
+GeocoderRequestResponse rev = await openStreetMapGeocoder.reverse(point2);
+print(rev);
+print('');
+```
+
+Result:
+
+```txt
+Geocoding Search Query: knust, Success: true, Timestamp: 2024-02-19 04:56:54.024349
+GeocoderRequestResponse:
+Success: true
+Duration: 1035ms
+Result: [{place_id: 125221183, licence: Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright, osm_type: way, osm_id: 32197062, lat: 53.741931199999996, lon: 9.842065240044334, class: natural, type: wood, place_rank: 22, importance: 0.2000099999999999, addresstype: wood, name: Knust, display_name: Knust, Quickborn, Kreis Pinneberg, Schleswig-Holstein, 25451, Germany, boundingbox: [53.7398546, 53.7444675, 9.8384852, 9.8500422]}, {place_id: 258247195, licence: Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright, osm_type: way, osm_id: 378466289, lat: 6.6785135, lon: -1.5754220088808766, class: amenity, type: university, place_rank: 30, importance: 0.3752824455605189, addresstype: amenity, name: Kwame Nkrumah University of Science & Technology, display_name: Kwame Nkrumah University of Science & Technology, Osei Tutu II Boulevard, Ayigya, Kumasi, Oforikrom Municipal District, Ashanti Region, AK385, Ghana, boundingbox: [6.6617810, 6.6953608, -1.5894842, -1.5323729]}, {place_id: 108558563, licence: Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright, osm_type: node, osm_id: 3362954799, lat: 49.5656112, lon: 9.4330658, class: place, type: locality, place_rank: 25, importance: 0.12500999999999995, addresstype: locality, name: Knust, display_name: Knust, Fuchsenloch, Waldstetten, Höpfingen, Verwaltungsverband Hardheim-Walldürn, Neckar-Odenwald-Kreis, Baden-Württemberg, 74746, Germany, boundingbox: [49.5556112, 49.5756112, 9.4230658, 9.4430658]}, {place_id: 122049626, licence: Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright, osm_type: node, osm_id: 4874767389, lat: 51.3722208, lon: 8.7031219, class: highway, type: bus_stop, place_rank: 30, importance: 0.00000999999999995449, addresstype: highway, name: Knust, display_name: Knust, L 3393, Heringhausen, Diemelsee, Landkreis Waldeck-Frankenberg, Hesse, 34519, Germany, boundingbox: [51.3721708, 51.3722708, 8.7030719, 8.7031719]}, {place_id: 379344893, licence: Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright, osm_type: node, osm_id: 1525291987, lat: 53.5581388, lon: 9.9679333, class: amenity, type: nightclub, place_rank: 30, importance: 0.00000999999999995449, addresstype: amenity, name: Knust, display_name: Knust, 30, Neuer Kamp, Karolinenviertel, St. Pauli, Hamburg-Mitte, Hamburg, 20357, Germany, boundingbox: [53.5580888, 53.5581888, 9.9678833, 9.9679833]}, {place_id: 98501560, licence: Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright, osm_type: node, osm_id: 1979116123, lat: 51.3126212, lon: 7.9976981, class: highway, type: bus_stop, place_rank: 30, importance: 0.00000999999999995449, addresstype: highway, name: Knust, display_name: Knust, Silmecke, Seidfeld (Sauerland), Sundern, Hochsauerlandkreis, North Rhine-Westphalia, 59846, Germany, boundingbox: [51.3125712, 51.3126712, 7.9976481, 7.9977481]}]
+
+Reverse Geocoding Query: Location(6.0, 0.7), Success: true, Timestamp: 2024-02-19 04:56:55.029766
+GeocoderRequestResponse:
+Success: true
+Duration: 1003ms
+Result: {place_id: 34177377, licence: Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright, osm_type: way, osm_id: 517183740, lat: 5.999405087489885, lon: 0.7000142714680313, class: highway, type: unclassified, place_rank: 26, importance: 0.10000999999999993, addresstype: road, name: , display_name: Dabala, South Tongu District, Volta Region, Ghana, address: {town: Dabala, county: South Tongu District, state: Volta Region, ISO3166-2-lvl4: GH-TV, country: Ghana, country_code: gh}, boundingbox: [5.9949293, 5.9994108, 0.6890045, 0.7032672]}
+```
+
+## Usage LocalStrategy
+
+The `LocalStrategy` in the `GeoCoding` library allows you to use a pre-defined dataset for geocoding and reverse geocoding. This is useful when you want to work with an offline dataset or need to process large amounts of data quickly without relying on network requests to external services. The Local Strategy requires you to provide a set of coordinates along with their associated addresses, places, or locations.
+
+To create a `GeoCoder` instance using the Local Strategy, you can use the following code for dataset strategy:
+
+```dart
+List<Map<String, double>> points = [
+  {'latitude': 5.80736, 'longitude': 0.41074},
+  {'latitude': 6.13373, 'longitude': 0.81585},
+  {'latitude': 11.01667, 'longitude': -0.5},
+  {'latitude': 10.08587, 'longitude': -0.13587},
+  {'latitude': 9.35, 'longitude': -0.88333},
+  {'latitude': 10.73255, 'longitude': -1.05917},
+];
+```
+
+Or using downloaded data from [GeoNames data][geonames]  file with all world cities and population.
+
+[geonames]: https://download.geonames.org/export/dump/
+
+```dart
+final geoData = await GeoData.readFile(
+  'example/GH.txt',
+  delimiter: '\t',
+  hasHeader: false,
+  coordinatesColumns: {
+    'latitude': 4,
+    'longitude': 5
+  }, // Specify column names and indices
+);
+
+// Print the number of records in the file
+print(geoData.rows.length); // 23232
+```
+
+With the data created, geocoder can be used to create a local strategy using `KDTree` indexing. Other indexing methods will be implemented soon.
+The only difference is the connection to data and associating the coordinates to `x` and `y` axis.
+
+In this example, the `geoData` list contains the addresses, latitudes, and longitudes of different locations. The `LocalStrategy.create()` function is used to create a geocoding strategy using the provided data and specify the column names for coordinates. You can customize various configuration options for the Local Strategy, including search radius, limit, data preprocessing logic, cache size, and indexing strategy.
+
+Once you have created the `localGeocoder` instance, you can use it to geocode an address or reverse geocode coordinates:
+
+```dart
+var localGeocoder = Geocoder(
+  strategyFactory: LocalStrategy.create(
+    entries: geoData.rows,
+    coordinatesColumnNames: (y: 'latitude', x: 'longitude'),
+  ),
+  config: {
+    // Common Configurations
+    'language': 'en',
+    'requestTimeout': const Duration(seconds: 10),
+
+    // Local-Specific Configurations
+    'isGeodetic': true,
+    'searchRadius': 2000, // in meters
+    'limit': 5, // Number of results to return
+    'dataPreprocessing': (data) => {/* preprocessing logic */},
+    'cacheSize': 100,
+    'indexingStrategy': 'KDTree', // or 'RTree will be implemented soon'
+});
+
+// Geocode an address
+GeocoderRequestResponse u = await localGeocoder.search('Kotei');
+print(u);
+print('');
+
+// Reverse geocode coordinates to get the address
+GeocoderRequestResponse rex = await localGeocoder.reverse(point2);
+print(rex);
+print('');
+```
+
+```txt
+Geocoding Search Query: kotei, Success: true, Timestamp: 2024-02-19 05:13:55.706794
+GeocoderRequestResponse:
+Success: true
+Duration: 42ms
+Result: [{latitude: 6.66308, longitude: -1.55893, 0: 2299299, 1: Kotei, 2: Kotei, 3: Kotei, 4: 6.66308, 5: -1.55893, 6: P, 7: PPL, 8: GH, 9: , 10: 2, 11: 614, 12: , 13: , 14: 0, 15: , 16: 270, 17: Africa/Accra, 18: 06/12/2019}, {latitude: 6.60296, longitude: -1.66005, 0: 11780246, 1: Kotei, 2: Kotei, 3: "Kotei,Kotwi", 4: 6.60296, 5: -1.66005, 6: P, 7: PPL, 8: GH, 9: , 10: 2, 11: 613, 12: , 13: , 14: 0, 15: , 16: 242, 17: Africa/Accra, 18: 05/12/2019}]
+
+Reverse Geocoding Query: Location(6.0, 0.7), Success: true, Timestamp: 2024-02-19 05:13:56.671350
+GeocoderRequestResponse:
+Success: true
+Duration: 6ms
+Result: [[{latitude: 5.98333, longitude: 0.7, 0: 2302105, 1: Dabala, 2: Dabala, 3: , 4: 5.98333, 5: 0.7, 6: H, 7: LK, 8: GH, 9: , 10: 0, 11: , 12: , 13: , 14: 0, 15: , 16: 1, 17: Africa/Accra, 18: 06/01/1994}, 1853.6194271649065], [{latitude: 5.98306, longitude: 0.69745, 0: 2305576, 1: Agbogbla, 2: Agbogbla, 3: "Agbogbla,Agoblan", 4: 5.98306, 5: 0.69745, 6: P, 7: PPL, 8: GH, 9: , 10: 8, 11: 401, 12: , 13: , 14: 0, 15: , 16: 3, 17: Africa/Accra, 18: 06/12/2019}, 1904.6339152449402]]
+
+Initial Bearing: Bearing: 0.0° or 0.0 rad or 000° 00' 0.00000"
+Final Bearing: Bearing: 180.0° or 3.1415926535897403 rad or 180° 00' 0.00000"
+Distance (Haversine): 1.8536194271649065 km
+Distance (Great Circle): 1.8536194278434843 km
+Distance (Vincenty): 1.8434748739484934 km
+
+Initial Bearing: Bearing: 8.514324846934187° or 0.14860300216336128 rad or 008° 30' 51.56945"
+Final Bearing: Bearing: 188.51459101961586° or 3.2902003013427756 rad or 188° 30' 52.52767"
+Distance (Haversine): 1.9046339152449403 km
+Distance (Great Circle): 1.9046339162803452 km
+```
+
+The `localGeocoder.search()` and `localGeocoder.reverse()` functions work similarly to their online counterparts, allowing you to easily geocode addresses or reverse geocode coordinates from your pre-defined dataset.
+
+</details>
 
 ## Documentation
 
 For detailed documentation and examples for each feature, please visit the [GeoEngine Documentation](link-to-documentation).
 
 ## Contributing
+### :beer: Pull requests are welcome!
+Don't forget that `open-source` makes no sense without contributors. No matter how big your changes are, it helps us a lot even it is a line of change.
 
-Contributions are welcome! If you find a bug or would like to request a new feature, please open an issue. For major changes, please open an issue first to discuss what you would like to change.
+There might be a lot of grammar issues in the docs. It's a big help to us to fix them if you are fluent in English. Reporting bugs and issues are contribution too, yes it is. Please file feature requests and bugs at the [issue tracker][tracker].
+
+[tracker]: https://github.com/gameticharles/geoengine/issues
 
 ## Testing
 
 Tests are located in the test directory. To run tests, execute dart test in the project root.
-
-## Features and bugs
-
-Please file feature requests and bugs at the [issue tracker][tracker].
-
-[tracker]: https://github.com/gameticharles/geoengine/issues
 
 ## Author
 

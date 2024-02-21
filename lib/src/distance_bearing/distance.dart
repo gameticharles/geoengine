@@ -1,8 +1,19 @@
-part of geoengine;
+part of '../../geoengine.dart';
 
+/// Calculates geodetic distance between two [LatLng] points using
+/// various algorithms.
 class Distance extends Length {
+  /// The radius of Earth in meters.
   static double R = 6371000; // Earth radius in meters
 
+  /// Calculates the distance between two points using the Haversine formula.
+  ///
+  /// This is the simplest formula and less accurate than Vincenty formula.
+  ///
+  /// [point1] The first point.
+  /// [point2] The second point.
+  ///
+  /// Returns the [Length] between points.
   static Length haversine(LatLng point1, LatLng point2) {
     double lat1 = toRadians(point1.latitude);
     double lon1 = toRadians(point1.longitude);
@@ -19,6 +30,15 @@ class Distance extends Length {
     return Length(m: R * c);
   }
 
+  /// Calculates the great circle distance between two points using spherical
+  /// law of cosines formula.
+  ///
+  /// This method is less accurate than Vincenty formula.
+  ///
+  /// [point1] The first point.
+  /// [point2] The second point.
+  ///
+  /// Returns the [Length] between points.
   static Length greatCircle(LatLng point1, LatLng point2) {
     double lat1 = toRadians(point1.latitude);
     double lon1 = toRadians(point1.longitude);
@@ -31,10 +51,27 @@ class Distance extends Length {
             R);
   }
 
+  /// Calculates the shortest distance between two points using
+  /// Vincenty inverse formula.
+  ///
+  /// This is the most accurate distance calculation.
+  ///
+  /// [point1] The first point.
+  /// [point2] The second point.
+  ///
+  /// Returns the [Length] between points.
   static Length? shortestPath(LatLng point1, LatLng point2) {
     return vincenty(point1, point2); // Assuming Vincenty is the most accurate
   }
 
+  /// Calculates the geodesic distance between two points using
+  /// Vincenty inverse formula.
+  ///
+  /// [point1] The first point.
+  /// [point2] The second point.
+  /// [ellipsoid] The ellipsoid model to use. Defaults to WGS84.
+  ///
+  /// Returns the [Length] between points.
   static Length? vincenty(LatLng point1, LatLng point2,
       {Ellipsoid? ellipsoid}) {
     ellipsoid ??= Ellipsoid.wgs84;
@@ -107,6 +144,15 @@ class Distance extends Length {
     return Length(m: s); // return distance in meters
   }
 
+  /// Calculates the destination point given a start point, distance
+  /// and initial bearing using Vincenty direct formula.
+  ///
+  /// [point] The start point.
+  /// [distance] The distance to travel.
+  /// [bearing] The initial bearing angle.
+  /// [ellipsoid] The ellipsoid model to use. Defaults to WGS84.
+  ///
+  /// Returns the calculated [LatLng] destination point.
   LatLng vincentyDirect(LatLng point, double distance, double initialBearing,
       {Ellipsoid? ellipsoid}) {
     ellipsoid ??= Ellipsoid.wgs84;
@@ -171,6 +217,16 @@ class Distance extends Length {
     return LatLng(toDegrees(phi2), toDegrees(lambda2), finalBearing);
   }
 
+  /// Calculates the inverse geodetic problem between two points using the Vincenty formula.
+  ///
+  /// Returns the distance between the two points and the forward and reverse azimuths.
+  ///
+  /// [point1] The start point.
+  /// [point2] The end point.
+  /// [ellipsoid] The ellipsoid to use for the calculation. Defaults to WGS84.
+  ///
+  /// Returns a list containing the distance, forward azimuth, and reverse azimuth,
+  /// or null if the calculation fails to converge.
   List<double>? vincentyInverse(LatLng point1, LatLng point2,
       {Ellipsoid? ellipsoid}) {
     ellipsoid ??= Ellipsoid.wgs84;
@@ -246,7 +302,7 @@ class Distance extends Length {
     return [s, fwdAz, revAz];
   }
 
-  // Calculate the cross-track distance to the great-circle path between point1 and point2
+  /// Calculate the cross-track distance to the great-circle path between point1 and point2
   Length crossTrackDistanceTo(LatLng point1, LatLng point2, LatLng point3) {
     var delta13 =
         Distance.shortestPath(point1, point3)! / R; // angular distance
@@ -260,7 +316,7 @@ class Distance extends Length {
     return Length(m: dXt);
   }
 
-  // Calculate the along-track distance to the point closest to the third point on the great-circle path between point1 and point2
+  /// Calculate the along-track distance to the point closest to the third point on the great-circle path between point1 and point2
   Length alongTrackDistanceTo(LatLng point1, LatLng point2, LatLng point3) {
     var delta13 =
         Distance.shortestPath(point1, point3)! / R; // angular distance

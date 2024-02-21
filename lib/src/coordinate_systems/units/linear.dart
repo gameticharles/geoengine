@@ -1,4 +1,4 @@
-part of geoengine;
+part of '../../../geoengine.dart';
 
 class LinearUnit extends Info {
   /// Number of meters per unit.
@@ -6,20 +6,13 @@ class LinearUnit extends Info {
 
   LinearUnit({
     required this.metersPerUnit,
-    required String name,
-    required int authorityCode,
-    String authority = "EPSG",
-    String? alias,
-    String? abbreviation,
-    String? remarks,
-  }) : super(
-          name: name,
-          authority: authority,
-          authorityCode: authorityCode,
-          alias: alias,
-          abbreviation: abbreviation,
-          remarks: remarks,
-        );
+    required super.name,
+    required super.authorityCode,
+    super.authority = "EPSG",
+    super.alias,
+    super.abbreviation,
+    super.remarks,
+  });
 
   /// Meter
   static final LinearUnit meter = LinearUnit(

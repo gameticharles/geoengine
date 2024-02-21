@@ -1,4 +1,4 @@
-part of geoengine;
+part of '../../geoengine.dart';
 
 /// Represents the bearing (direction) between two points, measured in degrees from the North.
 ///
@@ -22,7 +22,7 @@ part of geoengine;
 /// ```dart
 /// var point1 = LatLng(34.0, -118.0);
 /// var point2 = LatLng(36.0, -116.0);
-/// var bearing = Bearing.forwardBearing(point1, point2);
+/// var bearing = Bearing.fromPoints(point1, point2);
 ///
 /// print(bearing);  // e.g. Bearing: 55.0°
 ///
@@ -31,7 +31,7 @@ part of geoengine;
 ///
 /// ```
 class Bearing extends Angle {
-  final double _degrees;
+  final num _degrees;
   final Point? point1;
   final Point? point2;
 
@@ -54,7 +54,7 @@ class Bearing extends Angle {
         super(deg: initialBearing(p1, p2)._degrees);
 
   /// Compute the forward (initial) bearing.
-  double get forwardBearing => _degrees;
+  double get forwardBearing => _degrees.toDouble();
 
   /// Compute the backward (final) bearing.
   double get backBearing => (_degrees + 180) % 360;
@@ -129,8 +129,9 @@ class Bearing extends Angle {
   /// @return The final bearing value.
   static Bearing finalBearing(Point point1, Point point2) {
     // Final bearing is simply the initial bearing from point2 to point1 reversed by 180 degrees
-    var initial = initialBearing(point2, point1);
-    return Bearing((initial.deg + 180) % 360);
+    var finalBb = initialBearing(point2, point1);
+
+    return Bearing(finalBb.deg);
   }
 
   @override

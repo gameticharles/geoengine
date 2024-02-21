@@ -1,4 +1,4 @@
-part of geoengine;
+part of '../../../geoengine.dart';
 
 /// Enumeration representing the orientation of an axis.
 enum AxisOrientationEnum {

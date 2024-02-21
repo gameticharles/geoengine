@@ -1,4 +1,4 @@
-part of geoengine;
+part of '../../geoengine.dart';
 
 /// A utility class to handle conversions between Julian Dates and DateTime objects.
 class JulianDate extends DateTime {

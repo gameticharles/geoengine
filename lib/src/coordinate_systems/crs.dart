@@ -1,4 +1,4 @@
-part of geoengine;
+part of '../../geoengine.dart';
 
 class CRS {
   final String crsName;

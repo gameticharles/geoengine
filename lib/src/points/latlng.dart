@@ -1,5 +1,10 @@
-part of geoengine;
+part of '../../geoengine.dart';
 
+/// Represents a geographical location using latitude and longitude coordinates.
+///
+/// This class extends `PointX` to provide additional functionalities specific
+/// to geographical coordinates, including methods to work with different
+/// coordinate formats and geospatial calculations.
 class LatLng extends PointX {
   /// The longitude of the point. This is always in decimal degrees
   final double latitude;
@@ -12,7 +17,11 @@ class LatLng extends PointX {
 
   static const double R = 6371000; // Earth radius in meters
 
-  /// Default constructor
+  /// Creates a LatLng instance with specified latitude, longitude, and optional elevation.
+  ///
+  /// [latitude]: The latitude of the point in decimal degrees.
+  /// [longitude]: The longitude of the point in decimal degrees.
+  /// [elevation]: (Optional) The elevation of the point in meters.
   LatLng(this.latitude, this.longitude, [this.elevation])
       : assert(latitude >= -90 && latitude <= 90),
         assert(longitude >= -180 && longitude <= 180),
@@ -22,18 +31,23 @@ class LatLng extends PointX {
             z: elevation,
             type: CoordinateType.geodetic);
 
-  /// Named constructor that creates a LatLng from a Map
-  LatLng.fromMap(Map<String, double> map)
+  /// Creates a LatLng instance from a Map containing latitude, longitude, and optional elevation.
+  ///
+  /// [map]: A Map containing 'latitude', 'longitude', and optionally 'elevation' keys.
+  LatLng.fromMap(Map<dynamic, dynamic> map)
       : latitude = map['latitude']!,
         longitude = map['longitude']!,
-        elevation = map['elevation']!,
+        elevation = map['elevation'],
         super(
             y: map['latitude']!,
             x: map['longitude']!,
-            z: map['elevation']!,
+            z: map['elevation'],
             type: CoordinateType.geodetic);
 
-  /// Named constructor that creates a LatLng from a List
+  /// Creates a LatLng instance from a List containing latitude, longitude, and optional elevation.
+  ///
+  /// [list]: A List containing latitude and longitude as the first two elements,
+  ///         and optionally elevation as the third element.
   LatLng.fromList(List<double> list)
       : assert(list.length >= 2),
         latitude = list[0],
@@ -46,7 +60,9 @@ class LatLng extends PointX {
           type: CoordinateType.geodetic,
         );
 
-  /// Named constructor that creates a LatLng from a string (e.g.: "40.7128,-74.0060")
+  /// Creates a LatLng instance from a string representation of coordinates (e.g.: "40.7128,-74.0060").
+  ///
+  /// [latLngAsString]: A string representing the coordinates in the format "latitude,longitude".
   LatLng.fromString(String latLngAsString)
       : assert(latLngAsString.split(',').length >= 2),
         latitude = double.parse(latLngAsString.split(',')[0]),
@@ -64,12 +80,12 @@ class LatLng extends PointX {
         );
 
   /// Converts sexagesimal string into a lat/long value
-  ///
-  ///     final LatLng p1 = new LatLng.fromSexagesimal('''51° 31' 10.11" N, 19° 22' 32.00" W''');
-  ///     print("${p1.latitude}, ${p1.longitude}");
-  ///     // Shows:
-  ///     51.519475, -19.37555556
-  ///
+  ///  ```dart
+  /// final LatLng p1 = new LatLng.fromSexagesimal('''51° 31' 10.11" N, 19° 22' 32.00" W''');
+  /// print("${p1.latitude}, ${p1.longitude}");
+  /// // Shows:
+  /// 51.519475, -19.37555556
+  ///```
   factory LatLng.fromSexagesimal(String sexagesimal) {
     double latitude = 0.0;
     double longitude = 0.0;
@@ -162,6 +178,10 @@ class LatLng extends PointX {
     return decimal;
   }
 
+  /// Calculates the midpoint between this point and another point.
+  ///
+  /// [point]: The other point to which the midpoint is calculated.
+  /// Returns a new LatLng instance representing the midpoint.
   LatLng midPointTo(LatLng point) {
     double phi1 = latitude * pi / 180, lon1 = longitude * pi / 180;
     double phi2 = point.latitude * pi / 180;
@@ -180,6 +200,13 @@ class LatLng extends PointX {
     return LatLng(lat3, lon3);
   }
 
+  /// Finds the intersection point of two paths defined by a point and a bearing.
+  ///
+  /// [point1]: The first point.
+  /// [brng1]: The bearing from the first point.
+  /// [point2]: The second point.
+  /// [brng2]: The bearing from the second point.
+  /// Returns a LatLng representing the intersection point, or null if no unique intersection is found.
   static LatLng? intersectionPoint(
       LatLng point1, double brng1, LatLng point2, double brng2) {
     double lat1 = point1.latitude * pi / 180;
@@ -235,6 +262,11 @@ class LatLng extends PointX {
     return LatLng(lat3, lon3);
   }
 
+  /// Calculates the distance to another point using a specified method.
+  ///
+  /// [point]: The point to which the distance is calculated.
+  /// [method]: The method used for distance calculation, defaulting to Haversine.
+  /// Returns the calculated distance as a Length object.
   Length? distanceTo(LatLng point,
       {DistanceMethod method = DistanceMethod.haversine}) {
     switch (method) {
@@ -249,15 +281,27 @@ class LatLng extends PointX {
     }
   }
 
+  /// Calculates the initial bearing from this point to another point.
+  ///
+  /// [point]: The point to which the bearing is calculated.
+  /// Returns the initial bearing as a Bearing object.
   Bearing initialBearingTo(LatLng point) {
     return Bearing.initialBearing(this, point);
   }
 
+  /// Calculates the final bearing from this point to another point.
+  ///
+  /// [point]: The point from which the final bearing is calculated.
+  /// Returns the final bearing as a Bearing object.
   Bearing finalBearingTo(LatLng point) {
     return Bearing.finalBearing(this, point);
   }
 
-  // Destination point given distance and bearing from start point
+  /// Calculates the destination point given a distance and bearing from this point.
+  ///
+  /// [distance]: The distance to the destination point.
+  /// [bearing]: The bearing to the destination point.
+  /// Returns a new LatLng instance representing the destination point.
   LatLng destinationPoint(double distance, double bearing) {
     double phi1 = latitude * pi / 180;
     double lambda1 = longitude * pi / 180;
@@ -273,7 +317,11 @@ class LatLng extends PointX {
     return LatLng(phi2 * 180 / pi, lambda2 * 180 / pi);
   }
 
-  // Calculate destination point given distance and bearing
+  /// Calculates the destination point using rhumb line navigation given a distance and bearing from this point.
+  ///
+  /// [distance]: The distance to the destination point.
+  /// [bearing]: The bearing to the destination point.
+  /// Returns a new LatLng instance representing the destination point.
   LatLng rhumbDestinationPoint(double distance, double bearing) {
     double phi1 = latitude * pi / 180;
     double lambda1 = longitude * pi / 180;
@@ -292,7 +340,13 @@ class LatLng extends PointX {
     return LatLng(phi2 * 180 / pi, lambda2 * 180 / pi);
   }
 
-  // Calculate rhumb line distance between two points
+  /// Calculates the rhumb line distance to another point.
+  ///
+  /// Rhumb lines are straight lines on a Mercator projection map, making this
+  /// method useful for navigation purposes.
+  ///
+  /// [point]: The other point to which the rhumb line distance is calculated.
+  /// Returns the distance as a Length object.
   Length rhumbLineDistance(LatLng point) {
     double phi1 = latitude * pi / 180;
     double phi2 = point.latitude * pi / 180;
@@ -309,7 +363,12 @@ class LatLng extends PointX {
     return Length(m: d);
   }
 
-  // Calculate rhumb line bearing between two points
+  /// Calculates the rhumb line bearing to another point.
+  ///
+  /// This bearing is constant between any two points along the rhumb line.
+  ///
+  /// [point]: The other point to which the rhumb line bearing is calculated.
+  /// Returns the bearing as a Bearing object.
   Bearing rhumbLineBearing(LatLng point) {
     double phi1 = latitude * pi / 180;
     double phi2 = point.latitude * pi / 180;
@@ -323,7 +382,10 @@ class LatLng extends PointX {
     return Bearing((theta + 360) % 360);
   }
 
-  // Calculate midpoint between two points along a rhumb line
+  /// Calculates the midpoint along a rhumb line between this point and another point.
+  ///
+  /// [point]: The other point to which the midpoint is calculated.
+  /// Returns a new LatLng instance representing the midpoint.
   LatLng rhumbMidpoint(LatLng point) {
     double phi1 = latitude * pi / 180;
     double phi2 = point.latitude * pi / 180;
@@ -343,7 +405,13 @@ class LatLng extends PointX {
     return LatLng(phiM * 180 / pi, lambdaM * 180 / pi);
   }
 
-  // Calculate the cross-track distance to the great-circle path between point1 and point2
+  /// Calculates the cross-track distance to the great-circle path between two points.
+  ///
+  /// This is the shortest distance between a point and a great-circle path.
+  ///
+  /// [point1]: The start point of the great-circle path.
+  /// [point2]: The end point of the great-circle path.
+  /// Returns the cross-track distance as a Length object.
   Length crossTrackDistanceTo(LatLng point1, LatLng point2) {
     var delta13 =
         Distance.shortestPath(point1, this)!.valueInUnits(LengthUnits.meters) /
@@ -357,7 +425,13 @@ class LatLng extends PointX {
     return Length(m: dXt);
   }
 
-  // Calculate the along-track distance to the point closest to the third point on the great-circle path between point1 and point2
+  /// Calculates the along-track distance to the closest point on the great-circle path between two points.
+  ///
+  /// This is the distance along the great-circle path to the closest point from the third point.
+  ///
+  /// [point1]: The start point of the great-circle path.
+  /// [point2]: The end point of the great-circle path.
+  /// Returns the along-track distance as a Length object.
   Length alongTrackDistanceTo(LatLng point1, LatLng point2) {
     var delta13 =
         Distance.shortestPath(point1, this)!.valueInUnits(LengthUnits.meters) /
@@ -370,6 +444,10 @@ class LatLng extends PointX {
     return Length(m: dAt);
   }
 
+  /// Converts the LatLng instance to a Wpt (Waypoint) object.
+  ///
+  /// Transfers the geographical coordinates and descriptive information to a Wpt instance.
+  /// Returns the Wpt object with the properties of this LatLng instance.
   Wpt toWPT() {
     var wpt = Wpt();
     wpt.desc = desc;
@@ -409,31 +487,15 @@ class LatLng extends PointX {
 
   /// Return the Latitude and Longitude to UTM coordinates
   UTM toUTM() {
-    // var utm = mgrs_dart.Mgrs.LLtoUTM(latitude, longitude);
-
-    // return UTM(
-    //   zoneNumber: utm.zoneNumber,
-    //   zoneLetter: utm.zoneLetter,
-    //   easting: utm.easting,
-    //   northing: utm.northing,
-    //   height: 0,
-    //   accuracy: utm.accuracy,
-    // );
-
-    var utm = CoordinateConversion().convert(
-      point: this,
-      projSrc: Projection.WGS84,
-      projDst:
-          CoordinateConversion().getUTM84ProjectionFromLon(latitude, longitude),
-      conversion: ConversionType.geodeticToProjected,
-    );
+    var utm = mgrs_dart.Mgrs.LLtoUTM(latitude, longitude);
 
     return UTM(
-      zoneNumber: UTMZones().getLongZone(longitude),
-      zoneLetter: UTMZones().getLatZone(latitude),
-      easting: utm.x,
-      northing: utm.y,
-      height: utm.z,
+      zoneNumber: utm.zoneNumber,
+      zoneLetter: utm.zoneLetter,
+      easting: utm.easting,
+      northing: utm.northing,
+      height: 0,
+      accuracy: utm.accuracy,
     );
   }
 
