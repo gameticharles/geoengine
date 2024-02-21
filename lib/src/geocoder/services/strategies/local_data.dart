@@ -28,27 +28,26 @@ import 'strategy.dart';
 /// );
 /// var result = await localGeocoding.search('Search Query');
 /// ```
-class LocalGeocodingStrategy implements GeocoderStrategy {
+class LocalStrategy implements GeocoderStrategy {
   final List<Map<String, dynamic>> entries;
+  final Map<String, dynamic> _cache = {};
   late KDTree _tree;
-  final int maxTopResults;
-  final int? maxDistance;
+  int limit;
   ({String x, String y}) coordinatesColumnNames;
-  final bool isGeodetic;
+  bool isGeodetic;
+  int? searchRadius;
+  int cacheSize;
+  String indexingStrategy;
 
-  /// Constructs an instance of LocalGeocodingStrategy.
-  ///
-  /// [entries]: The list of data entries for geocoding, each entry being a map of key-value pairs.
-  /// [coordinatesColumnNames]: A tuple specifying the column names for x (longitude/easting) and y (latitude/northing).
-  /// [maxTopResults]: (Optional) The maximum number of results to return for reverse geocoding. Defaults to 1.
-  /// [maxDistance]: (Optional) The maximum search distance for reverse geocoding.
-  /// [isGeodetic]: Indicates whether the coordinates are geodetic (true) or projected (false).
-  LocalGeocodingStrategy({
+  /// Private constructor to enforce the use of the factory method.
+  LocalStrategy._({
     required this.entries,
     required this.coordinatesColumnNames,
-    this.maxTopResults = 1,
-    this.maxDistance,
+    this.limit = 5,
     this.isGeodetic = true,
+    this.searchRadius = 1000, // in meters
+    this.cacheSize = 100,
+    this.indexingStrategy = 'KDTree',
   }) {
     // Filter out entries that do not have valid latitude and longitude
     var validEntries = entries
@@ -57,15 +56,49 @@ class LocalGeocodingStrategy implements GeocoderStrategy {
             e[coordinatesColumnNames.x]! != null)
         .toList();
 
-    // Create points for the k-d tree from the valid entries
-    var points = validEntries
-        .map((e) => {
-              coordinatesColumnNames.y: e[coordinatesColumnNames.y]!,
-              coordinatesColumnNames.x: e[coordinatesColumnNames.x]!
-            })
-        .toList();
-    _tree = KDTree(points, isGeodetic ? geodeticDistance : euclideanDistanceMap,
-        [coordinatesColumnNames.y, coordinatesColumnNames.x]);
+    // // Create points for the k-d tree from the valid entries
+    // var points = validEntries
+    //     .map((e) => {
+    //           coordinatesColumnNames.y: e[coordinatesColumnNames.y]!,
+    //           coordinatesColumnNames.x: e[coordinatesColumnNames.x]!
+    //         })
+    //     .toList();
+
+    if (indexingStrategy == 'RTree') {
+      // Initialize RTree
+      // _tree = RTree(...);
+    } else {
+      // Default to KDTree
+      _tree = KDTree(
+        validEntries,
+        isGeodetic ? geodeticDistance : euclideanDistanceMap,
+        [coordinatesColumnNames.y, coordinatesColumnNames.x],
+      );
+    }
+  }
+
+  /// Private configuration method.
+  void _configure(Map<String, dynamic> config) {
+    limit = config['limit'] ?? limit;
+    isGeodetic = config['isGeodetic'] ?? isGeodetic;
+    searchRadius = config['searchRadius'] ?? searchRadius;
+    cacheSize = config['cacheSize'] ?? cacheSize;
+    indexingStrategy = config['indexingStrategy'] ?? indexingStrategy;
+  }
+
+  /// Public factory method for LocalGeocoderStrategy.
+  ///
+  /// [entries]: The list of data entries for geocoding, each entry being a map of key-value pairs.
+  /// [coordinatesColumnNames]: A tuple specifying the column names for x (longitude/easting) and y (latitude/northing).
+  static Map<String, dynamic> create(
+      {required List<Map<String, dynamic>> entries,
+      required ({String x, String y}) coordinatesColumnNames}) {
+    var strategy = LocalStrategy._(
+        entries: entries, coordinatesColumnNames: coordinatesColumnNames);
+    return {
+      'strategy': strategy,
+      'configure': (Map<String, dynamic> config) => strategy._configure(config)
+    };
   }
 
   distance(a, b) {
@@ -74,19 +107,29 @@ class LocalGeocodingStrategy implements GeocoderStrategy {
   }
 
   euclideanDistanceMap(Map<dynamic, dynamic> a, Map<dynamic, dynamic> b) {
-    return sqrt(pow(
-            a[coordinatesColumnNames.x]! - b[coordinatesColumnNames.x]!, 2) +
-        pow(a[coordinatesColumnNames.y]! - b[coordinatesColumnNames.y]!, 2));
+    return sqrt(pow(a[coordinatesColumnNames.x]! - b[coordinatesColumnNames.x]!,
+                2) +
+            pow(a[coordinatesColumnNames.y]! - b[coordinatesColumnNames.y]!, 2))
+        .toDouble();
   }
 
   geodeticDistance(Map<dynamic, dynamic> a, Map<dynamic, dynamic> b) {
     return LatLng(a[coordinatesColumnNames.y]!, a[coordinatesColumnNames.x]!)
         .distanceTo(
-            LatLng(b[coordinatesColumnNames.y]!, b[coordinatesColumnNames.x]!));
+            LatLng(b[coordinatesColumnNames.y]!, b[coordinatesColumnNames.x]!))!
+        .mks
+        .toDouble();
   }
 
   @override
   Future<GeocoderRequestResponse> search(String query, String language) async {
+    var cacheKey = 'search-$query-$language';
+    if (_cache.containsKey(cacheKey) &&
+        _cache[cacheKey] is GeocoderRequestResponse) {
+      return _cache[cacheKey];
+    }
+
+    var startTime = DateTime.now();
     var matchedEntries = entries.where((entry) {
       // Perform a case-insensitive search on all values
       return entry.values.any((value) {
@@ -97,33 +140,73 @@ class LocalGeocodingStrategy implements GeocoderStrategy {
     }).toList();
 
     // Convert matched entries to the desired format
-    return GeocoderRequestResponse(
+    var response = GeocoderRequestResponse(
       success: matchedEntries.isNotEmpty,
+      duration: DateTime.now().difference(startTime),
       result: matchedEntries.map((e) => e).toList(),
     );
+
+    if (_cache.length >= cacheSize) {
+      _cache.remove(_cache.keys.first);
+    }
+    _cache[cacheKey] = response;
+
+    return response;
   }
 
   @override
   Future<GeocoderRequestResponse> reverse(
       LatLng location, String language) async {
+    var cacheKey =
+        'reverse-${location.latitude}-${location.longitude}-$language';
+    if (_cache.containsKey(cacheKey) &&
+        _cache[cacheKey] is GeocoderRequestResponse) {
+      return _cache[cacheKey];
+    }
+
+    var startTime = DateTime.now();
     var nearest = _tree.nearest(
       {
         coordinatesColumnNames.y: location.latitude,
         coordinatesColumnNames.x: location.longitude
       },
-      maxTopResults,
-      maxDistance,
+      limit,
+      searchRadius,
     );
+
+    // List<Map<String, dynamic>> nearestEntries = nearest.map((nearestPoint) {
+    //   var pointCoordinates = {
+    //     coordinatesColumnNames.y: nearestPoint[0][coordinatesColumnNames.y],
+    //     coordinatesColumnNames.x: nearestPoint[0][coordinatesColumnNames.x]
+    //   };
+    //   return entries.firstWhere(
+    //       (entry) =>
+    //           entry[coordinatesColumnNames.y] ==
+    //               pointCoordinates[coordinatesColumnNames.y] &&
+    //           entry[coordinatesColumnNames.x] ==
+    //               pointCoordinates[coordinatesColumnNames.x],
+    //       orElse: () => pointCoordinates);
+    // }).toList();
+
+    GeocoderRequestResponse response;
     if (nearest.isNotEmpty) {
-      return GeocoderRequestResponse(
+      response = GeocoderRequestResponse(
         success: true,
+        duration: DateTime.now().difference(startTime),
         result: nearest,
       );
     } else {
-      return GeocoderRequestResponse(
+      response = GeocoderRequestResponse(
         success: false,
+        duration: DateTime.now().difference(startTime),
         error: 'No results found',
       );
     }
+    if (_cache.length >= cacheSize) {
+      _cache.remove(_cache.keys.first);
+    }
+    _cache[cacheKey] = response;
+
+    return response;
   }
 }

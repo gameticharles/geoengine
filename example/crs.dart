@@ -6,7 +6,53 @@ import 'package:geoengine/geoengine.dart';
 
 void main(List<String> args) {
   test1();
-  // test2();
+  test2();
+}
+
+void test1() {
+  // Read the JSON data from the file
+  final file = File('assets/data/PreDefinedCRSTable.json');
+  final jsonString = file.readAsStringSync();
+  final jsonData = json.decode(jsonString);
+
+  // Extract unique ellipsoids from the WKT strings
+  final crsList = (jsonData['CRS'] as List<dynamic>)
+      .map((json) => CRS.fromJson(json))
+      .toList();
+
+  final uniqueEllipsoids = <Ellipsoid>{};
+
+  for (CRS crs in crsList) {
+    final ellipsoid = extractEllipsoidFromWKTString(crs.wktString);
+    if (ellipsoid != null) {
+      uniqueEllipsoids.add(ellipsoid);
+    }
+  }
+
+  // Now you have a set of unique ellipsoids
+  for (Ellipsoid ellipsoid in uniqueEllipsoids) {
+    print(ellipsoid.toGeoServer());
+  }
+}
+
+void test2() {
+  // Read the JSON data from the file
+  final file = File('assets/data/PreDefinedCRSTable.json');
+  final jsonString = file.readAsStringSync();
+  final jsonData = json.decode(jsonString);
+
+  // Extract ellipsoids from the WKT strings
+  final crsList = (jsonData['CRS'] as List<dynamic>)
+      .map((json) => CRS.fromJson(json))
+      .toList();
+
+  final wktStrings = crsList.map((crs) => crs.wktString).toList();
+  final uniqueEllipsoids = extractEllipsoidsFromWKTStrings(wktStrings);
+
+  // Now you have a set of unique ellipsoids
+  for (Ellipsoid ellipsoid in uniqueEllipsoids.toSet()) {
+    print(ellipsoid.toWKT2());
+  }
 }
 
 Set<Ellipsoid> extractEllipsoidsFromWKTStrings(List<String> wktStrings) {
@@ -76,50 +122,4 @@ Ellipsoid? extractEllipsoidFromWKTString(String wktString) {
   }
 
   return null;
-}
-
-void test1() {
-  // Read the JSON data from the file
-  final file = File('assets/data/PreDefinedCRSTable.json');
-  final jsonString = file.readAsStringSync();
-  final jsonData = json.decode(jsonString);
-
-  // Extract unique ellipsoids from the WKT strings
-  final crsList = (jsonData['CRS'] as List<dynamic>)
-      .map((json) => CRS.fromJson(json))
-      .toList();
-
-  final uniqueEllipsoids = <Ellipsoid>{};
-
-  for (CRS crs in crsList) {
-    final ellipsoid = extractEllipsoidFromWKTString(crs.wktString);
-    if (ellipsoid != null) {
-      uniqueEllipsoids.add(ellipsoid);
-    }
-  }
-
-  // Now you have a set of unique ellipsoids
-  for (Ellipsoid ellipsoid in uniqueEllipsoids) {
-    print(ellipsoid.toGeoServer());
-  }
-}
-
-void test2() {
-  // Read the JSON data from the file
-  final file = File('assets/data/PreDefinedCRSTable.json');
-  final jsonString = file.readAsStringSync();
-  final jsonData = json.decode(jsonString);
-
-  // Extract ellipsoids from the WKT strings
-  final crsList = (jsonData['CRS'] as List<dynamic>)
-      .map((json) => CRS.fromJson(json))
-      .toList();
-
-  final wktStrings = crsList.map((crs) => crs.wktString).toList();
-  final uniqueEllipsoids = extractEllipsoidsFromWKTStrings(wktStrings);
-
-  // Now you have a set of unique ellipsoids
-  for (Ellipsoid ellipsoid in uniqueEllipsoids.toSet()) {
-    print(ellipsoid.toWKT2());
-  }
 }

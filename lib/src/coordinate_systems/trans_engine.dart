@@ -1,6 +1,6 @@
 // ignore_for_file: implementation_imports
 
-part of geoengine;
+part of '../../geoengine.dart';
 
 class CoordinateConversion {
   CoordinateConversion();

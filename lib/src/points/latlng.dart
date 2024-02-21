@@ -1,4 +1,4 @@
-part of geoengine;
+part of '../../geoengine.dart';
 
 /// Represents a geographical location using latitude and longitude coordinates.
 ///

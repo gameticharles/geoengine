@@ -1,4 +1,4 @@
-part of geoengine;
+part of '../../geoengine.dart';
 
 /// Represents a point in the Universal Transverse Mercator (UTM) coordinate system.
 ///

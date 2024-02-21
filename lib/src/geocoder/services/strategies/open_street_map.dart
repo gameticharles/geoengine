@@ -9,22 +9,50 @@ import 'strategy.dart';
 /// coordinate-to-address translation (reverse).
 ///
 /// It includes a mixin [GeocoderRequestMixin] for shared HTTP request functionality.
-class OpenStreetMapGeocoderStrategy
+class OpenStreetMapStrategy
     with GeocoderRequestMixin
     implements GeocoderStrategy {
-  final Duration requestTimeout;
-  final int retries;
+  Duration requestTimeout;
+  int retries;
+  String email;
+  String countryCodes;
+  String viewBox;
+  String boundedViewBox;
+  int limit;
+  int addressDetails;
 
-  /// Constructs an instance of OpenStreetMap GeocoderStrategy.
-  ///
-  /// [requestTimeout]: (Optional) The duration to wait before the request times out.
-  ///                   Defaults to a duration of 10 seconds.
-  /// [retries]: (Optional) The number of times to retry the request in case
-  ///            of a failure. Defaults to 3 retries.
-  OpenStreetMapGeocoderStrategy({
+  /// Private constructor to enforce the use of the factory method.
+  OpenStreetMapStrategy._({
     this.requestTimeout = const Duration(seconds: 10),
     this.retries = 3,
+    this.email = '',
+    this.countryCodes = '',
+    this.viewBox = '',
+    this.boundedViewBox = '',
+    this.limit = 5,
+    this.addressDetails = 1,
   });
+
+  /// Private configuration method.
+  void _configure(Map<String, dynamic> config) {
+    requestTimeout = config['requestTimeout'] ?? const Duration(seconds: 10);
+    retries = config['retries'] ?? 3;
+    email = config['email'] ?? '';
+    countryCodes = config['countryCodes'] ?? '';
+    viewBox = config['viewBox'] ?? '';
+    viewBox = config['boundedViewBox'] ?? '';
+    limit = config['limit'] ?? 5;
+    addressDetails = config['addressDetails'] ?? 1;
+  }
+
+  /// Public factory method.
+  static Map<String, dynamic> create() {
+    var strategy = OpenStreetMapStrategy._();
+    return {
+      'strategy': strategy,
+      'configure': (Map<String, dynamic> config) => strategy._configure(config)
+    };
+  }
 
   @override
   Future<GeocoderRequestResponse> search(

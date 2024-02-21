@@ -1,4 +1,4 @@
-part of geoengine;
+part of '../../../geoengine.dart';
 
 /// Represents details of an axis, used for labeling and indicating orientation.
 class AxisInfo {

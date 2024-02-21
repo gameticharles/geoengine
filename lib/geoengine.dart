@@ -38,9 +38,9 @@ part 'src/coordinate_systems/units/linear.dart';
 
 part 'src/julian_date/julian_date.dart';
 
-part 'src/distance/enum.dart';
-part 'src/distance/distance.dart';
-part 'src/distance/bearing.dart';
+part 'src/distance_bearing/enum.dart';
+part 'src/distance_bearing/distance.dart';
+part 'src/distance_bearing/bearing.dart';
 
 part 'src/least_square/least_squares_adjustment.dart';
 part 'src/least_square/scaling_method.dart';

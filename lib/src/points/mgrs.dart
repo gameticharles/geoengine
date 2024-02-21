@@ -1,4 +1,4 @@
-part of geoengine;
+part of '../../geoengine.dart';
 
 /// Military Grid Reference System (MGRS/NATO) grid references provides with methods to parse references, and
 /// to convert to UTM coordinates and latitude/longitude.

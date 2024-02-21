@@ -10,30 +10,47 @@ import 'strategy.dart';
 ///
 /// It includes a mixin [GeocoderRequestMixin] for shared HTTP request functionality.
 /// The mixin handles HTTP GET requests with retry logic and timeout handling.
-class GoogleGeocoderStrategy
-    with GeocoderRequestMixin
-    implements GeocoderStrategy {
-  final String apiKey;
-  final Duration requestTimeout;
-  final int retries;
+class GoogleStrategy with GeocoderRequestMixin implements GeocoderStrategy {
+  String apiKey;
+  Duration requestTimeout;
+  int retries;
+  String regionBias;
+  String resultType;
+  String locationType;
+  String components;
+  int rateLimit;
 
-  /// Constructs an instance of Google GeocoderStrategy with the provided Google API key.
-  ///
-  /// [apiKey]: The API key for accessing the Google Geocoding API. This key is used
-  ///           to authenticate requests to the Google API.
-  ///
-  /// [requestTimeout]: (Optional) The duration to wait before the request times out.
-  ///                   Defaults to a duration of 10 seconds. This timeout is applied
-  ///                   to each attempt of the HTTP request.
-  ///
-  /// [retries]: (Optional) The number of times to retry the request in case
-  ///            of a failure. Defaults to 3 retries. This parameter controls the
-  ///            number of retry attempts if the initial request fails.
-  GoogleGeocoderStrategy(
-    this.apiKey, {
+  /// Private constructor to enforce the use of the factory method.
+  GoogleStrategy._({
+    required this.apiKey,
     this.requestTimeout = const Duration(seconds: 10),
     this.retries = 3,
+    this.regionBias = 'US',
+    this.resultType = 'address',
+    this.locationType = 'ROOFTOP',
+    this.components = 'country:US',
+    this.rateLimit = 10,
   });
+
+  /// Private configuration method.
+  void _configure(Map<String, dynamic> config) {
+    requestTimeout = config['requestTimeout'] ?? requestTimeout;
+    retries = config['retries'] ?? retries;
+    regionBias = config['regionBias'] ?? regionBias;
+    resultType = config['resultType'] ?? resultType;
+    locationType = config['locationType'] ?? locationType;
+    components = config['components'] ?? components;
+    rateLimit = config['rateLimit'] ?? rateLimit;
+  }
+
+  /// Public factory method.
+  static Map<String, dynamic> create(String apiKey) {
+    var strategy = GoogleStrategy._(apiKey: apiKey);
+    return {
+      'strategy': strategy,
+      'configure': (Map<String, dynamic> config) => strategy._configure(config)
+    };
+  }
 
   @override
   Future<GeocoderRequestResponse> search(

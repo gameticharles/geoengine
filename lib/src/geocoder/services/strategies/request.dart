@@ -27,6 +27,7 @@ mixin GeocoderRequestMixin {
   Future<GeocoderRequestResponse> performRequest(
       String url, Duration requestTimeout,
       {int retries = 3, String? service}) async {
+    var startTime = DateTime.now();
     int attempts = 0;
     while (attempts < retries) {
       try {
@@ -35,11 +36,13 @@ mixin GeocoderRequestMixin {
         if (response.statusCode == 200) {
           return GeocoderRequestResponse(
             success: true,
+            duration: DateTime.now().difference(startTime),
             result: json.decode(response.body),
           );
         } else {
           return GeocoderRequestResponse(
             success: false,
+            duration: DateTime.now().difference(startTime),
             error:
                 'Failed to fetch data${service != null ? ' from $service' : ''}',
             statusCode: response.statusCode,
@@ -50,6 +53,7 @@ mixin GeocoderRequestMixin {
         if (attempts >= retries) {
           return GeocoderRequestResponse(
             success: false,
+            duration: DateTime.now().difference(startTime),
             error: 'Error occurred while fetching data: $e',
           );
         }
@@ -58,31 +62,53 @@ mixin GeocoderRequestMixin {
     // Return a generic failure response if the loop exits without a return.
     return GeocoderRequestResponse(
       success: false,
+      duration: DateTime.now().difference(startTime),
       error: 'Failed to complete the request',
     );
   }
 }
 
 /// Represents the response from a geocoding request.
+///
+/// This class encapsulates the results of a geocoding or reverse geocoding operation,
+/// including information about the success or failure of the request, the results
+/// of the request (if successful), and any error information (if failed).
+///
+/// [success]: Indicates whether the geocoding request was successful.
+/// [result]: Holds the result of the request if it was successful. The type of this
+///           field depends on the implementation of the geocoding strategy.
+/// [error]: Contains error message details if the request failed.
+/// [statusCode]: The HTTP status code returned by the server (if applicable).
+/// [duration]: The time taken to complete the geocoding request.
 class GeocoderRequestResponse {
   final bool success;
   final dynamic result;
   final String? error;
   final int? statusCode;
+  final Duration? duration;
 
+  /// Constructs a [GeocoderRequestResponse].
+  ///
+  /// [success]: A boolean indicating the success of the geocoding operation.
+  /// [result]: The result of the geocoding operation, which varies based on the strategy.
+  /// [error]: An optional string containing error details.
+  /// [statusCode]: An optional integer representing the HTTP status code.
+  /// [duration]: An optional [Duration] representing the time taken for the request.
   GeocoderRequestResponse({
     required this.success,
     this.result,
     this.error,
     this.statusCode,
+    this.duration,
   });
 
   @override
   String toString() {
     if (success) {
-      return 'GeocoderRequestResponse: Success: $success\nBody: $result';
+      // Successful response
+      return 'GeocoderRequestResponse:\nSuccess: $success\nDuration: ${duration!.inMilliseconds}ms\nResult: $result';
     } else {
-      // Error reporting with status code and error message
+      // Response with error
       String errorDetails = 'Error';
       if (statusCode != null) {
         errorDetails += ' (Status code: $statusCode)';
@@ -90,7 +116,7 @@ class GeocoderRequestResponse {
       if (error != null) {
         errorDetails += ': $error';
       }
-      return 'GeocoderRequestResponse:(Success: $success, $errorDetails)';
+      return 'GeocoderRequestResponse:\nSuccess: $success\nDuration: ${duration?.inMilliseconds}ms\nError Details: $errorDetails';
     }
   }
 }

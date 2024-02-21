@@ -1,6 +1,6 @@
 // ignore_for_file: non_constant_identifier_names
 
-part of geoengine;
+part of '../../geoengine.dart';
 
 /// `LeastSquaresAdjustment` class provides methods for performing a least squares adjustment.
 ///
@@ -129,10 +129,13 @@ class LeastSquaresAdjustment {
   double get uv =>
       _uv ??= ((v.transpose() * W * v) / (A.rowCount - A.columnCount))[0][0];
 
+  /// Variance-Covariance of the Adjusted Heights
   Matrix get cx => _cx ??= nInv * uv;
 
+  /// Variance-Covariance of the Residuals
   Matrix get cv => _cv ??= qxx * uv;
 
+  /// Variance-Covariance of the Observations
   Matrix get cl => _cl ??= A * cx * A.transpose();
 
   /// Standard deviation.

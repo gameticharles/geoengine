@@ -1,4 +1,4 @@
-part of geoengine;
+part of '../../../geoengine.dart';
 
 class Ellipsoid extends Info {
   /// semi-major axis
@@ -33,24 +33,16 @@ class Ellipsoid extends Info {
     required this.a,
     required this.invF,
     required this.linearUnit,
-    required String name,
-    required String authority,
-    required int authorityCode,
-    String? alias,
-    String? abbreviation,
-    String? remarks,
+    required super.name,
+    required super.authority,
+    required super.authorityCode,
+    super.alias,
+    super.abbreviation,
+    super.remarks,
     this.isIvfDefinitive = true,
   })  : f = 1 / invF,
         b = a * (1 - (1 / invF)),
-        eSq = (2 * (1 / invF)) - ((1 / invF) * (1 / invF)),
-        super(
-          name: name,
-          authority: authority,
-          authorityCode: authorityCode,
-          alias: alias,
-          abbreviation: abbreviation,
-          remarks: remarks,
-        );
+        eSq = (2 * (1 / invF)) - ((1 / invF) * (1 / invF));
 
   /// Surface Area Calculation
   double surfaceArea() {

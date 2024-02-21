@@ -1,6 +1,6 @@
 // ignore_for_file: depend_on_referenced_packages
 
-part of geoengine;
+part of '../../geoengine.dart';
 
 /// An extension of the Point class with additional properties and functionalities.
 ///
@@ -39,10 +39,10 @@ class PointX extends Point {
   /// [crs]: The coordinate reference system.
   /// [selected]: A flag indicating whether the point is selected.
   PointX({
-    required double x,
-    required double y,
-    double? z,
-    double? m,
+    required super.x,
+    required super.y,
+    super.z,
+    super.m,
     this.type,
     this.status,
     this.name,
@@ -51,7 +51,7 @@ class PointX extends Point {
     this.crsCode,
     this.crs,
     this.selected = false,
-  }) : super.withM(x: x, y: y, z: z, m: m);
+  }) : super.withM();
 
   /// Constructs an instance of PointX with specified coordinates and properties.
   ///
@@ -70,10 +70,10 @@ class PointX extends Point {
   /// [status]: (Optional) The status associated with the point.
   /// [type]: (Optional) The type of coordinates.
   PointX.withM(
-      {required double x,
-      required double y,
-      required double z,
-      required double m,
+      {required super.x,
+      required super.y,
+      required double super.z,
+      required double super.m,
       this.selected = false,
       this.name,
       this.desc,
@@ -82,7 +82,7 @@ class PointX extends Point {
       this.crs,
       this.status,
       this.type})
-      : super.withM(x: x, y: y, z: z, m: m);
+      : super.withM();
 
   /// Constructs a new PointX with default values.
   ///
