@@ -225,3 +225,93 @@ Coordinate type: ${type == null ? '' : type!.name}
 """;
   }
 }
+
+
+// extension PointExtensions on Point {
+//   CoordinateType? get type => null;
+//   String? get status => null;
+//   set status(String? value) {}
+
+//   /// The name of the point. This field will be transferred to and from
+//   /// the conversion.
+//   String? get name => null;
+//   set name(String? value) {}
+
+//   /// A text description of the element. Holds additional information about the
+//   /// element intended for the user.
+//   String? get desc => null;
+//   set desc(String? value) {}
+
+//   String? get country => null;
+//   set country(String? value) {}
+
+//   String? get crsCode => null;
+//   set crsCode(String? value) {}
+
+//   Projection? get crs => null;
+//   set crs(Projection? value) {}
+
+//   bool get selected => false;
+//   set selected(bool value) {}
+
+//   /// Converts the PointX instance to a LatLng object.
+//   ///
+//   /// Returns a LatLng object representing the same geographical location.
+//   LatLng asLatLng() {
+//     return LatLng(y, x, z);
+//   }
+
+//   /// Converts the PointX instance to a Point object.
+//   ///
+//   /// Returns a Point object with the same x, y, and z coordinates.
+//   Point toPoint() {
+//     return Point.withZ(x: x, y: y, z: z);
+//   }
+
+//   /// Converts the PointX instance into a data array.
+//   ///
+//   /// Returns a list containing the point's name, x, y, z, and m values.
+//   /// The z and m values are included only if they are not null.
+//   List<dynamic> toDataArray() {
+//     var res = [name, x, y];
+//     if (z != null) {
+//       res.add(z!);
+
+//       if (m != null) {
+//         res.add(m!);
+//       }
+//     }
+//     return res;
+//   }
+
+//   /// Gets the value of a specified part of the PointX instance.
+//   ///
+//   /// [part]: The part of the PointX for which the value is required.
+//   ///
+//   /// Returns the value of the specified part.
+//   dynamic getValue(PointXPart part) {
+//     return part == PointXPart.name
+//         ? name
+//         : part == PointXPart.x
+//             ? x
+//             : part == PointXPart.y
+//                 ? y
+//                 : z;
+//   }
+
+//   /// Sets the value of a specified part of the PointX instance.
+//   ///
+//   /// [part]: The part of the PointX to be set.
+//   /// [newValue]: The new value to be set for the specified part.
+//   ///
+//   /// Updates the specified part of the PointX with the new value.
+//   dynamic setValue(PointXPart part, String newValue) {
+//     part == PointXPart.name
+//         ? name = newValue
+//         : part == PointXPart.x
+//             ? x = double.parse(newValue)
+//             : part == PointXPart.y
+//                 ? y = double.parse(newValue)
+//                 : z = double.parse(newValue);
+//   }
+// }

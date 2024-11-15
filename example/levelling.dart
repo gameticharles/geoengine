@@ -1,4 +1,4 @@
-import 'package:geoengine/src/leveling/leveling.dart';
+import 'package:geoengine/geoengine.dart';
 
 void main() {
   final startingTBM = 100.000;

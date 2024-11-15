@@ -110,7 +110,7 @@ class LeastSquaresAdjustment {
   Matrix get nInv => _nInv ??= N.inverse();
 
   /// Misclosure matrix.
-  Matrix get qxx => _qxx ??= (W.inverse() - (A * nInv * A.transpose()));
+  Matrix get qxx => _qxx ??= N.inverse();
 
   /// Unknown parameters.
   Matrix get x {
@@ -202,6 +202,10 @@ class LeastSquaresAdjustment {
     Matrix cov = covariance();
     // Perform Eigenvalue decomposition on covariance matrix
     Eigen eig = cov.eigen();
+
+    //return all the eigenvalues and eigenvectors for all 2x2 matrix
+    //of the leading 2x2 matrix of the covariance matrix
+
     return eig;
   }
 
@@ -247,7 +251,7 @@ class LeastSquaresAdjustment {
         'Rejection Criterion (Confidence Level $confidenceLevel): $rejectionCriterion\n');
     results.writeln(
         'Outliers (false = accepted, true = rejected): \n${outliers.toString()}\n');
-    results.writeln('Error Ellipse: \n${errorEllipse().values}\n');
+    results.writeln('Error Ellipse: \n${errorEllipse()}\n');
     results.writeln('---------------------------------');
 
     return results.toString();

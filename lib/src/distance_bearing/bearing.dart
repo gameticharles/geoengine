@@ -71,10 +71,10 @@ class Bearing extends Angle {
   /// Validate the LatLng value
   static void _validatePoint(Point point) {
     if (point is LatLng) {
-      if (point.latitude < -90 || point.latitude > 90) {
+      if (point.latitude.degrees < -90 || point.latitude.degrees > 90) {
         throw ArgumentError('Latitude must be between -90 and 90 degrees.');
       }
-      if (point.longitude < -180 || point.longitude > 180) {
+      if (point.longitude.degrees < -180 || point.longitude.degrees > 180) {
         throw ArgumentError('Longitude must be between -180 and 180 degrees.');
       }
     }
@@ -97,10 +97,10 @@ class Bearing extends Angle {
     _validatePoint(point2);
 
     if (point1 is LatLng && point2 is LatLng) {
-      double lat1 = toRadians(point1.latitude);
-      double lon1 = toRadians(point1.longitude);
-      double lat2 = toRadians(point2.latitude);
-      double lon2 = toRadians(point2.longitude);
+      double lat1 = point1.latitude.radians;
+      double lon1 = point1.longitude.radians;
+      double lat2 = point2.latitude.radians;
+      double lon2 = point2.longitude.radians;
 
       double dLon = lon2 - lon1;
 

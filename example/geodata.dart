@@ -1,4 +1,4 @@
-import 'package:geoengine/src/geodata/geodata.dart';
+import 'package:geoengine/geoengine.dart';
 
 Future<void> main(List<String> args) async {
   // Read file

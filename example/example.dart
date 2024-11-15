@@ -2,6 +2,8 @@ import 'package:advance_math/advance_math.dart';
 import 'package:geoengine/geoengine.dart';
 
 void main() {
+  print(percentage2Degrees(0.75)); // Output: 180
+  print(percentage2radians(0.75)); // Output: 3.141592653589793
   var utm = UTM(
     zoneNumber: 35,
     zoneLetter: 'J',

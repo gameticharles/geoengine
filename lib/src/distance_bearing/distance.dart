@@ -15,10 +15,10 @@ class Distance extends Length {
   ///
   /// Returns the [Length] between points.
   static Length haversine(LatLng point1, LatLng point2) {
-    double lat1 = toRadians(point1.latitude);
-    double lon1 = toRadians(point1.longitude);
-    double lat2 = toRadians(point2.latitude);
-    double lon2 = toRadians(point2.longitude);
+    double lat1 = point1.latitude.radians;
+    double lon1 = point1.longitude.radians;
+    double lat2 = point2.latitude.radians;
+    double lon2 = point2.longitude.radians;
 
     double dlat = lat2 - lat1;
     double dlon = lon2 - lon1;
@@ -40,10 +40,10 @@ class Distance extends Length {
   ///
   /// Returns the [Length] between points.
   static Length greatCircle(LatLng point1, LatLng point2) {
-    double lat1 = toRadians(point1.latitude);
-    double lon1 = toRadians(point1.longitude);
-    double lat2 = toRadians(point2.latitude);
-    double lon2 = toRadians(point2.longitude);
+    double lat1 = point1.latitude.radians;
+    double lon1 = point1.longitude.radians;
+    double lat2 = point2.latitude.radians;
+    double lon2 = point2.longitude.radians;
 
     return Length(
         m: acos(sin(lat1) * sin(lat2) +
@@ -77,10 +77,10 @@ class Distance extends Length {
     ellipsoid ??= Ellipsoid.wgs84;
     double a = ellipsoid.a, b = ellipsoid.b, f = ellipsoid.f;
 
-    double lat1 = toRadians(point1.latitude);
-    double lon1 = toRadians(point1.longitude);
-    double lat2 = toRadians(point2.latitude);
-    double lon2 = toRadians(point2.longitude);
+    double lat1 = point1.latitude.radians;
+    double lon1 = point1.longitude.radians;
+    double lat2 = point2.latitude.radians;
+    double lon2 = point2.longitude.radians;
 
     double u1 = atan((1 - f) * tan(lat1));
     double u2 = atan((1 - f) * tan(lat2));
@@ -162,7 +162,7 @@ class Distance extends Length {
     double sinAlpha1 = sin(alpha1);
     double cosAlpha1 = cos(alpha1);
 
-    double tanU1 = (1 - f) * tan(toRadians(point.latitude));
+    double tanU1 = (1 - f) * tan(point.latitude.radians);
     double cosU1 = 1 / sqrt((1 + tanU1 * tanU1));
     double sinU1 = tanU1 * cosU1;
     double sigma1 = atan2(tanU1, cosAlpha1);
@@ -209,7 +209,7 @@ class Distance extends Length {
                     sinSigma *
                     (cos2SigmaM +
                         C * cosSigma * (-1 + 2 * cos2SigmaM * cos2SigmaM)));
-    double lambda2 = toRadians(point.longitude) + L;
+    double lambda2 = point.longitude.radians + L;
 
     double finalBearing = atan2(sinAlpha, -x);
     finalBearing = (toDegrees(finalBearing) + 360) % 360;
@@ -231,10 +231,10 @@ class Distance extends Length {
       {Ellipsoid? ellipsoid}) {
     ellipsoid ??= Ellipsoid.wgs84;
     double a = ellipsoid.a, b = ellipsoid.b, f = ellipsoid.f;
-    double phi1 = toRadians(point1.latitude);
-    double lambda1 = toRadians(point1.longitude);
-    double phi2 = toRadians(point2.latitude);
-    double lambda2 = toRadians(point2.longitude);
+    double phi1 = point1.latitude.radians;
+    double lambda1 = point1.longitude.radians;
+    double phi2 = point2.latitude.radians;
+    double lambda2 = point2.longitude.radians;
 
     double u1 = atan((1 - f) * tan(phi1));
     double u2 = atan((1 - f) * tan(phi2));

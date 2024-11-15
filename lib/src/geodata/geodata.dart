@@ -1,4 +1,4 @@
-import 'file_helper/file_io.dart';
+part of "../../geoengine.dart";
 
 /// The `GeoData` class for handling geospatial data in various formats.
 ///

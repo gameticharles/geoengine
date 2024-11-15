@@ -106,7 +106,7 @@ class GeocoderRequestResponse {
   String toString() {
     if (success) {
       // Successful response
-      return 'GeocoderRequestResponse:\nSuccess: $success\nDuration: ${duration!.inMilliseconds}ms\nResult: $result';
+      return 'GeocoderRequestResponse:\nSuccess: $success\nDuration: ${duration!.inMilliseconds} ms\nResult: $result';
     } else {
       // Response with error
       String errorDetails = 'Error';
@@ -116,7 +116,7 @@ class GeocoderRequestResponse {
       if (error != null) {
         errorDetails += ': $error';
       }
-      return 'GeocoderRequestResponse:\nSuccess: $success\nDuration: ${duration?.inMilliseconds}ms\nError Details: $errorDetails';
+      return 'GeocoderRequestResponse:\nSuccess: $success\nDuration: ${duration?.inMilliseconds} ms\nError Details: $errorDetails';
     }
   }
 }

@@ -63,7 +63,7 @@ class UTMZones {
     final int longZone = longitude < 0.0
         ? ((180 + longitude) ~/ 6.0) + 1
         : (longitude ~/ 6) + 31;
-    return '$longZone${getLatZone(latitude)}';
+    return '$longZone${getHemisphere(getLatZone(latitude))}';
   }
 
   /// Get the central meridian value for the UTM zone based on the given longitude.

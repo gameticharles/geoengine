@@ -1,0 +1,48 @@
+#!/bin/bash
+
+Fail()
+{
+    echo "FATAL(demo/dart/demotest): $1"
+    exit 1
+}
+
+TestDemo()
+{
+    echo "Testing Dart demo: $1"
+    dart run $1.dart $* > test/$1${SUFFIX}.txt || Fail "Error running $1.dart."
+    diff {correct,test}/$1${SUFFIX}.txt || Fail "Incorrect output from $1.dart."
+}
+
+rm -f test/*.txt
+mkdir -p test
+
+SUFFIX=
+TestDemo solar_time +38.88 -77.03 $current_date
+TestDemo equatorial 38.1256 -89.5544 215.7 23.5 $current_date
+TestDemo equator_of_date a 12 45 $current_date
+SUFFIX=_nz TestDemo camera -41.17 175.5 $current_date
+SUFFIX=_fl TestDemo camera +29 -81 $current_date
+SUFFIX=_ca TestDemo camera 51.05 -114.07 $current_date
+TestDemo moonphase $current_date
+TestDemo positions +45.6 -90.7 $current_date
+TestDemo riseset +45.6 -90.7 $current_date
+TestDemo seasons $(date -u +"%Y")
+TestDemo culminate +30 -90 $current_date
+TestDemo horizon +25.5 -85.3 $current_date
+TestDemo lunar_eclipse 1988-01-01
+TestDemo triangulate 48.16042 24.49986 2019 18 7 48.27305 24.36401 662 83 12
+TestDemo vernal_point 1900-01-01 2000-01-01
+TestDemo moon_north_south 2023-08-22 2000-12-18 $current_date
+
+echo "Testing Dart demo: gravity"
+for latitude in {0..90}; do
+    dart run gravity.dart ${latitude} 0 >> test/gravity.txt || Fail "Error running gravity.dart."
+done
+diff {correct,test}/gravity.txt || Fail "Incorrect output from gravity.dart."
+
+cd calendar || Fail "Cannot change to calendar directory."
+./run || exit 1
+cd ..
+
+echo "PASS: Dart demos"
+exit 0

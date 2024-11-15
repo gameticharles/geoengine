@@ -5,38 +5,40 @@ part of '../../geoengine.dart';
 /// This class extends `PointX` to provide additional functionalities specific
 /// to geographical coordinates, including methods to work with different
 /// coordinate formats and geospatial calculations.
-class LatLng extends PointX {
-  /// The longitude of the point. This is always in decimal degrees
-  final double latitude;
-
-  /// The longitude of the point. This is always in decimal degrees.
-  final double longitude;
-
+class LatLng extends PointX implements latLng.LatLng {
   /// The elevation (in meters) of the point.
   final double? elevation;
 
+  /// The longitude of the point. This is always in decimal degrees
+  final double lat;
+
+  /// The longitude of the point. This is always in decimal degrees.
+  final double lng;
+
   static const double R = 6371000; // Earth radius in meters
+
+  @override
+  latLng.Angle get latitude => latLng.Angle.degree(lat);
+
+  @override
+  latLng.Angle get longitude => latLng.Angle.degree(lng);
 
   /// Creates a LatLng instance with specified latitude, longitude, and optional elevation.
   ///
   /// [latitude]: The latitude of the point in decimal degrees.
   /// [longitude]: The longitude of the point in decimal degrees.
   /// [elevation]: (Optional) The elevation of the point in meters.
-  LatLng(this.latitude, this.longitude, [this.elevation])
-      : assert(latitude >= -90 && latitude <= 90),
-        assert(longitude >= -180 && longitude <= 180),
-        super(
-            y: latitude,
-            x: longitude,
-            z: elevation,
-            type: CoordinateType.geodetic);
+  LatLng(this.lat, this.lng, [this.elevation])
+      : assert(lat >= -90 && lat <= 90),
+        assert(lng >= -180 && lng <= 180),
+        super(y: lat, x: lng, z: elevation, type: CoordinateType.geodetic);
 
   /// Creates a LatLng instance from a Map containing latitude, longitude, and optional elevation.
   ///
   /// [map]: A Map containing 'latitude', 'longitude', and optionally 'elevation' keys.
   LatLng.fromMap(Map<dynamic, dynamic> map)
-      : latitude = map['latitude']!,
-        longitude = map['longitude']!,
+      : lat = map['latitude']!,
+        lng = map['longitude']!,
         elevation = map['elevation'],
         super(
             y: map['latitude']!,
@@ -50,8 +52,8 @@ class LatLng extends PointX {
   ///         and optionally elevation as the third element.
   LatLng.fromList(List<double> list)
       : assert(list.length >= 2),
-        latitude = list[0],
-        longitude = list[1],
+        lat = list[0],
+        lng = list[1],
         elevation = list.length == 3 ? list[2] : null,
         super(
           y: list[0],
@@ -65,8 +67,8 @@ class LatLng extends PointX {
   /// [latLngAsString]: A string representing the coordinates in the format "latitude,longitude".
   LatLng.fromString(String latLngAsString)
       : assert(latLngAsString.split(',').length >= 2),
-        latitude = double.parse(latLngAsString.split(',')[0]),
-        longitude = double.parse(latLngAsString.split(',')[1]),
+        lat = double.parse(latLngAsString.split(',')[0]),
+        lng = double.parse(latLngAsString.split(',')[1]),
         elevation = latLngAsString.split(',').length == 3
             ? double.parse(latLngAsString.split(',')[2])
             : null,
@@ -119,12 +121,12 @@ class LatLng extends PointX {
   ///
   String toSexagesimal({int decPlaces = 3}) {
     return '${degree2DMSString(
-      latitude,
+      latitude.degrees,
       isLat: true,
       isLatLon: true,
       decPlace: 3,
     )}, ${degree2DMSString(
-      longitude,
+      longitude.degrees,
       isLat: false,
       isLatLon: true,
       decPlace: 3,
@@ -143,7 +145,7 @@ class LatLng extends PointX {
 
     // Now we find the time zone difference in seconds of time:
     var longInSec =
-        degrees2Seconds(longitude) / 15; // seconds before/behind GMT
+        degrees2Seconds(longitude.degrees) / 15; // seconds before/behind GMT
 
     // Convert to HH:MM:SS.
     var newTime = degree2DMS(longInSec / 3600);
@@ -183,9 +185,9 @@ class LatLng extends PointX {
   /// [point]: The other point to which the midpoint is calculated.
   /// Returns a new LatLng instance representing the midpoint.
   LatLng midPointTo(LatLng point) {
-    double phi1 = latitude * pi / 180, lon1 = longitude * pi / 180;
-    double phi2 = point.latitude * pi / 180;
-    double dLon = (point.longitude - longitude) * pi / 180;
+    double phi1 = latitude.radians, lon1 = longitude.radians;
+    double phi2 = point.latitude.radians;
+    double dLon = (point.longitude.degrees - longitude.degrees) * pi / 180;
 
     double bX = cos(phi2) * cos(dLon);
     double bY = cos(phi2) * sin(dLon);
@@ -203,18 +205,18 @@ class LatLng extends PointX {
   /// Finds the intersection point of two paths defined by a point and a bearing.
   ///
   /// [point1]: The first point.
-  /// [brng1]: The bearing from the first point.
+  /// [bearing1]: The bearing from the first point.
   /// [point2]: The second point.
-  /// [brng2]: The bearing from the second point.
+  /// [bearing1]: The bearing from the second point.
   /// Returns a LatLng representing the intersection point, or null if no unique intersection is found.
   static LatLng? intersectionPoint(
-      LatLng point1, double brng1, LatLng point2, double brng2) {
-    double lat1 = point1.latitude * pi / 180;
-    double lon1 = point1.longitude * pi / 180;
-    double lat2 = point2.latitude * pi / 180;
-    double lon2 = point2.longitude * pi / 180;
-    double theta13 = brng1 * pi / 180;
-    double theta23 = brng2 * pi / 180;
+      LatLng point1, double bearing1, LatLng point2, double bearing2) {
+    double lat1 = point1.latitude.radians;
+    double lon1 = point1.longitude.radians;
+    double lat2 = point2.latitude.radians;
+    double lon2 = point2.longitude.radians;
+    double theta13 = toRadians(bearing1);
+    double theta23 = toRadians(bearing2);
 
     double deltaLat = lat2 - lat1;
     double deltaLon = lon2 - lon1;
@@ -256,8 +258,8 @@ class LatLng extends PointX {
         cos(delta13) - sin(lat1) * sin(lat3));
     double lon3 = lon1 + deltaLon13;
 
-    lat3 = lat3 * 180 / pi;
-    lon3 = lon3 * 180 / pi;
+    lat3 = toDegrees(lat3);
+    lon3 = toDegrees(lon3);
 
     return LatLng(lat3, lon3);
   }
@@ -303,9 +305,9 @@ class LatLng extends PointX {
   /// [bearing]: The bearing to the destination point.
   /// Returns a new LatLng instance representing the destination point.
   LatLng destinationPoint(double distance, double bearing) {
-    double phi1 = latitude * pi / 180;
-    double lambda1 = longitude * pi / 180;
-    double theta = bearing * pi / 180;
+    double phi1 = latitude.radians;
+    double lambda1 = longitude.radians;
+    double theta = toRadians(bearing);
     double delta = distance / R;
 
     double phi2 =
@@ -314,7 +316,7 @@ class LatLng extends PointX {
         atan2(sin(theta) * sin(delta) * cos(phi1),
             cos(delta) - sin(phi1) * sin(phi2));
 
-    return LatLng(phi2 * 180 / pi, lambda2 * 180 / pi);
+    return LatLng(toDegrees(phi2), toDegrees(lambda2));
   }
 
   /// Calculates the destination point using rhumb line navigation given a distance and bearing from this point.
@@ -323,9 +325,9 @@ class LatLng extends PointX {
   /// [bearing]: The bearing to the destination point.
   /// Returns a new LatLng instance representing the destination point.
   LatLng rhumbDestinationPoint(double distance, double bearing) {
-    double phi1 = latitude * pi / 180;
-    double lambda1 = longitude * pi / 180;
-    double theta = bearing * pi / 180;
+    double phi1 = latitude.radians;
+    double lambda1 = longitude.radians;
+    double theta = toRadians(bearing);
 
     double delta = distance / R;
     double deltaPhi = delta * cos(theta);
@@ -337,7 +339,7 @@ class LatLng extends PointX {
     double deltaLambda = delta * sin(theta) / q;
     double lambda2 = lambda1 + deltaLambda;
 
-    return LatLng(phi2 * 180 / pi, lambda2 * 180 / pi);
+    return LatLng(toDegrees(phi2), toDegrees(lambda2));
   }
 
   /// Calculates the rhumb line distance to another point.
@@ -348,11 +350,11 @@ class LatLng extends PointX {
   /// [point]: The other point to which the rhumb line distance is calculated.
   /// Returns the distance as a Length object.
   Length rhumbLineDistance(LatLng point) {
-    double phi1 = latitude * pi / 180;
-    double phi2 = point.latitude * pi / 180;
+    double phi1 = latitude.radians;
+    double phi2 = point.latitude.radians;
     double deltaPhi = phi2 - phi1;
-    double lambda1 = longitude * pi / 180;
-    double lambda2 = point.longitude * pi / 180;
+    double lambda1 = longitude.radians;
+    double lambda2 = point.longitude.radians;
     double deltaLambda = lambda2 - lambda1;
 
     double deltaPsi = log(tan(pi / 4 + phi2 / 2) / tan(pi / 4 + phi1 / 2));
@@ -370,10 +372,10 @@ class LatLng extends PointX {
   /// [point]: The other point to which the rhumb line bearing is calculated.
   /// Returns the bearing as a Bearing object.
   Bearing rhumbLineBearing(LatLng point) {
-    double phi1 = latitude * pi / 180;
-    double phi2 = point.latitude * pi / 180;
-    double lambda1 = longitude * pi / 180;
-    double lambda2 = point.longitude * pi / 180;
+    double phi1 = latitude.radians;
+    double phi2 = point.latitude.radians;
+    double lambda1 = longitude.radians;
+    double lambda2 = point.longitude.radians;
     double deltaLambda = lambda2 - lambda1;
 
     double deltaPsi = log(tan(pi / 4 + phi2 / 2) / tan(pi / 4 + phi1 / 2));
@@ -387,10 +389,10 @@ class LatLng extends PointX {
   /// [point]: The other point to which the midpoint is calculated.
   /// Returns a new LatLng instance representing the midpoint.
   LatLng rhumbMidpoint(LatLng point) {
-    double phi1 = latitude * pi / 180;
-    double phi2 = point.latitude * pi / 180;
-    double lambda1 = longitude * pi / 180;
-    double lambda2 = point.longitude * pi / 180;
+    double phi1 = latitude.radians;
+    double phi2 = point.latitude.radians;
+    double lambda1 = longitude.radians;
+    double lambda2 = point.longitude.radians;
 
     double phiM = (phi1 + phi2) / 2;
     double f1 = tan(pi / 4 + phi1 / 2);
@@ -402,7 +404,7 @@ class LatLng extends PointX {
             lambda2 * log(f1)) /
         log(f2 / f1);
 
-    return LatLng(phiM * 180 / pi, lambdaM * 180 / pi);
+    return LatLng(toDegrees(phiM), toDegrees(lambdaM));
   }
 
   /// Calculates the cross-track distance to the great-circle path between two points.
@@ -452,8 +454,8 @@ class LatLng extends PointX {
     var wpt = Wpt();
     wpt.desc = desc;
     wpt.name = name;
-    wpt.lat = latitude;
-    wpt.lon = longitude;
+    wpt.lat = latitude.degrees;
+    wpt.lon = longitude.degrees;
     wpt.ele = elevation;
 
     //wpt.src = crs!.projName;
@@ -480,14 +482,15 @@ class LatLng extends PointX {
   String toMGRS([int accuracy = 5]) {
     return MGRS
         .parse(
-          mgrs_dart.Mgrs.forward([longitude, latitude], accuracy),
+          mgrs_dart.Mgrs.forward(
+              [longitude.degrees, latitude.degrees], accuracy),
         )
         .toString();
   }
 
   /// Return the Latitude and Longitude to UTM coordinates
   UTM toUTM() {
-    var utm = mgrs_dart.Mgrs.LLtoUTM(latitude, longitude);
+    var utm = mgrs_dart.Mgrs.LLtoUTM(latitude.degrees, longitude.degrees);
 
     return UTM(
       zoneNumber: utm.zoneNumber,

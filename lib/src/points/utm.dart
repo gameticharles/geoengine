@@ -61,11 +61,11 @@ class UTM extends PointX {
   LatLng get latLng => _latLng ??= toLatLng();
 
   /// Get the latitude zone letter based on the given latitude.
-  String get latitudeZone => UTMZones().getLatZone(latLng.latitude);
+  String get latitudeZone => UTMZones().getLatZone(latLng.latitude.degrees);
 
   /// Get the UTM zone identifier based on the point.
-  String get zone => UTMZones()
-      .getZone(latitude: latLng.latitude, longitude: latLng.longitude);
+  String get zone => UTMZones().getZone(
+      latitude: latLng.latitude.degrees, longitude: latLng.longitude.degrees);
 
   /// Returns the UTM coordinate system of the current coordinate.
   Projection get utmProjection => _utmProjection ??=
@@ -94,8 +94,8 @@ class UTM extends PointX {
         accuracy: null,
       ).toLatLng();
 
-      return LatLng((llTR.latitude + ll.latitude) / 2,
-          (llTR.longitude + ll.longitude) / 2);
+      return LatLng((llTR.latitude.degrees + ll.latitude.degrees) / 2,
+          (llTR.longitude.degrees + ll.longitude.degrees) / 2);
     } else {
       return ll;
     }

@@ -1,5 +1,12 @@
 # CHANGE LOGS
 
+## 0.2.0
+
+* **[FEATURE]** Added astronomical calculations.
+* **[BUG_FIX]** Fixed getZone to return the hemisphere.
+* **[IMPROVEMENT]** Updated to use the new LatLng library format.
+* **[IMPROVEMENT]** Update to use the new Dart SDK linting rules.
+
 ## 0.1.3
 
 * **[BUG_FIX]** Final bearing not computed properly

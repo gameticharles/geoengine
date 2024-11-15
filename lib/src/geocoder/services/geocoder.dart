@@ -17,7 +17,7 @@ import 'strategies/strategy.dart';
 class Geocoder {
   final GeocoderStrategy _strategy;
   late final Function(Map<String, dynamic>) _configureStrategy;
-  Map<String, GeocoderRequestResponse> _cache = {};
+  final Map<String, GeocoderRequestResponse> _cache = {};
   DateTime _lastRequestTime;
   final Duration _throttleDuration;
 
@@ -137,7 +137,7 @@ class Geocoder {
   void _logReverseMetric(LatLng location, bool success, Duration duration) {
     // Example: Log to console - in a real application, replace with a logging framework or analytics service.
     print(
-        'Reverse Geocoding Query: Location(${location.latitude}, ${location.longitude}), Success: $success, Timestamp: ${DateTime.now()}');
+        'Reverse Geocoding Query: Location(${location.latitude.degrees}, ${location.longitude.degrees}), Success: $success, Timestamp: ${DateTime.now()}');
 
     //Logger.log('Reverse Geocoding Query: Location(${location.latitude}, ${location.longitude}), Success: $success, Duration: ${duration.inMilliseconds}ms');
 

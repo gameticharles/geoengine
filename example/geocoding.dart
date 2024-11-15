@@ -1,12 +1,9 @@
 import 'package:advance_math/advance_math.dart';
 import 'package:geoengine/geoengine.dart';
-import 'package:geoengine/src/geocoder/geocoder.dart';
-
-import 'package:geoengine/src/geodata/geodata.dart';
 
 void main(List<String> args) async {
 // Search Point
-  var point2 = LatLng(6, 0.7);
+  var point2 = LatLng(6, -1.5);
 
   var googleGeocoder = Geocoder(
       strategyFactory: GoogleStrategy.create('YOUR_GOOGLE_API_KEY'),
@@ -97,7 +94,8 @@ void main(List<String> args) async {
   print('');
 
   rex.result.forEach((x) {
-    var point1 = LatLng(x[0]['latitude'], x[0]['longitude']);
+    // print(x);
+    var point1 = LatLng((x[0]['latitude']), x[0]['longitude']);
 
     print('Initial Bearing: ${point1.initialBearingTo(point2)}');
     print('Final Bearing: ${point1.finalBearingTo(point2)}');

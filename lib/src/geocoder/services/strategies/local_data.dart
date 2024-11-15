@@ -1,9 +1,8 @@
+// ignore_for_file: unused_element
+
 import 'package:advance_math/advance_math.dart';
 import 'package:geoengine/geoengine.dart';
 import 'package:kdtree/kdtree.dart';
-
-import 'request.dart';
-import 'strategy.dart';
 
 /// A concrete implementation of the GeocoderStrategy for local geocoding.
 ///
@@ -158,7 +157,7 @@ class LocalStrategy implements GeocoderStrategy {
   Future<GeocoderRequestResponse> reverse(
       LatLng location, String language) async {
     var cacheKey =
-        'reverse-${location.latitude}-${location.longitude}-$language';
+        'reverse-${location.latitude.degrees}-${location.longitude.degrees}-$language';
     if (_cache.containsKey(cacheKey) &&
         _cache[cacheKey] is GeocoderRequestResponse) {
       return _cache[cacheKey];
@@ -167,8 +166,8 @@ class LocalStrategy implements GeocoderStrategy {
     var startTime = DateTime.now();
     var nearest = _tree.nearest(
       {
-        coordinatesColumnNames.y: location.latitude,
-        coordinatesColumnNames.x: location.longitude
+        coordinatesColumnNames.y: location.latitude.degrees,
+        coordinatesColumnNames.x: location.longitude.degrees
       },
       limit,
       searchRadius,

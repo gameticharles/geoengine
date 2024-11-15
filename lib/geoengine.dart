@@ -1,4 +1,5 @@
 // ignore_for_file: implementation_imports
+
 library geoengine;
 
 import 'package:advance_math/advance_math.dart' hide Point;
@@ -9,10 +10,16 @@ import 'package:proj4dart/src/common/datum_utils.dart' as datum_utils;
 import 'package:proj4dart/src/common/utils.dart' as utils;
 import 'package:proj4dart/src/constants/values.dart' as consts;
 import 'package:mgrs_dart/mgrs_dart.dart' as mgrs_dart;
+import 'package:latlng/latlng.dart' as latLng;
+import 'package:geoengine/src/utils/utils.dart';
 
 export 'package:geoxml/geoxml.dart';
 export 'package:proj4dart/proj4dart.dart' hide Point;
 
+export 'package:geoengine/src/geocoder/geocoder.dart';
+export 'package:geoengine/src/leveling/leveling.dart';
+
+part 'src/geodata/geodata.dart';
 part 'src/points/x_point.dart';
 part 'src/points/mgrs.dart';
 part 'src/points/latlng.dart';
