@@ -168,14 +168,14 @@ class GravitySimulator {
 
     // Calculate the heliocentric position of each planet, and adjust the SSB
     // based each planet's pull on the Sun.
-    dict[Body.Mercury.toString().split('.').last] = adjustBarycenterPosVel(ssb, time.tt, Body.Mercury, MERCURY_GM);
-    dict[Body.Venus.toString().split('.').last] = adjustBarycenterPosVel(ssb, time.tt, Body.Venus, VENUS_GM);
-    dict[Body.Earth.toString().split('.').last] = adjustBarycenterPosVel(ssb, time.tt, Body.Earth, EARTH_GM + MOON_GM);
-    dict[Body.Mars.toString().split('.').last] = adjustBarycenterPosVel(ssb, time.tt, Body.Mars, MARS_GM);
-    dict[Body.Jupiter.toString().split('.').last] = adjustBarycenterPosVel(ssb, time.tt, Body.Jupiter, JUPITER_GM);
-    dict[Body.Saturn.toString().split('.').last] = adjustBarycenterPosVel(ssb, time.tt, Body.Saturn, SATURN_GM);
-    dict[Body.Uranus.toString().split('.').last] = adjustBarycenterPosVel(ssb, time.tt, Body.Uranus, URANUS_GM);
-    dict[Body.Neptune.toString().split('.').last] = adjustBarycenterPosVel(ssb, time.tt, Body.Neptune, NEPTUNE_GM);
+    dict[Body.Mercury.name] = adjustBarycenterPosVel(ssb, time.tt, Body.Mercury, MERCURY_GM);
+    dict[Body.Venus.name] = adjustBarycenterPosVel(ssb, time.tt, Body.Venus, VENUS_GM);
+    dict[Body.Earth.name] = adjustBarycenterPosVel(ssb, time.tt, Body.Earth, EARTH_GM + MOON_GM);
+    dict[Body.Mars.name] = adjustBarycenterPosVel(ssb, time.tt, Body.Mars, MARS_GM);
+    dict[Body.Jupiter.name] = adjustBarycenterPosVel(ssb, time.tt, Body.Jupiter, JUPITER_GM);
+    dict[Body.Saturn.name] = adjustBarycenterPosVel(ssb, time.tt, Body.Saturn, SATURN_GM);
+    dict[Body.Uranus.name] = adjustBarycenterPosVel(ssb, time.tt, Body.Uranus, URANUS_GM);
+    dict[Body.Neptune.name] = adjustBarycenterPosVel(ssb, time.tt, Body.Neptune, NEPTUNE_GM);
 
     // Convert planet states from heliocentric to barycentric.
     for (var body in dict.keys.toList()) {

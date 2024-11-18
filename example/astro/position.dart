@@ -83,7 +83,7 @@ void demo() {
           date, observer, equOfDate.ra, equOfDate.dec, 'normal');
 
       print(
-          '${body.toString().split('.').last.padRight(8)} ${format(equ2000.ra)} ${format(equ2000.dec)} ${format(hor.azimuth)} ${format(hor.altitude)}');
+          '${body.name.padRight(8)} ${format(equ2000.ra)} ${format(equ2000.dec)} ${format(hor.azimuth)} ${format(hor.altitude)}');
     }
 
     exit(0);
@@ -96,7 +96,7 @@ void demo() {
 void demo1() {
   final latitude = 6.56784;
   final longitude = -1.5674;
-  final observer = Observer(latitude, longitude, 0);
+  final observer = Observer(latitude, longitude, 232);
   final date = DateTime.now().toUtc();
 
   print('UTC date = ${date.toIso8601String()}');
@@ -124,7 +124,7 @@ void demo1() {
         date, observer, equOfDate.ra, equOfDate.dec, 'normal');
 
     print(
-        '${body.toString().split('.').last.padRight(8)} ${format(equ2000.ra)} ${format(equ2000.dec)} ${format(hor.azimuth)} ${format(hor.altitude)}');
+        '${body.name.padRight(8)} ${format(equ2000.ra)} ${format(equ2000.dec)} ${format(hor.azimuth)} ${format(hor.altitude)}');
   }
 
   exit(0);

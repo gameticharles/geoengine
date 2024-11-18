@@ -66,8 +66,8 @@ double angleBetween(AstroVector a, AstroVector b) {
 ///      The approximate average time it takes for the planet to travel once around the Sun.
 ///      The value is expressed in days.
 double planetOrbitalPeriod(Body body) {
-  if (planetTable.containsKey(body.toString().split('.').last)) {
-    return planetTable[body.toString().split('.').last]!.orbitalPeriod;
+  if (planetTable.containsKey(body.name)) {
+    return planetTable[body.name]!.orbitalPeriod;
   }
 
   throw "Unknown orbital period for: $body";
@@ -289,7 +289,6 @@ List<double> gyration(List<double> pos, AstroTime time, PrecessDirection dir) {
     return nutation(precession(pos, time, dir), time, dir);
   }
 }
-
 
 /// Toggles the azimuth direction by subtracting it from 360 degrees.
 double toggleAzimuthDirection(double az) {

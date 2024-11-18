@@ -93,8 +93,8 @@ Apsis bruteSearchPlanetApsis(Body body, AstroTime startTime) {
     is greatest and smallest.
   */
   const npoints = 100;
-  final t1 = startTime.addDays(planetTable[body.toString().split('.').last]!.orbitalPeriod * (-30 / 360));
-  final t2 = startTime.addDays(planetTable[body.toString().split('.').last]!.orbitalPeriod * (270 / 360));
+  final t1 = startTime.addDays(planetTable[body.name]!.orbitalPeriod * (-30 / 360));
+  final t2 = startTime.addDays(planetTable[body.name]!.orbitalPeriod * (270 / 360));
   var tMin = t1;
   var tMax = t1;
   var minDist = -1.0;
@@ -180,7 +180,7 @@ Apsis searchPlanetApsis(Body body, dynamic startTime) {
     return -positiveSlope(t);
   }
 
-  final orbitPeriodDays = planetTable[body.toString().split('.').last]!.orbitalPeriod;
+  final orbitPeriodDays = planetTable[body.name]!.orbitalPeriod;
   final increment = orbitPeriodDays / 6.0;
   var t1 = startTime;
   var m1 = positiveSlope(t1);
@@ -252,7 +252,7 @@ Apsis nextPlanetApsis(Body body, Apsis apsis) {
   }
 
   // Skip 1/4 of an orbit before starting the search again
-  final skip = 0.25 * planetTable[body.toString().split('.').last]!.orbitalPeriod;
+  final skip = 0.25 * planetTable[body.name]!.orbitalPeriod;
   final time = apsis.time.addDays(skip);
   final next = searchPlanetApsis(body, time);
 

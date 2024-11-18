@@ -45,20 +45,13 @@ DateTime parseDate(String text) {
 
 void displayEvent(String name, HourAngleEvent evt) {
   String text;
-  if (evt != null) {
-    DateTime dateTime = evt.time.date;
-    double altitude = evt.hor.altitude;
-    double azimuth = evt.hor.azimuth;
+  DateTime dateTime = evt.time.date;
+  double altitude = evt.hor.altitude;
+  double azimuth = evt.hor.azimuth;
 
-    text = dateTime.toIso8601String() +
-        '  altitude=' +
-        altitude.toStringAsFixed(2).padLeft(6) +
-        '  azimuth=' +
-        azimuth.toStringAsFixed(2).padLeft(7);
-  } else {
-    text = '(not found)';
-  }
-  print(name.padRight(8) + ' : ' + text);
+  text =
+      '${dateTime.toIso8601String()}  altitude=${altitude.toStringAsFixed(2).padLeft(6)}  azimuth=${azimuth.toStringAsFixed(2).padLeft(7)}';
+  print('${name.padRight(8)} : $text');
 }
 
 void demo() {
@@ -82,12 +75,12 @@ void demo() {
     final observer = Observer(latitude, longitude, 0);
     final date =
         (arguments.length == 5) ? parseDate(arguments[4]) : DateTime.now();
-    print('search   : ' + date.toIso8601String());
+    print('search   : ${date.toIso8601String()}');
 
     for (var body in bodyList) {
       var culm = searchHourAngle(body, observer, 0,
           date); // Replace with actual method to search hour angle.
-      displayEvent(body.toString().split('.').last, culm);
+      displayEvent(body.name, culm);
     }
 
     exit(0);
@@ -115,12 +108,12 @@ void demo1() {
   final observer = Observer(latitude, longitude, 0);
   final date = DateTime.now();
 
-  print('search   : ' + date.toIso8601String());
+  print('search   : ${date.toIso8601String()}');
 
   for (var body in bodyList) {
     var culm = searchHourAngle(body, observer, 0,
         date); // Replace with actual method to search hour angle.
-    displayEvent(body.toString().split('.').last, culm);
+    displayEvent(body.name, culm);
   }
 
   exit(0);

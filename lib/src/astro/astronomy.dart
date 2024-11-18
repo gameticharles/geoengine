@@ -119,7 +119,7 @@ final List<Map<String, double>> StarTable = [
 
 // Define the getStar function
 Map<String, double>? getStar(Body body) {
-  int index = StarList.indexOf(body.toString().split('.').last);
+  int index = StarList.indexOf(body.name);
   return (index >= 0) ? StarTable[index] : null;
 }
 
@@ -534,7 +534,7 @@ BodyState bodyStateFromTable(List entry) {
 
 BodyState adjustBarycenterPosVel(BodyState ssb, double tt, Body body, double planetGm) {
   final shift = planetGm / (planetGm + SUN_GM);
-  final planet = calcVsopPosVel(vsopTable[body.toString().split('.').last]!, tt);
+  final planet = calcVsopPosVel(vsopTable[body.name]!, tt);
   ssb.r.incr(planet.r.mul(shift));
   ssb.v.incr(planet.v.mul(shift));
   return planet;
@@ -810,7 +810,7 @@ StateVector exportState(BodyState terse, AstroTime time) {
 
 void adjustBarycenter(AstroVector ssb, AstroTime time, Body body, double pmass) {
   final shift = pmass / (pmass + SUN_GM);
-  final planet = calcVsop(vsopTable[body.toString().split('.').last]!, time);
+  final planet = calcVsop(vsopTable[body.name]!, time);
   ssb.x += shift * planet.x;
   ssb.y += shift * planet.y;
   ssb.z += shift * planet.z;
@@ -851,8 +851,8 @@ AstroVector calcSolarSystemBarycenter(AstroTime time) {
 AstroVector helioVector(Body body, dynamic date) {
   var time = AstroTime(date);
 
-  if (vsopTable.containsKey(body.toString().split('.').last)) {
-    return calcVsop(vsopTable[body.toString().split('.').last]!, time);
+  if (vsopTable.containsKey(body.name)) {
+    return calcVsop(vsopTable[body.name]!, time);
   }
   if (body == Body.Pluto) {
     // print("run");
@@ -940,7 +940,7 @@ StateVector helioState(Body body, dynamic date) {
     case Body.Uranus:
     case Body.Neptune:
       // Planets included in the VSOP87 model.
-      var planet = calcVsopPosVel(vsopTable[body.toString().split('.').last]!, time.tt);
+      var planet = calcVsopPosVel(vsopTable[body.name]!, time.tt);
       return exportState(planet, time);
 
     case Body.Pluto:
@@ -1249,8 +1249,9 @@ EquatorialCoordinates equator(
         gc.z - gcObserver[2],
     ];
 
-    if (!ofdate)
-        return vector2radec(j2000, time);
+    if (!ofdate) {
+      return vector2radec(j2000, time);
+    }
 
     var datevect = gyration(j2000, time, PrecessDirection.From2000);
     return vector2radec(datevect, time);
@@ -1803,8 +1804,8 @@ double HelioDistance(Body body, dynamic date) {
   }
 
   var time = AstroTime(date); // Assuming AstroTime function is defined elsewhere
-  if (vsopTable.containsKey(body.toString().split('.').last)) {
-    return vsopFormula(vsopTable[body.toString().split('.').last]![RAD_INDEX], time.tt / DAYS_PER_MILLENNIUM, false);
+  if (vsopTable.containsKey(body.name)) {
+    return vsopFormula(vsopTable[body.name]![RAD_INDEX], time.tt / DAYS_PER_MILLENNIUM, false);
   }
 
   return helioVector(body, time).length();
@@ -1870,10 +1871,10 @@ StateVector baryState(Body body, dynamic date) {
       );
     case _:
       // Handle the remaining VSOP bodies: Mercury, Venus, Earth, Mars.
-      if (vsopTable.containsKey(body.toString().split('.').last)) {
+      if (vsopTable.containsKey(body.name)) {
         
-        // print(vsopTable.containsKey(body.toString().split('.').last));
-        final planet = calcVsopPosVel(vsopTable[body.toString().split('.').last]!, time.tt);
+        // print(vsopTable.containsKey(body.name));
+        final planet = calcVsopPosVel(vsopTable[body.name]!, time.tt);
         return StateVector(
           bary.Sun.r.x + planet.r.x,
           bary.Sun.r.y + planet.r.y,
@@ -2349,7 +2350,7 @@ double synodicPeriod(Body body) {
     return MEAN_SYNODIC_MONTH;
   }
 
-  final planetName = body.toString().split('.').last;
+  final planetName = body.name;
   final planetInfo = planetTable[planetName];
   if (planetInfo == null) {
     throw Exception('Not a valid planet name: $planetName');
@@ -2388,7 +2389,7 @@ double synodicPeriod(Body body) {
 ///      The time when the Earth and the body next reach the specified relative longitudes.
 AstroTime searchRelativeLongitude(Body body, double targetRelLon, dynamic startDate) {
   verifyNumber(targetRelLon);
-  final planet = planetTable[body.toString().split('.').last]!;
+  final planet = planetTable[body.name]!;
   if (body == Body.Earth) {
     throw Exception('Cannot search relative longitude for the Earth (it is always 0).');
   }
@@ -3221,7 +3222,7 @@ ElongationEvent searchMaxElongation(Body body, dynamic startDate) {
     'Venus': InferiorPlanetEntry(40.0, 50.0),
   });
 
-  InferiorPlanetEntry? planet = table.table[body.toString().split('.').last];
+  InferiorPlanetEntry? planet = table.table[body.name];
   if (planet == null) {
     throw 'SearchMaxElongation works for Mercury and Venus only.';
   }
