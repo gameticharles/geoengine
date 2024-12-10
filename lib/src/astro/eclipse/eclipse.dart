@@ -861,7 +861,7 @@ class Eclipse{
           final lastEclipse = eclipseResult.last;
           final isLastLunar = lastEclipse is LunarEclipseInfo;
           
-          if (isLastLunar) {
+          if (!isLastLunar) {
             final nextEclipse = observer != null
                 ? nextLocalSolarEclipse((lastEclipse.peak as EclipseEvent).time, observer)
                 : nextGlobalSolarEclipse(lastEclipse.peak as AstroTime);
