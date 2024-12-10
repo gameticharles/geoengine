@@ -1,6 +1,6 @@
-// ignore_for_file: avoid_init_to_null
+// ignore_for_file: avoid_init_to_null, non_constant_identifier_names, unused_local_variable
 
-part of '../astronomy.dart';
+part of '../../astronomy.dart';
 
 class Moon {
   late AstroTime date;
@@ -8,7 +8,6 @@ class Moon {
   late double geo_eclip_lat;
   late double distance_au;
 
-  // ignore: avoid_init_to_null
   Moon([dynamic date = null]) {
     this.date = AstroTime(date ?? DateTime.now());
     final m = _calcMoon(this.date);
@@ -597,5 +596,116 @@ class Moon {
     final d = 1.0 + EARTH_MOON_MASS_RATIO;
     return StateVector(
         s.x / d, s.y / d, s.z / d, s.vx / d, s.vy / d, s.vz / d, s.t);
+  }
+
+  /// Calculates the local shadow information for the Moon as seen by the given observer.
+  ///
+  /// This method returns a [ShadowInfo] object that contains information about the local
+  /// shadow of the Moon as seen by the given observer, such as the start and end times
+  /// of the shadow, the duration of the shadow, and the magnitude of the shadow.
+  ///
+  /// @param observer The observer for whom to calculate the local Moon shadow.
+  /// @return A [ShadowInfo] object containing the local Moon shadow information.
+  ShadowInfo localMoonShadow(Observer observer) {
+    return ShadowInfo.localMoonShadow(date, observer);
+  }
+
+  /// Calculates the peak local shadow information for the Moon as seen by the given observer.
+  ///
+  /// This method returns a [ShadowInfo] object that contains information about the peak local
+  /// shadow of the Moon as seen by the given observer, such as the start and end times
+  /// of the peak shadow, the duration of the peak shadow, and the magnitude of the peak shadow.
+  ///
+  /// @param observer The observer for whom to calculate the peak local Moon shadow.
+  /// @return A [ShadowInfo] object containing the peak local Moon shadow information.
+  ShadowInfo peakLocalMoonShadow(Observer observer) {
+    return ShadowInfo.peakLocalMoonShadow(date, observer);
+  }
+
+  /// Calculates the peak local shadow information for the Moon as seen by the given observer.
+  ///
+  /// This method returns a [ShadowInfo] object that contains information about the peak local
+  /// shadow of the Moon as seen by the given observer, such as the start and end times
+  /// of the peak shadow, the duration of the peak shadow, and the magnitude of the peak shadow.
+  ///
+  /// @param observer The observer for whom to calculate the peak local Moon shadow.
+  /// @return A [ShadowInfo] object containing the peak local Moon shadow information.
+  ShadowInfo peakMoonShadow() {
+    return ShadowInfo.peakMoonShadow(date);
+  }
+
+  final MoonNodeStepDays = 10.0;
+
+  /// @brief Searches for a time when the Moon's center crosses through the ecliptic plane.
+  ///
+  /// Searches for the first ascending or descending node of the Moon after `startTime`.
+  /// An ascending node is when the Moon's center passes through the ecliptic plane
+  /// (the plane of the Earth's orbit around the Sun) from south to north.
+  /// A descending node is when the Moon's center passes through the ecliptic plane
+  /// from north to south. Nodes indicate possible times of solar or lunar eclipses,
+  /// if the Moon also happens to be in the correct phase (new or full, respectively).
+  /// Call `SearchMoonNode` to find the first of a series of nodes.
+  /// Then call {@link NextMoonNode} to find as many more consecutive nodes as desired.
+  ///
+  /// @param {FlexibleDateTime} startTime
+  ///      The date and time for starting the search for an ascending or descending node of the Moon.
+  ///
+  /// @returns {NodeEventInfo}
+  NodeEventInfo searchMoonNode([dynamic startDate = null]) {
+    // Start at the given moment in time and sample the Moon's ecliptic latitude.
+    // Step 10 days at a time, searching for an interval where that latitude crosses zero.
+
+    AstroTime time1 = AstroTime(startDate ?? date);
+    Spherical eclip1 = EclipticGeoMoon(time1);
+
+    for (;;) {
+      AstroTime time2 = time1.addDays(MoonNodeStepDays);
+      Spherical eclip2 = EclipticGeoMoon(time2);
+      if (eclip1.lat * eclip2.lat <= 0.0) {
+        // There is a node somewhere inside this closed time interval.
+        // Figure out whether it is an ascending node or a descending node.
+        NodeEventKind kind = (eclip2.lat > eclip1.lat)
+            ? NodeEventKind.Ascending
+            : NodeEventKind.Descending;
+        final result =
+            search((t) => kind.value * EclipticGeoMoon(t).lat, time1, time2);
+        if (result == null) {
+          throw 'Could not find moon node.'; // should never happen
+        }
+        return NodeEventInfo(kind, result);
+      }
+      time1 = time2;
+      eclip1 = eclip2;
+    }
+  }
+
+  /// @brief Searches for the next time when the Moon's center crosses through the ecliptic plane.
+  ///
+  /// Call {@link SearchMoonNode} to find the first of a series of nodes.
+  /// Then call `NextMoonNode` to find as many more consecutive nodes as desired.
+  ///
+  /// @param {NodeEventInfo} prevNode
+  ///      The previous node found from calling {@link SearchMoonNode} or `NextMoonNode`.
+  ///
+  /// @returns {NodeEventInfo}
+  NodeEventInfo nextMoonNode([NodeEventInfo? prevNode]) {
+    AstroTime time =
+        (prevNode ?? searchMoonNode()).time.addDays(MoonNodeStepDays);
+    NodeEventInfo node = searchMoonNode(time);
+    switch (prevNode!.kind) {
+      case NodeEventKind.Ascending:
+        if (node.kind != NodeEventKind.Descending) {
+          throw 'Internal error: previous node was ascending, but this node was: ${node.kind}';
+        }
+        break;
+      case NodeEventKind.Descending:
+        if (node.kind != NodeEventKind.Ascending) {
+          throw 'Internal error: previous node was descending, but this node was: ${node.kind}';
+        }
+        break;
+      default:
+        throw 'Previous node has an invalid node kind: ${prevNode.kind}';
+    }
+    return node;
   }
 }

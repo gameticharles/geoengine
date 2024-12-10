@@ -1,5 +1,5 @@
 
-part of '../astronomy.dart';
+part of '../../astronomy.dart';
 
 
 /// @brief Determines the moon's phase expressed as an ecliptic longitude.

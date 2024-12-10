@@ -29,11 +29,11 @@ void main() {
   leveling.computeReducedLevels();
 
   print("Rise & Fall:");
-  print(leveling.getDataFrame());
+  print(leveling);
 
   // Calculate reduced levels using Rise & Fall algorithm
   leveling.computeReducedLevels(LevellingMethod.hpc);
 
   print("\n\nHPC:");
-  print(leveling.getDataFrame());
+  print(leveling);
 }

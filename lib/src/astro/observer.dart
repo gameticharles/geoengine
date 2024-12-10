@@ -152,6 +152,133 @@ Observer inverseTerra(List<double> ovec, double st) {
   return Observer(latDeg, lonDeg, 1000 * heightKm);
 }
 
+/// @brief Calculates geocentric equatorial coordinates of an observer on the surface of the Earth.
+///
+/// This function calculates a vector from the center of the Earth to
+/// a point on or near the surface of the Earth, expressed in equatorial
+/// coordinates. It takes into account the rotation of the Earth at the given
+/// time, along with the given latitude, longitude, and elevation of the observer.
+///
+/// The caller may pass `ofdate` as `true` to return coordinates relative to the Earth's
+/// equator at the specified time, or `false` to use the J2000 equator.
+///
+/// The returned vector has components expressed in astronomical units (AU).
+/// To convert to kilometers, multiply the `x`, `y`, and `z` values by
+/// the constant value {@link KM_PER_AU}.
+///
+/// The inverse of this function is also available: {@link VectorObserver}.
+///
+/// @param {FlexibleDateTime} date
+///      The date and time for which to calculate the observer's position vector.
+///
+/// @param {Observer} observer
+///      The geographic location of a point on or near the surface of the Earth.
+///
+/// @param {boolean} ofdate
+///      Selects the date of the Earth's equator in which to express the equatorial coordinates.
+///      The caller may pass `false` to use the orientation of the Earth's equator
+///      at noon UTC on January 1, 2000, in which case this function corrects for precession
+///      and nutation of the Earth as it was at the moment specified by the `time` parameter.
+///      Or the caller may pass `true` to use the Earth's equator at `time`
+///      as the orientation.
+///
+/// @returns {Vector}
+///      An equatorial vector from the center of the Earth to the specified location
+///      on (or near) the Earth's surface.
+AstroVector observerVector(dynamic date, Observer observer, bool ofdate) {
+  final time = AstroTime(date);
+  final gast = siderealTime(time);
+  var ovec = terra(observer, gast).pos;
+  if (!ofdate) {
+    ovec = gyration(ovec, time, PrecessDirection.Into2000);
+  }
+  return AstroVector.fromArray(ovec, time);
+}
+
+/// @brief Calculates geocentric equatorial position and velocity of an observer on the surface of the Earth.
+///
+/// This function calculates position and velocity vectors of an observer
+/// on or near the surface of the Earth, expressed in equatorial
+/// coordinates. It takes into account the rotation of the Earth at the given
+/// time, along with the given latitude, longitude, and elevation of the observer.
+///
+/// The caller may pass `ofdate` as `true` to return coordinates relative to the Earth's
+/// equator at the specified time, or `false` to use the J2000 equator.
+///
+/// The returned position vector has components expressed in astronomical units (AU).
+/// To convert to kilometers, multiply the `x`, `y`, and `z` values by
+/// the constant value {@link KM_PER_AU}.
+/// The returned velocity vector has components expressed in AU/day.
+///
+/// @param {FlexibleDateTime} date
+///      The date and time for which to calculate the observer's position and velocity vectors.
+///
+/// @param {Observer} observer
+///      The geographic location of a point on or near the surface of the Earth.
+///
+/// @param {boolean} ofdate
+///      Selects the date of the Earth's equator in which to express the equatorial coordinates.
+///      The caller may pass `false` to use the orientation of the Earth's equator
+///      at noon UTC on January 1, 2000, in which case this function corrects for precession
+///      and nutation of the Earth as it was at the moment specified by the `time` parameter.
+///      Or the caller may pass `true` to use the Earth's equator at `time`
+///      as the orientation.
+///
+/// @returns {StateVector}
+StateVector observerState(dynamic date, Observer observer, bool ofdate) {
+  final time = AstroTime(date);
+  final gast = siderealTime(time);
+  final svec = terra(observer, gast);
+  final state = StateVector(
+    svec.pos[0],
+    svec.pos[1],
+    svec.pos[2],
+    svec.vel[0],
+    svec.vel[1],
+    svec.vel[2],
+    time,
+  );
+
+  if (!ofdate) {
+    return StateVector.gyrationPosVel(state, time, PrecessDirection.Into2000);
+  }
+
+  return state;
+}
+
+/// @brief Calculates the geographic location corresponding to an equatorial vector.
+///
+/// This is the inverse function of {@link ObserverVector}.
+/// Given a geocentric equatorial vector, it returns the geographic
+/// latitude, longitude, and elevation for that vector.
+///
+/// @param {Vector} vector
+///      The geocentric equatorial position vector for which to find geographic coordinates.
+///      The components are expressed in Astronomical Units (AU).
+///      You can calculate AU by dividing kilometers by the constant {@link KM_PER_AU}.
+///      The time `vector.t` determines the Earth's rotation.
+///
+/// @param {boolean} ofdate
+///      Selects the date of the Earth's equator in which `vector` is expressed.
+///      The caller may select `false` to use the orientation of the Earth's equator
+///      at noon UTC on January 1, 2000, in which case this function corrects for precession
+///      and nutation of the Earth as it was at the moment specified by `vector.t`.
+///      Or the caller may select `true` to use the Earth's equator at `vector.t`
+///      as the orientation.
+///
+/// @returns {Observer}
+///      The geographic latitude, longitude, and elevation above sea level
+///      that corresponds to the given equatorial vector.
+Observer vectorObserver(AstroVector vector, bool ofdate) {
+  final gast = siderealTime(vector.time);
+  var ovec = [vector.x, vector.y, vector.z];
+  if (!ofdate) {
+    ovec = precession(ovec, vector.time, PrecessDirection.From2000);
+    ovec = nutation(ovec, vector.time, PrecessDirection.From2000);
+  }
+  return inverseTerra(ovec, gast);
+}
+
 class TerraInfo {
   final List<double> pos;
   final List<double> vel;

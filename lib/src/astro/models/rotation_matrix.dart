@@ -698,4 +698,16 @@ class RotationMatrix {
       [0.0, s, c]
     ]);
   }
+
+  /// @brief Calculates a rotation matrix from Jupiter's equatorial orientation (EQJ) to Jupiter's equatorial orientation (EQJ).
+  ///
+  /// This rotation matrix is used to convert coordinates between Jupiter's equatorial orientation (EQJ) and itself.
+  ///
+  /// @returns {RotationMatrix}
+  ///      A rotation matrix that converts EQJ to EQJ.
+  static RotationMatrix get rotationJUPtoEQJ => RotationMatrix([
+        [9.99432765338654e-01, -3.36771074697641e-02, 0.00000000000000e+00],
+        [3.03959428906285e-02, 9.02057912352809e-01, 4.30543388542295e-01],
+        [-1.44994559663353e-02, -4.30299169409101e-01, 9.02569881273754e-01]
+      ]);
 }

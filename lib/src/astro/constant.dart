@@ -1,3 +1,5 @@
+// ignore_for_file: constant_identifier_names, non_constant_identifier_names
+
 part of 'astronomy.dart';
 
 //  The speed of light in AU/day.

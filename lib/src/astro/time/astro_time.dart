@@ -1,5 +1,7 @@
 part of '../astronomy.dart';
 
+typedef AstroTimeFunction = double Function(AstroTime t);
+
 /// @brief The date and time of an astronomical observation.
 ///
 /// Objects of type `AstroTime` are used throughout the internals
@@ -118,4 +120,35 @@ class AstroTime {
       AstroTime time1, AstroTime time2, double fraction) {
     return AstroTime(time1.ut + fraction * (time2.ut - time1.ut));
   }
+}
+
+/// Calculates and displays the true solar time for a given observer and date
+///
+/// The true solar time represents the time based on the actual position of the Sun
+/// in the sky, rather than clock time. It varies throughout the year due to the
+/// Earth's elliptical orbit and axial tilt.
+///
+/// Parameters:
+/// - [observer]: An Observer object containing the latitude, longitude, and elevation
+/// - [date]: DateTime object in UTC representing the time for calculation
+///
+/// Returns void but prints the solar time in both decimal hours and HH:MM:SS.mmm format
+AstroTime trueSolarTime(Observer observer, DateTime date) {
+  var nHourangle = hourAngle(Body.Sun, date, observer);
+  var solarTimeHours = (nHourangle + 12) % 24;
+
+  var milli = (solarTimeHours * 3.6e+6).round();
+  var second = milli ~/ 1000;
+  milli %= 1000;
+  var minute = second ~/ 60;
+  second %= 60;
+  var hour = minute ~/ 60;
+  minute %= 60;
+  hour %= 24;
+
+  return AstroTime(
+      DateTime(date.year, date.month, date.day, hour, minute, second, milli));
+
+  // print(
+  //     'True solar time = ${solarTimeHours.toStringAsFixed(4)} hours (${f(hour, 2)}:${f(minute, 2)}:${f(second, 2)}.${f(milli, 3)})');
 }

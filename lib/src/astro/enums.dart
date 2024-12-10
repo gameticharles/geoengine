@@ -1,3 +1,5 @@
+// ignore_for_file: constant_identifier_names
+
 part of 'astronomy.dart';
 
 /// @brief String constants that represent the solar system bodies supported by Astronomy Engine.
@@ -51,10 +53,28 @@ enum PrecessDirection { From2000, Into2000 }
 ///
 /// @enum {string}
 enum EclipseKind {
+  /// A lunar eclipse in which only the Earth's penumbra falls on the Moon. (Never used for a solar eclipse.)
   Penumbral,
+
+  /// A partial lunar/solar eclipse.
   Partial,
+
+  /// A solar eclipse in which the entire Moon is visible against the Sun, but the Sun appears as a ring around the Moon. (Never used for a lunar eclipse.)
   Annular,
+
+  /// A total lunar/solar eclipse.
   Total,
+}
+
+enum Eclipses {
+  /// A lunar eclipse.
+  lunar,
+
+  /// A solar eclipse.
+  solar,
+
+  /// A lunar/solar eclipse.
+  all
 }
 
 /// @brief The two kinds of apsis: pericenter (closest) and apocenter (farthest).

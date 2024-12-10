@@ -1,6 +1,6 @@
 // ignore_for_file: non_constant_identifier_names
 
-part of '../astronomy.dart';
+part of '../../astronomy.dart';
 
 int calcMoonCount = 0;
 
