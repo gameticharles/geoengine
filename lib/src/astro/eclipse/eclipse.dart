@@ -573,7 +573,7 @@ class Eclipse{
     
     // Iterate through consecutive new moons until we find a solar eclipse visible somewhere on Earth.
     var nmtime = startTime;
-    for (var nmcount = 0; nmcount < 12; ++nmcount) {
+    for (var nmCount = 0; nmCount < 12; ++nmCount) {
       // Search for the next new moon. Any eclipse will be near it.
       var newmoon = searchMoonPhase(0.0, nmtime, 40.0);
       if (newmoon == null) {
@@ -636,22 +636,22 @@ class Eclipse{
   ///
   /// @returns {LunarEclipseInfo}
   static LunarEclipseInfo searchLunarEclipse(dynamic date) {
-    const double PruneLatitude = 1.8; // full Moon's ecliptic latitude above which eclipse is impossible
-    var fmtime = AstroTime(date);
-    for (var fmcount = 0; fmcount < 12; ++fmcount) {
+    const double pruneLatitude = 1.8; // full Moon's ecliptic latitude above which eclipse is impossible
+    var fmTime = AstroTime(date);
+    for (var fmCount = 0; fmCount < 12; ++fmCount) {
       // Search for the next full moon. Any eclipse will be near it.
-      final fullmoon = searchMoonPhase(180, fmtime, 40);
-      if (fullmoon == null) {
+      final fullMoon = searchMoonPhase(180, fmTime, 40);
+      if (fullMoon == null) {
         throw 'Cannot find full moon.';
       }
 
       // Pruning: if the full Moon's ecliptic latitude is too large,
       // a lunar eclipse is not possible. Avoid needless work searching for the minimum moon distance.
-      final eclipLat = Moon(fullmoon).moonEclipticLatitudeDegrees();
-      if (eclipLat.abs() < PruneLatitude) {
+      final eclipLat = Moon(fullMoon).moonEclipticLatitudeDegrees();
+      if (eclipLat.abs() < pruneLatitude) {
         // Search near the full moon for the time when the center of the Moon
         // is closest to the line passing through the centers of the Sun and Earth.
-        final shadow = ShadowInfo.peakEarthShadow(fullmoon);
+        final shadow = ShadowInfo.peakEarthShadow(fullMoon);
         if (shadow.r < shadow.p + MOON_MEAN_RADIUS_KM) {
           // This is at least a penumbral eclipse. We will return a result.
           var kind = EclipseKind.Penumbral;
@@ -679,7 +679,7 @@ class Eclipse{
       }
 
       // We didn't find an eclipse on this full moon, so search for the next one.
-      fmtime = fullmoon.addDays(10);
+      fmTime = fullMoon.addDays(10);
     }
 
     // This should never happen because there are always at least 2 full moons per year.
@@ -730,7 +730,7 @@ class Eclipse{
   static LocalSolarEclipseInfo searchLocalSolarEclipse(dynamic startTime, Observer observer) {
     startTime = AstroTime(startTime);
     verifyObserver(observer);
-    const PruneLatitude = 1.8; // Moon's ecliptic latitude beyond which eclipse is impossible
+    const pruneLatitude = 1.8; // Moon's ecliptic latitude beyond which eclipse is impossible
 
     // Iterate through consecutive new moons until we find a solar eclipse visible somewhere on Earth.
     var nmtime = startTime;
@@ -743,7 +743,7 @@ class Eclipse{
 
       // Pruning: if the new moon's ecliptic latitude is too large, a solar eclipse is not possible.
       final eclipLat = Moon(newmoon).moonEclipticLatitudeDegrees();
-      if (eclipLat.abs() < PruneLatitude) {
+      if (eclipLat.abs() < pruneLatitude) {
         // Search near the new moon for the time when the observer
         // is closest to the line passing through the centers of the Sun and Moon.
         final shadow = ShadowInfo.peakLocalMoonShadow(newmoon, observer);
@@ -998,14 +998,14 @@ GlobalSolarEclipseInfo geoidIntersect(ShadowInfo shadow) {
   final A = v.x * v.x + v.y * v.y + v.z * v.z;
   final B = -2.0 * (v.x * e.x + v.y * e.y + v.z * e.z);
   final C = (e.x * e.x + e.y * e.y + e.z * e.z) - R * R;
-  final radic = B * B - 4 * A * C;
+  final raDic = B * B - 4 * A * C;
 
   double? obscuration;
 
-  if (radic > 0.0) {
+  if (raDic > 0.0) {
     // Calculate the closer of the two intersection points.
     // This will be on the day side of the Earth.
-    final u = (-B - sqrt(radic)) / (2 * A);
+    final u = (-B - sqrt(raDic)) / (2 * A);
 
     // Convert lunacentric dilated coordinates to geocentric coordinates.
     final px = u * v.x - e.x;
@@ -1237,7 +1237,7 @@ AstroTime? searchSunLongitude(
   double sunOffset(AstroTime t) {
     final pos = sunPosition(t);
 
-    return LongitudeOffset(pos.elon - targetLon);
+    return LongitudeOffset(pos.eLon - targetLon);
   }
 
   verifyNumber(targetLon);

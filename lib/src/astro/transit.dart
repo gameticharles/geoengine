@@ -32,8 +32,7 @@ class TransitInfo {
 /// Finds the first transit of Mercury or Venus after a specified date.
 /// A transit is when an inferior planet passes between the Sun and the Earth
 /// so that the silhouette of the planet is visible against the Sun in the background.
-/// To continue the search, pass the `finish` time in the returned structure to
-/// {@link NextTransit}.
+/// To continue the search, pass the `finish` time in the returned structure to {@link NextTransit}.
 ///
 /// @param {Body} body
 ///      The planet whose transit is to be found. Must be `Body.Mercury` or `Body.Venus`.
@@ -44,7 +43,8 @@ class TransitInfo {
 /// @returns {TransitInfo}
 TransitInfo searchTransit(Body body, dynamic startTime) {
   startTime = AstroTime(startTime);
-  const double thresholdAngle = 0.4; // maximum angular separation to attempt transit calculation
+  const double thresholdAngle =
+      0.4; // maximum angular separation to attempt transit calculation
   const double dtDays = 1.0;
 
   // Validate the planet and find its mean radius.
@@ -81,9 +81,11 @@ TransitInfo searchTransit(Body body, dynamic startTime) {
         // does the planet's penumbra touch the Earth's center?
         // Find the beginning and end of the penumbral contact.
         final timeBefore = shadow.time.addDays(-dtDays);
-        final start = planetTransitBoundary(body, planetRadiusKm, timeBefore, shadow.time, -1.0);
+        final start = planetTransitBoundary(
+            body, planetRadiusKm, timeBefore, shadow.time, -1.0);
         final timeAfter = shadow.time.addDays(dtDays);
-        final finish = planetTransitBoundary(body, planetRadiusKm, shadow.time, timeAfter, 1.0);
+        final finish = planetTransitBoundary(
+            body, planetRadiusKm, shadow.time, timeAfter, 1.0);
         final minSeparation = 60.0 * angleFromSun(body, shadow.time);
         return TransitInfo(start, shadow.time, finish, minSeparation);
       }
@@ -107,20 +109,22 @@ TransitInfo searchTransit(Body body, dynamic startTime) {
 ///      A date and time near the previous transit.
 ///
 /// @returns {TransitInfo}
-  TransitInfo nextTransit(Body body, dynamic prevTransitTime) {
+TransitInfo nextTransit(Body body, dynamic prevTransitTime) {
   prevTransitTime = AstroTime(prevTransitTime);
   final startTime = prevTransitTime.addDays(100.0);
   return searchTransit(body, startTime);
 }
 
-
-AstroTime planetTransitBoundary(Body body, double planetRadiusKm, AstroTime t1, AstroTime t2, double direction) {
+AstroTime planetTransitBoundary(Body body, double planetRadiusKm, AstroTime t1,
+    AstroTime t2, double direction) {
   // Search for the time the planet's penumbra begins/ends making contact with the center of the Earth.
-  final tx = search((AstroTime time) => ShadowInfo.planetShadowBoundary(time, body, planetRadiusKm, direction), t1, t2);
+  final tx = search(
+      (AstroTime time) => ShadowInfo.planetShadowBoundary(
+          time, body, planetRadiusKm, direction),
+      t1,
+      t2);
   if (tx == null) {
     throw 'Planet transit boundary search failed';
   }
   return tx;
 }
-
-

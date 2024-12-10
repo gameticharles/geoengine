@@ -12,30 +12,10 @@
 */
 
 import 'package:geoengine/src/astro/astronomy.dart';
-import 'dart:io';
 
 void displayEvent(String name, AstroTime? evt) {
   var text = evt != null ? evt.date.toIso8601String() : '';
   print('${name.padRight(8)} : $text');
-}
-
-double parseNumber(String text, String name) {
-  final x = double.tryParse(text);
-  if (x == null || x.isNaN) {
-    stderr.writeln('ERROR: Not a valid numeric value for $name: "$text"');
-    exit(1);
-  }
-  return x;
-}
-
-DateTime parseDate(String text) {
-  try {
-    final d = DateTime.parse(text);
-    return d;
-  } catch (e) {
-    stderr.writeln('ERROR: Not a valid date: "$text"');
-    exit(1);
-  }
 }
 
 void demo() {
@@ -54,8 +34,6 @@ void demo() {
   displayEvent('sunset', sunset);
   displayEvent('moonrise', moonrise);
   displayEvent('moonset', moonset);
-
-  exit(0);
 }
 
 void main() {

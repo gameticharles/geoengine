@@ -17,14 +17,14 @@ SaturnMagnitudeResult saturnMagnitude(double phase, double helioDist,
   final eclip = ecliptic(gc);
   double ir =
       DEG2RAD * 28.06; // tilt of Saturn's rings to the ecliptic, in radians
-  double Nr = DEG2RAD *
+  double nr = DEG2RAD *
       (169.51 +
           (3.82e-5 * time.tt)); // ascending node of Saturn's rings, in radians
 
   // Find tilt of Saturn's rings, as seen from Earth.
-  double lat = DEG2RAD * eclip.elat;
-  double lon = DEG2RAD * eclip.elon;
-  double tilt = asin(sin(lat) * cos(ir) - cos(lat) * sin(ir) * sin(lon - Nr));
+  double lat = DEG2RAD * eclip.eLat;
+  double lon = DEG2RAD * eclip.eLon;
+  double tilt = asin(sin(lat) * cos(ir) - cos(lat) * sin(ir) * sin(lon - nr));
   double sinTilt = sin(tilt.abs());
 
   double mag = -9.0 + 0.044 * phase;

@@ -45,10 +45,8 @@ DateTime parseDate(String text) {
   }
 }
 
-void demo() {
-  final arguments = Platform.environment['args']?.split(' ') ?? [];
-  final date =
-      (arguments.length == 3) ? parseDate(arguments[2]) : DateTime.now();
+void main() {
+  var date = DateTime.now();
 
   // Calculate the Moon's ecliptic phase angle,
   // which ranges from 0 to 360 degrees.
@@ -79,6 +77,3 @@ void demo() {
   }
 }
 
-void main() {
-  demo();
-}

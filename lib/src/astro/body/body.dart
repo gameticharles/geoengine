@@ -549,26 +549,27 @@ AstroVector backdatePosition(
 ///
 /// @returns {Vector}
 AstroVector geoVector(
-    Body body,
-    dynamic date,
-    bool aberration,
+  Body body,
+  dynamic date,
+  bool aberration,
 ) {
-    verifyBoolean(aberration);
-    var time = AstroTime(date);
+  verifyBoolean(aberration);
+  var time = AstroTime(date);
 
-    switch (body) {
-        case Body.Earth:
-            return AstroVector(0, 0, 0, time);
+  switch (body) {
+    case Body.Earth:
+      return AstroVector(0, 0, 0, time);
 
-        case Body.Moon:
-            return Moon(time).geoMoon();
+    case Body.Moon:
+      return Moon(time).geoMoon();
 
-        default:
-            var vec = backdatePosition(time, Body.Earth, body, aberration);
-            vec.time = time; // Return the observation time, not the backdated time
-            return vec;
-    }
+    default:
+      var vec = backdatePosition(time, Body.Earth, body, aberration);
+      vec.time = time; // Return the observation time, not the backdated time
+      return vec;
+  }
 }
+
 /// @brief Calculates equatorial coordinates of a Solar System body at a given time.
 ///
 /// Returns topocentric equatorial coordinates (right ascension and declination)
@@ -596,8 +597,7 @@ AstroVector geoVector(
 /// @param {bool} ofdate
 ///      Pass `true` to return equatorial coordinates of date,
 ///      i.e. corrected for precession and nutation at the given date.
-///      This is needed to get correct horizontal coordinates when you call
-///      {@link Horizon}.
+///      This is needed to get correct horizontal coordinates when you call {@link Horizon}.
 ///      Pass `false` to return equatorial coordinates in the J2000 system.
 ///
 /// @param {bool} aberration
@@ -608,32 +608,32 @@ AstroVector geoVector(
 /// @returns {EquatorialCoordinates}
 ///      The topocentric coordinates of the body as adjusted for the given observer.
 EquatorialCoordinates equator(
-    Body body,
-    dynamic date,
-    Observer observer,
-    bool ofdate,
-    bool aberration,
+  Body body,
+  dynamic date,
+  Observer observer,
+  bool ofdate,
+  bool aberration,
 ) {
-    verifyObserver(observer);
-    verifyBoolean(ofdate);
-    verifyBoolean(aberration);
-    
-    var time = AstroTime(date);
-    var gcObserver = geoPos(time, observer);
-    var gc = geoVector(body, time, aberration);
-    
-    var j2000 = [
-        gc.x - gcObserver[0],
-        gc.y - gcObserver[1],
-        gc.z - gcObserver[2],
-    ];
+  verifyObserver(observer);
+  verifyBoolean(ofdate);
+  verifyBoolean(aberration);
 
-    if (!ofdate) {
-      return vector2radec(j2000, time);
-    }
+  var time = AstroTime(date);
+  var gcObserver = geoPos(time, observer);
+  var gc = geoVector(body, time, aberration);
 
-    var datevect = gyration(j2000, time, PrecessDirection.From2000);
-    return vector2radec(datevect, time);
+  var j2000 = [
+    gc.x - gcObserver[0],
+    gc.y - gcObserver[1],
+    gc.z - gcObserver[2],
+  ];
+
+  if (!ofdate) {
+    return vector2radec(j2000, time);
+  }
+
+  var datevect = gyration(j2000, time, PrecessDirection.From2000);
+  return vector2radec(datevect, time);
 }
 
 /// @brief Calculates the distance between a body and the Sun at a given time.
@@ -654,15 +654,17 @@ EquatorialCoordinates equator(
 /// @returns {number}
 ///      The heliocentric distance in AU.
 double HelioDistance(Body body, dynamic date) {
-
-  var star = userDefinedStar(body); // Assuming userDefinedStar function is defined elsewhere
+  var star = userDefinedStar(
+      body); // Assuming userDefinedStar function is defined elsewhere
   if (star != null) {
     return star['dist']!;
   }
 
-  var time = AstroTime(date); // Assuming AstroTime function is defined elsewhere
+  var time =
+      AstroTime(date); // Assuming AstroTime function is defined elsewhere
   if (vsopTable.containsKey(body.name)) {
-    return vsopFormula(vsopTable[body.name]![RAD_INDEX], time.tt / DAYS_PER_MILLENNIUM, false);
+    return vsopFormula(
+        vsopTable[body.name]![RAD_INDEX], time.tt / DAYS_PER_MILLENNIUM, false);
   }
 
   return helioVector(body, time).length();
@@ -716,7 +718,9 @@ StateVector baryState(Body body, dynamic date) {
     case Body.Moon:
     case Body.EMB:
       final earth = calcVsopPosVel(vsopTable[Body.Earth.name]!, time.tt);
-      final state = (body == Body.Moon) ? Moon.geoMoonState(time) : Moon.geoEmbState(time);
+      final state = (body == Body.Moon)
+          ? Moon.geoMoonState(time)
+          : Moon.geoEmbState(time);
       return StateVector(
         state.x + bary.Sun.r.x + earth.r.x,
         state.y + bary.Sun.r.y + earth.r.y,
@@ -729,7 +733,6 @@ StateVector baryState(Body body, dynamic date) {
     case _:
       // Handle the remaining VSOP bodies: Mercury, Venus, Earth, Mars.
       if (vsopTable.containsKey(body.name)) {
-        
         // print(vsopTable.containsKey(body.name));
         final planet = calcVsopPosVel(vsopTable[body.name]!, time.tt);
         return StateVector(
@@ -742,12 +745,10 @@ StateVector baryState(Body body, dynamic date) {
           time,
         );
       }
-
   }
 
   throw Exception('BaryState: Unsupported body "$body"');
 }
-
 
 /// @brief Calculates the angular separation between the Sun and the given body.
 ///
@@ -800,7 +801,7 @@ double eclipticLongitude(Body body, dynamic date) {
   final time = AstroTime(date);
   final hv = helioVector(body, time);
   final eclip = ecliptic(hv);
-  return eclip.elon;
+  return eclip.eLon;
 }
 
 double log10(num x) => log(x) / ln10;
@@ -855,7 +856,6 @@ double visualMagnitude(
   mag += 5 * log10(helioDist * geoDist);
   return mag;
 }
-
 
 double synodicPeriod(Body body) {
   if (body == Body.Earth) {
@@ -924,7 +924,7 @@ double pairLongitude(Body body1, Body body2, dynamic date) {
   final vector2 = geoVector(body2, time, false);
   final eclip2 = ecliptic(vector2);
 
-  return NormalizeLongitude(eclip1.elon - eclip2.elon);
+  return NormalizeLongitude(eclip1.eLon - eclip2.eLon);
 }
 
 /// @brief Searches for when the Earth and a given body reach a relative ecliptic longitude separation.
@@ -1124,7 +1124,6 @@ double maxAltitudeSlope(Body body, double latitude) {
   return (360.0 / SOLAR_DAYS_PER_SIDEREAL_DAY - derivRa).abs() * cos(latrad) +
       derivDec.abs() * sin(latrad);
 }
-
 
 // Define InternalSearchAltitude function
 AstroTime? internalSearchAltitude(
@@ -1358,8 +1357,6 @@ AstroTime? searchAltitude(Body body, Observer observer, double direction,
       body, observer, direction, dateStart, limitDays, 0, altitude);
 }
 
-
-
 /// @brief Searches for the time when the center of a body reaches a specified hour angle as seen by an observer on the Earth.
 ///
 /// The *hour angle* of a celestial body indicates its position in the sky with respect
@@ -1516,4 +1513,3 @@ double hourAngle(Body body, dynamic date, Observer observer) {
   }
   return hourAngle;
 }
-

@@ -22,7 +22,8 @@ class GravitySimulator {
   late GravSimEndpoint prev;
   late GravSimEndpoint curr;
 
-  GravitySimulator(this.originBody, dynamic date, List<StateVector> bodyStates) {
+  GravitySimulator(
+      this.originBody, dynamic date, List<StateVector> bodyStates) {
     final time = AstroTime(date);
 
     // Verify that the state vectors have matching times.
@@ -121,14 +122,14 @@ class GravitySimulator {
     // Also convert from barycentric coordinates to coordinates based on the selected origin body.
     final bodyStates = <StateVector>[];
     final ostate = internalBodyState(originBody);
-    for (var bcalc in curr.bodies) {
+    for (var bCalc in curr.bodies) {
       bodyStates.add(StateVector(
-        bcalc.r.x - ostate.r.x,
-        bcalc.r.y - ostate.r.y,
-        bcalc.r.z - ostate.r.z,
-        bcalc.v.x - ostate.v.x,
-        bcalc.v.y - ostate.v.y,
-        bcalc.v.z - ostate.v.z,
+        bCalc.r.x - ostate.r.x,
+        bCalc.r.y - ostate.r.y,
+        bCalc.r.z - ostate.r.z,
+        bCalc.v.x - ostate.v.x,
+        bCalc.v.y - ostate.v.y,
+        bCalc.v.z - ostate.v.z,
         time,
       ));
     }
@@ -142,9 +143,9 @@ class GravitySimulator {
   }
 
   StateVector solarSystemBodyState(Body body) {
-    final bstate = internalBodyState(body);
-    final ostate = internalBodyState(originBody);
-    return exportState(bstate.sub(ostate), curr.time);
+    final bState = internalBodyState(body);
+    final oState = internalBodyState(originBody);
+    return exportState(bState.sub(oState), curr.time);
   }
 
   BodyState internalBodyState(Body body) {
@@ -152,9 +153,9 @@ class GravitySimulator {
       return BodyState(curr.time.tt, TerseVector.zero(), TerseVector.zero());
     }
 
-    final bstate = curr.gravitators[body];
-    if (bstate != null) {
-      return bstate;
+    final bState = curr.gravitators[body.name];
+    if (bState != null) {
+      return bState;
     }
 
     throw 'Invalid body: $body';
@@ -168,14 +169,22 @@ class GravitySimulator {
 
     // Calculate the heliocentric position of each planet, and adjust the SSB
     // based each planet's pull on the Sun.
-    dict[Body.Mercury.name] = adjustBarycenterPosVel(ssb, time.tt, Body.Mercury, MERCURY_GM);
-    dict[Body.Venus.name] = adjustBarycenterPosVel(ssb, time.tt, Body.Venus, VENUS_GM);
-    dict[Body.Earth.name] = adjustBarycenterPosVel(ssb, time.tt, Body.Earth, EARTH_GM + MOON_GM);
-    dict[Body.Mars.name] = adjustBarycenterPosVel(ssb, time.tt, Body.Mars, MARS_GM);
-    dict[Body.Jupiter.name] = adjustBarycenterPosVel(ssb, time.tt, Body.Jupiter, JUPITER_GM);
-    dict[Body.Saturn.name] = adjustBarycenterPosVel(ssb, time.tt, Body.Saturn, SATURN_GM);
-    dict[Body.Uranus.name] = adjustBarycenterPosVel(ssb, time.tt, Body.Uranus, URANUS_GM);
-    dict[Body.Neptune.name] = adjustBarycenterPosVel(ssb, time.tt, Body.Neptune, NEPTUNE_GM);
+    dict[Body.Mercury.name] =
+        adjustBarycenterPosVel(ssb, time.tt, Body.Mercury, MERCURY_GM);
+    dict[Body.Venus.name] =
+        adjustBarycenterPosVel(ssb, time.tt, Body.Venus, VENUS_GM);
+    dict[Body.Earth.name] =
+        adjustBarycenterPosVel(ssb, time.tt, Body.Earth, EARTH_GM + MOON_GM);
+    dict[Body.Mars.name] =
+        adjustBarycenterPosVel(ssb, time.tt, Body.Mars, MARS_GM);
+    dict[Body.Jupiter.name] =
+        adjustBarycenterPosVel(ssb, time.tt, Body.Jupiter, JUPITER_GM);
+    dict[Body.Saturn.name] =
+        adjustBarycenterPosVel(ssb, time.tt, Body.Saturn, SATURN_GM);
+    dict[Body.Uranus.name] =
+        adjustBarycenterPosVel(ssb, time.tt, Body.Uranus, URANUS_GM);
+    dict[Body.Neptune.name] =
+        adjustBarycenterPosVel(ssb, time.tt, Body.Neptune, NEPTUNE_GM);
 
     // Convert planet states from heliocentric to barycentric.
     for (var body in dict.keys.toList()) {
@@ -184,7 +193,8 @@ class GravitySimulator {
     }
 
     // Convert heliocentric SSB to barycentric Sun.
-    dict[Body.Sun.toString().split('.').last] = BodyState(time.tt, ssb.r.neg(), ssb.v.neg());
+    dict[Body.Sun.toString().split('.').last] =
+        BodyState(time.tt, ssb.r.neg(), ssb.v.neg());
 
     return dict;
   }
@@ -193,19 +203,26 @@ class GravitySimulator {
     // Calculate the gravitational acceleration experienced by the simulated small bodies.
     for (var b in curr.bodies) {
       b.a = TerseVector.zero();
-      addAcceleration(b.a, b.r, curr.gravitators[Body.Sun]!.r, SUN_GM);
-      addAcceleration(b.a, b.r, curr.gravitators[Body.Mercury]!.r, MERCURY_GM);
-      addAcceleration(b.a, b.r, curr.gravitators[Body.Venus]!.r, VENUS_GM);
-      addAcceleration(b.a, b.r, curr.gravitators[Body.Earth]!.r, EARTH_GM + MOON_GM);
-      addAcceleration(b.a, b.r, curr.gravitators[Body.Mars]!.r, MARS_GM);
-      addAcceleration(b.a, b.r, curr.gravitators[Body.Jupiter]!.r, JUPITER_GM);
-      addAcceleration(b.a, b.r, curr.gravitators[Body.Saturn]!.r, SATURN_GM);
-      addAcceleration(b.a, b.r, curr.gravitators[Body.Uranus]!.r, URANUS_GM);
-      addAcceleration(b.a, b.r, curr.gravitators[Body.Neptune]!.r, NEPTUNE_GM);
+      addAcceleration(b.a, b.r, curr.gravitators[Body.Sun.name]!.r, SUN_GM);
+      addAcceleration(
+          b.a, b.r, curr.gravitators[Body.Mercury.name]!.r, MERCURY_GM);
+      addAcceleration(b.a, b.r, curr.gravitators[Body.Venus.name]!.r, VENUS_GM);
+      addAcceleration(
+          b.a, b.r, curr.gravitators[Body.Earth.name]!.r, EARTH_GM + MOON_GM);
+      addAcceleration(b.a, b.r, curr.gravitators[Body.Mars.name]!.r, MARS_GM);
+      addAcceleration(
+          b.a, b.r, curr.gravitators[Body.Jupiter.name]!.r, JUPITER_GM);
+      addAcceleration(
+          b.a, b.r, curr.gravitators[Body.Saturn.name]!.r, SATURN_GM);
+      addAcceleration(
+          b.a, b.r, curr.gravitators[Body.Uranus.name]!.r, URANUS_GM);
+      addAcceleration(
+          b.a, b.r, curr.gravitators[Body.Neptune.name]!.r, NEPTUNE_GM);
     }
   }
 
-  static void addAcceleration(TerseVector acc, TerseVector smallPos, TerseVector majorPos, double gm) {
+  static void addAcceleration(
+      TerseVector acc, TerseVector smallPos, TerseVector majorPos, double gm) {
     final dx = majorPos.x - smallPos.x;
     final dy = majorPos.y - smallPos.y;
     final dz = majorPos.z - smallPos.z;

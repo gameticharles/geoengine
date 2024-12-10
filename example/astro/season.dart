@@ -28,39 +28,17 @@ isSafeInteger(int? value) {
   }
 }
 
-void demo() {
-  var args = Platform.environment['args']?.split(' ') ?? [];
+void main() {
+  var year = 2024;
 
-  if (args.length == 3) {
-    int? year = int.tryParse(args[2]);
-    if (!isSafeInteger(year)) {
-      print('ERROR: Not a valid year: "${args[2]}"');
-      exit(1);
-    }
-
-    var seasons = SeasonInfo.seasons(year);
-    displayEvent('March equinox', seasons.marEquinox);
-    displayEvent('June solstice', seasons.junSolstice);
-    displayEvent('September equinox', seasons.sepEquinox);
-    displayEvent('December solstice', seasons.decSolstice);
-
-    exit(0);
-  } else {
-    print('USAGE: dart run seasons.dart year');
+  if (!isSafeInteger(year)) {
+    print('ERROR: Not a valid year: "$year"');
     exit(1);
   }
-}
-
-void demo1() {
-  var year = 2024;
 
   var seasons = SeasonInfo.seasons(year);
   displayEvent('March equinox', seasons.marEquinox);
   displayEvent('June solstice', seasons.junSolstice);
   displayEvent('September equinox', seasons.sepEquinox);
   displayEvent('December solstice', seasons.decSolstice);
-}
-
-void main() {
-  demo1();
 }

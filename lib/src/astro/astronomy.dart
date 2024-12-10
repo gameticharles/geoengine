@@ -68,10 +68,9 @@ part 'enums.dart';
 
 typedef ShadowFunc = double Function(ShadowInfo shadow);
 
-
 void main() {
-  // bruteSearchPlanetApsis(Body.Mercury, AstroTime(34.22)).dist_km
-  // print(nextTransit(Body.Venus, DateTime.now()));
+  //bruteSearchPlanetApsis(Body.Mercury, AstroTime(34.22)).dist_km;
+  print(nextTransit(Body.Venus, DateTime.now()).finish);
   AstroTime time = AstroTime(64473.24);
 
   // print( rotationAxis(Body.Mars, time).dec);

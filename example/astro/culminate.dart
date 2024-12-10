@@ -21,27 +21,7 @@
 */
 
 import 'package:geoengine/src/astro/astronomy.dart';
-
 import 'dart:io';
-
-double parseNumber(String text, String name) {
-  final x = double.tryParse(text);
-  if (x == null || x.isNaN) {
-    stderr.writeln('ERROR: Not a valid numeric value for $name: "$text"');
-    exit(1);
-  }
-  return x;
-}
-
-DateTime parseDate(String text) {
-  try {
-    final d = DateTime.parse(text);
-    return d;
-  } catch (e) {
-    stderr.writeln('ERROR: Not a valid date: "$text"');
-    exit(1);
-  }
-}
 
 void displayEvent(String name, HourAngleEvent evt) {
   String text;
@@ -54,43 +34,7 @@ void displayEvent(String name, HourAngleEvent evt) {
   print('${name.padRight(8)} : $text');
 }
 
-void demo() {
-  final arguments = Platform.executableArguments;
-  print(arguments);
-  if (arguments.length == 4 || arguments.length == 5) {
-    final bodyList = [
-      Body.Sun,
-      Body.Moon,
-      Body.Mercury,
-      Body.Venus,
-      Body.Mars,
-      Body.Jupiter,
-      Body.Saturn,
-      Body.Uranus,
-      Body.Neptune,
-      Body.Pluto
-    ];
-    final latitude = parseNumber(arguments[2], 'latitude');
-    final longitude = parseNumber(arguments[3], 'longitude');
-    final observer = Observer(latitude, longitude, 0);
-    final date =
-        (arguments.length == 5) ? parseDate(arguments[4]) : DateTime.now();
-    print('search   : ${date.toIso8601String()}');
-
-    for (var body in bodyList) {
-      var culm = searchHourAngle(body, observer, 0,
-          date); // Replace with actual method to search hour angle.
-      displayEvent(body.name, culm);
-    }
-
-    exit(0);
-  } else {
-    print('USAGE: dart culminate.dart latitude longitude [date]');
-    exit(1);
-  }
-}
-
-void demo1() {
+void main() {
   final bodyList = [
     Body.Sun,
     Body.Moon,
@@ -105,7 +49,7 @@ void demo1() {
   ];
   final latitude = 6.56784;
   final longitude = -1.5674;
-  final observer = Observer(latitude, longitude, 0);
+  final observer = Observer(latitude, longitude, 230);
   final date = DateTime.now();
 
   print('search   : ${date.toIso8601String()}');
@@ -117,8 +61,4 @@ void demo1() {
   }
 
   exit(0);
-}
-
-void main() {
-  demo1();
 }

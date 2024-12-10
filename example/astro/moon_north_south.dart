@@ -14,7 +14,7 @@ double _ecliptic(dynamic time) {
   // Return the Moon's ecliptic latitude at the given time.
   var vec = Moon(time).geoMoon();
   var ecl = ecliptic(vec);
-  return ecl.elat;
+  return ecl.eLat;
 }
 
 double _equatorial(dynamic time) {
@@ -73,28 +73,17 @@ DateTime parseDate(String text) {
   }
 }
 
-void demo() {
-  var args = Platform.environment['args']?.split(' ') ?? [];
-
-  if (args.length < 3) {
-    print('USAGE: dart run moon_north_south.dart yyyy-mm-dd[Thh:mm:ssZ] ...');
-    exit(1);
-  } else {
-    for (var i = 2; i < args.length; ++i) {
-      var time1 = AstroTime(parseDate(args[i]));
-      print('$time1  Starting search.');
-      solve(time1, -1, _ecliptic, 'maximum ecliptic latitude');
-      solve(time1, 1, _ecliptic, 'minimum ecliptic latitude');
-      solve(time1, -1, _equatorial, 'maximum declination');
-      solve(time1, 1, _equatorial, 'minimum declination');
-      print('');
-    }
-    exit(0);
-  }
-}
-
 void main() {
-  demo();
+  var dates = [DateTime(2023, 9, 10, 06, 0, 0), DateTime.now()];
+  for (var i = 0; i < dates.length; ++i) {
+    var time1 = AstroTime(dates[i]);
+    print('$time1  Starting search.');
+    solve(time1, -1, _ecliptic, 'maximum ecliptic latitude');
+    solve(time1, 1, _ecliptic, 'minimum ecliptic latitude');
+    solve(time1, -1, _equatorial, 'maximum declination');
+    solve(time1, 1, _equatorial, 'minimum declination');
+    print('');
+  }
 }
 
 

@@ -23,24 +23,24 @@ part of 'astronomy.dart';
 /// @see {@link SearchPlanetApsis}
 /// @see {@link NextPlanetApsis}
 class Apsis {
-  late double dist_km;
-  
+  late double distKM;
+
   AstroTime time;
   ApsisKind kind;
-  double dist_au;
+  double distAU;
 
-  Apsis(this.time, this.kind, this.dist_au) {
-    dist_km = dist_au * KM_PER_AU;
+  Apsis(this.time, this.kind, this.distAU) {
+    distKM = distAU * KM_PER_AU;
   }
 }
 
-
-Apsis planetExtreme(Body body, ApsisKind kind, AstroTime startTime, double dayspan) {
+Apsis planetExtreme(
+    Body body, ApsisKind kind, AstroTime startTime, double daySpan) {
   final direction = (kind == ApsisKind.Apocenter) ? 1.0 : -1.0;
-  const npoints = 10;
+  const nPoints = 10;
 
   while (true) {
-    final interval = dayspan / (npoints - 1);
+    final interval = daySpan / (nPoints - 1);
 
     // Iterate until uncertainty is less than one minute
     if (interval < 1.0 / 1440.0) {
@@ -51,7 +51,7 @@ Apsis planetExtreme(Body body, ApsisKind kind, AstroTime startTime, double daysp
 
     int bestI = -1;
     double bestDist = 0.0;
-    for (int i = 0; i < npoints; ++i) {
+    for (int i = 0; i < nPoints; ++i) {
       final time = startTime.addDays(i * interval);
       final dist = direction * HelioDistance(body, time);
       if (i == 0 || dist > bestDist) {
@@ -62,7 +62,7 @@ Apsis planetExtreme(Body body, ApsisKind kind, AstroTime startTime, double daysp
 
     // Narrow in on the extreme point
     startTime = startTime.addDays((bestI - 1) * interval);
-    dayspan = 2.0 * interval;
+    daySpan = 2.0 * interval;
   }
 }
 
@@ -92,16 +92,18 @@ Apsis bruteSearchPlanetApsis(Body body, AstroTime startTime) {
     Sample points around this orbital arc and find when the distance
     is greatest and smallest.
   */
-  const npoints = 100;
-  final t1 = startTime.addDays(planetTable[body.name]!.orbitalPeriod * (-30 / 360));
-  final t2 = startTime.addDays(planetTable[body.name]!.orbitalPeriod * (270 / 360));
+  const nPoints = 100;
+  final t1 =
+      startTime.addDays(planetTable[body.name]!.orbitalPeriod * (-30 / 360));
+  final t2 =
+      startTime.addDays(planetTable[body.name]!.orbitalPeriod * (270 / 360));
   var tMin = t1;
   var tMax = t1;
   var minDist = -1.0;
   var maxDist = -1.0;
-  final interval = (t2.ut - t1.ut) / (npoints - 1);
+  final interval = (t2.ut - t1.ut) / (nPoints - 1);
 
-  for (var i = 0; i < npoints; ++i) {
+  for (var i = 0; i < nPoints; ++i) {
     final time = t1.addDays(i * interval);
     final dist = HelioDistance(body, time);
     if (i == 0) {
@@ -118,10 +120,13 @@ Apsis bruteSearchPlanetApsis(Body body, AstroTime startTime) {
     }
   }
 
-  final perihelion = planetExtreme(body, ApsisKind.Pericenter, tMin.addDays(-2 * interval), 4 * interval);
-  final aphelion = planetExtreme(body, ApsisKind.Apocenter, tMax.addDays(-2 * interval), 4 * interval);
+  final perihelion = planetExtreme(
+      body, ApsisKind.Pericenter, tMin.addDays(-2 * interval), 4 * interval);
+  final aphelion = planetExtreme(
+      body, ApsisKind.Apocenter, tMax.addDays(-2 * interval), 4 * interval);
   if (perihelion.time.tt >= startTime.tt) {
-    if (aphelion.time.tt >= startTime.tt && aphelion.time.tt < perihelion.time.tt) {
+    if (aphelion.time.tt >= startTime.tt &&
+        aphelion.time.tt < perihelion.time.tt) {
       return aphelion;
     }
     return perihelion;
@@ -146,8 +151,7 @@ Apsis bruteSearchPlanetApsis(Body body, AstroTime startTime) {
 /// The word *apsis* refers to either event.
 ///
 /// To iterate through consecutive alternating perihelion and aphelion events,
-/// call `SearchPlanetApsis` once, then use the return value to call
-/// {@link NextPlanetApsis}. After that, keep feeding the previous return value
+/// call `SearchPlanetApsis` once, then use the return value to call {@link NextPlanetApsis}. After that, keep feeding the previous return value
 /// from `NextPlanetApsis` into another call of `NextPlanetApsis`
 /// as many times as desired.
 ///
@@ -212,13 +216,13 @@ Apsis searchPlanetApsis(Body body, dynamic startTime) {
         throw "Internal error with slopes in SearchPlanetApsis";
       }
 
-      final searchresult = search(slopeFunc, t1, t2);
-      if (searchresult == null) {
+      final searchResult = search(slopeFunc, t1, t2);
+      if (searchResult == null) {
         throw "Failed to find slope transition in planetary apsis search.";
       }
 
-      final dist = HelioDistance(body, searchresult);
-      return Apsis(searchresult, kind, dist);
+      final dist = HelioDistance(body, searchResult);
+      return Apsis(searchResult, kind, dist);
     }
 
     // We have not yet found a slope polarity change. Keep searching.
@@ -263,4 +267,3 @@ Apsis nextPlanetApsis(Body body, Apsis apsis) {
 
   return next;
 }
-

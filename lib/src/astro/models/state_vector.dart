@@ -161,10 +161,10 @@ class StateVector {
     var dx = minorState.x - majorState.x;
     var dy = minorState.y - majorState.y;
     var dz = minorState.z - majorState.z;
-    final R2 = (dx * dx + dy * dy + dz * dz);
+    final r2 = (dx * dx + dy * dy + dz * dz);
 
     // R = Total distance between the bodies.
-    final R = sqrt(R2);
+    final R = sqrt(r2);
 
     // Find the relative velocity vector <vx, vy, vz>.
     final vx = minorState.vx - majorState.vx;
@@ -220,13 +220,13 @@ class StateVector {
       final pz = R * Dz;
 
       // Use dot products to find radial and tangential components of the relative velocity.
-      final vrad = vx * dx + vy * dy + vz * dz;
-      final vtan = vx * ux + vy * uy + vz * uz;
+      final vRad = vx * dx + vy * dy + vz * dz;
+      final vTan = vx * ux + vy * uy + vz * uz;
 
       // Calculate L4/L5 velocities.
-      final pvx = vrad * Dx + vtan * Ux;
-      final pvy = vrad * Dy + vtan * Uy;
-      final pvz = vrad * Dz + vtan * Uz;
+      final pvx = vRad * Dx + vTan * Ux;
+      final pvy = vRad * Dy + vTan * Uy;
+      final pvz = vRad * Dz + vTan * Uz;
 
       p = StateVector(px, py, pz, pvx, pvy, pvz, majorState.t);
     } else {
@@ -237,7 +237,7 @@ class StateVector {
       final r2 = R * (majorMass / (majorMass + minorMass));
 
       // Calculate the square of the angular orbital speed in [rad^2 / day^2].
-      final omega2 = (majorMass + minorMass) / (R2 * R);
+      final omega2 = (majorMass + minorMass) / (r2 * R);
 
       // Use Newton's Method to numerically solve for the location where
       // outward centrifugal acceleration in the rotating frame of reference

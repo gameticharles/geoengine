@@ -11,17 +11,6 @@
 
 import 'package:geoengine/src/astro/astronomy.dart';
 
-import 'dart:io';
-
-DateTime parseDate(String text) {
-  try {
-    final d = DateTime.parse(text);
-    return d;
-  } catch (e) {
-    stderr.writeln('ERROR: Not a valid date: "$text"');
-    exit(1);
-  }
-}
 
 double vernalPointLongitudeChange(dynamic time1, AstroTime time2) {
   print('time1 = $time1');
@@ -48,23 +37,12 @@ double vernalPointLongitudeChange(dynamic time1, AstroTime time2) {
   return (sphere.lon > 180) ? (360 - sphere.lon) : sphere.lon;
 }
 
-void demo() {
-  final arguments = Platform.environment['args']?.split(' ') ?? [];
-  if (arguments.length == 4) {
-    AstroTime time1 = AstroTime(parseDate(arguments[2]));
-    AstroTime time2 = AstroTime(parseDate(arguments[3]));
-    double longitudeChange = vernalPointLongitudeChange(time1, time2);
-    print(
-        "The vernal point's ecliptic longitude changed by ${longitudeChange.toStringAsFixed(4)} degrees.");
-    exit(0);
-  } else {
-    print('USAGE: dart run vernal_point.dart time1 time2');
-    print(
-        'where the times are in the format yyyy-mm-dd or yyyy-mm-ddThh:mm:ssZ');
-    exit(1);
-  }
-}
-
 void main() {
-  demo();
+  var date = DateTime.now();
+  AstroTime time1 = AstroTime(date);
+  AstroTime time2 = AstroTime(date.add(Duration(days: 40)));
+
+  double longitudeChange = vernalPointLongitudeChange(time1, time2);
+  print(
+      "The vernal point's ecliptic longitude changed by ${longitudeChange.toStringAsFixed(4)} degrees.");
 }

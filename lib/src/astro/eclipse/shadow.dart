@@ -135,12 +135,12 @@ class ShadowInfo {
   }
 
   static double shadowDistanceSlope(
-      ShadowInfo Function(AstroTime) shadowfunc, AstroTime time) {
+      ShadowInfo Function(AstroTime) shadowFunc, AstroTime time) {
     final dt = 1.0 / 86400.0;
     final t1 = time.addDays(-dt);
     final t2 = time.addDays(dt);
-    final shadow1 = shadowfunc(t1);
-    final shadow2 = shadowfunc(t2);
+    final shadow1 = shadowFunc(t1);
+    final shadow2 = shadowFunc(t2);
     return (shadow2.r - shadow1.r) / dt;
   }
 
@@ -228,7 +228,7 @@ class ShadowInfo {
         centerTime, after);
 
     if (t1 == null || t2 == null) {
-      throw 'Failed to find shadow semiduration';
+      throw 'Failed to find shadow semi-duration';
     }
 
     return (t2.ut - t1.ut) *

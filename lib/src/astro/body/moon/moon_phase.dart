@@ -1,6 +1,4 @@
-
 part of '../../astronomy.dart';
-
 
 /// @brief Determines the moon's phase expressed as an ecliptic longitude.
 ///
@@ -27,9 +25,7 @@ double moonPhase(dynamic date) {
 /// with respect to the Sun.  When the Moon and the Sun have the same ecliptic
 /// longitude, that is defined as a new moon. When the two ecliptic longitudes
 /// are 180 degrees apart, that is defined as a full moon.
-/// To enumerate quarter lunar phases, it is simpler to call
-/// {@link SearchMoonQuarter} once, followed by repeatedly calling
-/// {@link NextMoonQuarter}. `SearchMoonPhase` is only
+/// To enumerate quarter lunar phases, it is simpler to call {@link SearchMoonQuarter} once, followed by repeatedly calling {@link NextMoonQuarter}. `SearchMoonPhase` is only
 /// necessary for finding other lunar phases than the usual quarter phases.
 ///
 /// @param {number} targetLon
@@ -54,10 +50,11 @@ double moonPhase(dynamic date) {
 ///      If successful, returns the date and time the moon reaches the phase specified by `targetlon`.
 ///      This function will return `null` if the phase does not occur within `limitDays` of `startTime`;
 ///      that is, if the search window is too small.
-AstroTime? searchMoonPhase(double targetLon, dynamic dateStart, double limitDays) {
+AstroTime? searchMoonPhase(
+    double targetLon, dynamic dateStart, double limitDays) {
   double moonOffset(AstroTime t) {
-    double mlon = moonPhase(t);
-    return LongitudeOffset(mlon - targetLon);
+    double mLon = moonPhase(t);
+    return LongitudeOffset(mLon - targetLon);
   }
 
   verifyNumber(targetLon);
@@ -82,7 +79,8 @@ AstroTime? searchMoonPhase(double targetLon, dynamic dateStart, double limitDays
   }
   AstroTime t1 = ta.addDays(dt1);
   AstroTime t2 = ta.addDays(dt2);
-  return search(moonOffset, t1, t2, options: SearchOptions(dtToleranceSeconds: 0.1));
+  return search(moonOffset, t1, t2,
+      options: SearchOptions(dtToleranceSeconds: 0.1));
 }
 
 /// @brief A quarter lunar phase, along with when it occurs.
@@ -103,50 +101,46 @@ class MoonQuarter {
   MoonQuarter(this.quarterIndex, this.time);
 
   /// Get the name of the Moon quarter
-  String get quarter => [
-    'New Moon',
-    'First Quarter',
-    'Full Moon',
-    'Third Quarter'
-  ][quarterIndex];
+  String get quarter =>
+      ['New Moon', 'First Quarter', 'Full Moon', 'Third Quarter'][quarterIndex];
 
   /// @brief Finds the first quarter lunar phase after the specified date and time.
-///
-/// The quarter lunar phases are: new moon, first quarter, full moon, and third quarter.
-/// To enumerate quarter lunar phases, call `SearchMoonQuarter` once,
-/// then pass its return value to {@link NextMoonQuarter} to find the next
-/// `MoonQuarter`. Keep calling `NextMoonQuarter` in a loop,
-/// passing the previous return value as the argument to the next call.
-///
-/// @param {FlexibleDateTime} dateStart
-///      The date and time after which to find the first quarter lunar phase.
-///
-/// @returns {MoonQuarter}
-static MoonQuarter searchMoonQuarter(dynamic dateStart) {
-  double phaseStart = moonPhase(dateStart);
-  int quarterStart = (phaseStart ~/ 90).floor();
-  int quarter = (quarterStart + 1) % 4;
-  AstroTime? time = searchMoonPhase(90 * quarter.toDouble(), dateStart, 10);
-  if (time == null) {
-    throw Exception('Cannot find moon quarter');
+  ///
+  /// The quarter lunar phases are: new moon, first quarter, full moon, and third quarter.
+  /// To enumerate quarter lunar phases, call `SearchMoonQuarter` once,
+  /// then pass its return value to {@link NextMoonQuarter} to find the next
+  /// `MoonQuarter`. Keep calling `NextMoonQuarter` in a loop,
+  /// passing the previous return value as the argument to the next call.
+  ///
+  /// @param {FlexibleDateTime} dateStart
+  ///      The date and time after which to find the first quarter lunar phase.
+  ///
+  /// @returns {MoonQuarter}
+  static MoonQuarter searchMoonQuarter(dynamic dateStart) {
+    double phaseStart = moonPhase(dateStart);
+    int quarterStart = (phaseStart ~/ 90).floor();
+    int quarter = (quarterStart + 1) % 4;
+    AstroTime? time = searchMoonPhase(90 * quarter.toDouble(), dateStart, 10);
+    if (time == null) {
+      throw Exception('Cannot find moon quarter');
+    }
+    return MoonQuarter(quarter, time);
   }
-  return MoonQuarter(quarter, time);
-}
 
-/// @brief Finds the next quarter lunar phase in a series.
-///
-/// Given a {@link MoonQuarter} object, finds the next consecutive
-/// quarter lunar phase. See remarks in {@link SearchMoonQuarter}
-/// for explanation of usage.
-///
-/// @param {MoonQuarter} mq
-///      The return value of a prior call to {@link MoonQuarter} or `NextMoonQuarter`.
-///
-/// @returns {MoonQuarter}
-static MoonQuarter nextMoonQuarter(MoonQuarter mq) {
-  DateTime date = mq.time.date.add(Duration(days: 6));
-  return searchMoonQuarter(date);
-}
+  /// @brief Finds the next quarter lunar phase in a series.
+  ///
+  /// Given a {@link MoonQuarter} object, finds the next consecutive
+  /// quarter lunar phase. See remarks in {@link SearchMoonQuarter}
+  /// for explanation of usage.
+  ///
+  /// @param {MoonQuarter} mq
+  ///      The return value of a prior call to {@link MoonQuarter} or `NextMoonQuarter`.
+  ///
+  /// @returns {MoonQuarter}
+  static MoonQuarter nextMoonQuarter(MoonQuarter mq) {
+    DateTime date = mq.time.date.add(Duration(days: 6));
+    return searchMoonQuarter(date);
+  }
 }
 
 double moonMagnitude(double phase, double helioDist, double geoDist) {

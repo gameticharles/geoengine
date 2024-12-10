@@ -1,6 +1,8 @@
-import 'package:geoengine/src/astro/astronomy.dart';
-
-void main(List<String> args) {}
+void main(List<String> args) {
+  var date = DateTime.now();
+  final latitude = 6.56784;
+  final longitude = -1.5674;
+}
 
 /*
 core/

@@ -704,7 +704,7 @@ Spherical EclipticGeoMoon(date) {
   var eclip =
       EclipticCoordinates.rotateEquatorialToEcliptic(eqdVec, cosTobl, sinTobl);
 
-  return Spherical(eclip.elat, eclip.elon, moon.distance_au);
+  return Spherical(eclip.eLat, eclip.eLon, moon.distance_au);
 }
 
 /// Performs a quadratic interpolation to find the time and derivative of a function that crosses zero.

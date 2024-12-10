@@ -13,28 +13,8 @@
 */
 
 import 'dart:math';
-import 'dart:io';
-
 import 'package:geoengine/src/astro/astronomy.dart';
 
-double parseNumber(String text, String name) {
-  final x = double.tryParse(text);
-  if (x == null || x.isNaN) {
-    stderr.writeln('ERROR: Not a valid numeric value for $name: "$text"');
-    exit(1);
-  }
-  return x;
-}
-
-DateTime parseDate(String text) {
-  try {
-    final d = DateTime.parse(text);
-    return d;
-  } catch (e) {
-    stderr.writeln('ERROR: Not a valid date: "$text"');
-    exit(1);
-  }
-}
 
 void camera(Observer observer, AstroTime time) {
   const tolerance = 1.0e-15;
@@ -120,31 +100,10 @@ void camera(Observer observer, AstroTime time) {
       'Angle between Moon and Sun as seen from Earth = ${angle.toStringAsFixed(2)} degrees.');
 }
 
-void demo() {
-  final args = Platform.environment['args']?.split(' ') ?? [];
-  if (args.length == 4 || args.length == 5) {
-    final latitude = parseNumber(args[2], "lat");
-    final longitude = parseNumber(args[3], "lon");
-    final observer = Observer(latitude, longitude, 0);
-    final time =
-        AstroTime(args.length == 5 ? parseDate(args[4]) : DateTime.now());
-    camera(observer, time);
-    exit(0);
-  } else {
-    print('USAGE: dart camera.dart latitude longitude [date]');
-    exit(1);
-  }
-}
-
-void demo1() {
+void main() {
   final latitude = 6.56784;
   final longitude = -1.5674;
   final observer = Observer(latitude, longitude, 0);
   final time = AstroTime(DateTime.now());
   camera(observer, time);
-  exit(0);
-}
-
-void main() {
-  demo1();
 }

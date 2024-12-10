@@ -307,13 +307,13 @@ class HorizontalCoordinates {
 ///      up to 360 degrees.
 class EclipticCoordinates {
   late AstroVector vec;
-  late double elat;
-  late double elon;
+  late double eLat;
+  late double eLon;
 
-  EclipticCoordinates(this.vec, this.elat, this.elon) {
+  EclipticCoordinates(this.vec, this.eLat, this.eLon) {
     vec = vec;
-    elat = verifyNumber(elat);
-    elon = verifyNumber(elon);
+    eLat = verifyNumber(eLat);
+    eLon = verifyNumber(eLon);
   }
 
   static EclipticCoordinates rotateEquatorialToEcliptic(

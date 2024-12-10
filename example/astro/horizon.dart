@@ -13,10 +13,10 @@
 import 'dart:io';
 import 'package:geoengine/src/astro/astronomy.dart';
 
-final NUM_SAMPLES = 4;
+final numSAMPLES = 4;
 
 double eclipLon(int i) {
-  return (360 * i) / NUM_SAMPLES;
+  return (360 * i) / numSAMPLES;
 }
 
 Spherical horizontalCoords(
@@ -26,7 +26,6 @@ Spherical horizontalCoords(
 
   final eclVec = AstroVector.vectorFromSphere(eclip, time);
   final horVec = AstroVector.rotateVector(rotEclHor, eclVec);
-  var g = Spherical.fromVector(horVec, 'normal');
 
   return Spherical.fromVector(horVec, 'normal');
 }
@@ -58,17 +57,15 @@ void findEclipticCrossings(Observer observer, AstroTime time) {
 
   // Sample several points around the ecliptic and store horizontal coordinates
   List<Spherical> hor = [];
-  for (var i = 0; i < NUM_SAMPLES; ++i) {
+  for (var i = 0; i < numSAMPLES; ++i) {
     hor.add(horizontalCoords(eclipLon(i), time, rot));
   }
 
   // Check for crossings where horizontal altitude ascends through zero
-  for (var i = 0; i < NUM_SAMPLES; ++i) {
-    var f = hor[i];
-
+  for (var i = 0; i < numSAMPLES; ++i) {
     final a1 = hor[i].lat;
 
-    final a2 = hor[(i + 1) % NUM_SAMPLES].lat;
+    final a2 = hor[(i + 1) % numSAMPLES].lat;
     final e1 = eclipLon(i);
     final e2 = eclipLon(i + 1);
 
@@ -96,44 +93,16 @@ void findEclipticCrossings(Observer observer, AstroTime time) {
   }
 }
 
-double parseNumber(String text, String name) {
-  final x = double.tryParse(text);
-  if (x == null || x.isNaN) {
-    stderr.writeln('ERROR: Not a valid numeric value for $name: "$text"');
-    exit(1);
-  }
-  return x;
-}
-
-DateTime parseDate(String text) {
-  try {
-    final d = DateTime.parse(text);
-    return d;
-  } catch (e) {
-    stderr.writeln('ERROR: Not a valid date: "$text"');
-    exit(1);
-  }
-}
-
-void demo() {
-  final args = Platform.environment['args']?.split(' ') ?? [];
-  if (args.length == 4 || args.length == 5) {
-    final latitude = parseNumber(args[2], '');
-    final longitude = parseNumber(args[3], '');
-    final observer = Observer(latitude, longitude, 0.0);
-
-    final time = (args.length == 5)
-        ? AstroTime(parseDate(args[4]))
-        : AstroTime(DateTime.now());
-
-    findEclipticCrossings(observer, time);
-    exit(0);
-  } else {
-    print('USAGE: dart horizon.dart latitude longitude [date]');
-    exit(1);
-  }
-}
 
 void main() {
-  demo();
+  var date = DateTime.now();
+  final latitude = 6.56784;
+  final longitude = -1.5674;
+
+  final observer = Observer(latitude, longitude, 230);
+
+    findEclipticCrossings(observer, AstroTime(date));
+    exit(0);
+ 
 }
+
