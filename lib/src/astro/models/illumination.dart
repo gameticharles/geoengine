@@ -163,8 +163,7 @@ class IlluminationInfo {
   ///      Currently only `Body.Venus` is supported.
   ///      Mercury's peak magnitude occurs at superior conjunction, when it is impossible to see from Earth,
   ///      so peak magnitude events have little practical value for that planet.
-  ///      The Moon reaches peak magnitude very close to full moon, which can be found using
-  ///      {@link SearchMoonQuarter} or {@link SearchMoonPhase}.
+  ///      The Moon reaches peak magnitude very close to full moon, which can be found using {@link SearchMoonQuarter} or {@link SearchMoonPhase}.
   ///      The other planets reach peak magnitude very close to opposition,
   ///      which can be found using {@link SearchRelativeLongitude}.
   ///

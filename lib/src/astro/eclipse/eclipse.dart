@@ -297,7 +297,7 @@ class LunarEclipseInfo extends EclipseInfo {
 /// @property {EclipseEvent} partial_end
 ///      The time and Sun altitude at the end of the eclipse.
 class LocalSolarEclipseInfo extends EclipseInfo {
-  static const double _minutesPerDay = 24 * 60;
+  // static const double _minutesPerDay = 24 * 60;
 
   final EclipseEvent partialBegin;
   final EclipseEvent? totalBegin;
@@ -433,8 +433,7 @@ class LocalSolarEclipseInfo extends EclipseInfo {
 /// For partial eclipses, `obscuration` is undefined and should not be used.
 /// This is because there is little practical use for an obscuration value of
 /// a partial eclipse without supplying a particular observation location.
-/// Developers who wish to find an obscuration value for partial solar eclipses should therefore use
-/// {@link SearchLocalSolarEclipse} and provide the geographic coordinates of an observer.
+/// Developers who wish to find an obscuration value for partial solar eclipses should therefore use {@link SearchLocalSolarEclipse} and provide the geographic coordinates of an observer.
 ///
 /// @property {EclipseKind} kind
 ///     One of the following enumeration values: `EclipseKind.Partial`, `EclipseKind.Annular`, `EclipseKind.Total`.

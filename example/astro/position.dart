@@ -29,7 +29,7 @@ String format(double x) {
   return x.toStringAsFixed(2).padLeft(8);
 }
 
-void demo1() {
+void main() {
   final latitude = 6.56784;
   final longitude = -1.5674;
   final observer = Observer(latitude, longitude, 232);
@@ -62,8 +62,4 @@ void demo1() {
     print(
         '${body.name.padRight(8)} ${format(equ2000.ra)} ${format(equ2000.dec)} ${format(hor.azimuth)} ${format(hor.altitude)}');
   }
-}
-
-void main() {
-  demo1();
 }

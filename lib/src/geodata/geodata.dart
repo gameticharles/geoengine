@@ -65,7 +65,7 @@ class GeoData {
   int get columnCount => headers.length;
 
   /// A constant map linking file extensions to their respective drivers.
-  static const Map<String, String> _extension_to_driver = {
+  static const Map<String, String> _extensionToDriver = {
     ".csv": "CSV",
     ".txt": "TXT",
     ".json": "GeoJSON",
@@ -96,7 +96,7 @@ class GeoData {
   /// Returns the driver as a string. If no matching driver is found, returns 'Unknown'.
   static String _getDriverForExtension(String filePath) {
     String extension = filePath.split('.').last.toLowerCase();
-    return _extension_to_driver[".$extension"] ?? 'Unknown';
+    return _extensionToDriver[".$extension"] ?? 'Unknown';
   }
 
   /// Reads spatial data from a file, automatically determining the driver.
