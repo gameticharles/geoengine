@@ -197,16 +197,11 @@ class LeastSquaresAdjustment {
   }
 
   /// Compute error ellipse parameters using eigenvalue decomposition on the covariance matrix.
-  Eigen errorEllipse() {
-    // Get covariance matrix
-    Matrix cov = covariance();
-    // Perform Eigenvalue decomposition on covariance matrix
-    Eigen eig = cov.eigen();
+  ErrorEllipse errorEllipse() {
+    var cov = nInv.subMatrix(rowRange: '0:1', colRange: '0:1');
 
-    //return all the eigenvalues and eigenvectors for all 2x2 matrix
-    //of the leading 2x2 matrix of the covariance matrix
-
-    return eig;
+    return ErrorEllipse(
+        sigmaX2: cov[0][0], sigmaY2: cov[1][1], sigmaXY: cov[0][1]);
   }
 
   /// Rejection criterion for outlier detection, using the specified confidence level.
@@ -251,7 +246,7 @@ class LeastSquaresAdjustment {
         'Rejection Criterion (Confidence Level $confidenceLevel): $rejectionCriterion\n');
     results.writeln(
         'Outliers (false = accepted, true = rejected): \n${outliers.toString()}\n');
-    results.writeln('Error Ellipse: \n${errorEllipse()}\n');
+    results.writeln('${errorEllipse()}\n');
     results.writeln('---------------------------------');
 
     return results.toString();

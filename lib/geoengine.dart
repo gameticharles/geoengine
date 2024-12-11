@@ -52,3 +52,4 @@ part 'src/distance_bearing/bearing.dart';
 
 part 'src/least_square/least_squares_adjustment.dart';
 part 'src/least_square/scaling_method.dart';
+part 'src/least_square/error_ellipse.dart';

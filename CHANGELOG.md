@@ -1,5 +1,11 @@
 # CHANGE LOGS
 
+## 0.2.2
+
+* **[FEATURE]** Added Error Ellipse class.
+* **[IMPROVEMENT]** Integrated the least squares adjustment class with the error ellipse class.
+* **[BUG_FIX]** Fixed the error ellipse calculation.
+
 ## 0.2.1
 
 * **[BUG_FIX]** Fixed astronomical calculations not working well.
