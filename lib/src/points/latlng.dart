@@ -5,7 +5,7 @@ part of '../../geoengine.dart';
 /// This class extends `PointX` to provide additional functionalities specific
 /// to geographical coordinates, including methods to work with different
 /// coordinate formats and geospatial calculations.
-class LatLng extends PointX implements latLng.LatLng {
+class LatLng extends PointX implements lat_lng.LatLng {
   /// The elevation (in meters) of the point.
   final double? elevation;
 
@@ -18,10 +18,10 @@ class LatLng extends PointX implements latLng.LatLng {
   static const double R = 6371000; // Earth radius in meters
 
   @override
-  latLng.Angle get latitude => latLng.Angle.degree(lat);
+  lat_lng.Angle get latitude => lat_lng.Angle.degree(lat);
 
   @override
-  latLng.Angle get longitude => latLng.Angle.degree(lng);
+  lat_lng.Angle get longitude => lat_lng.Angle.degree(lng);
 
   /// Creates a LatLng instance with specified latitude, longitude, and optional elevation.
   ///
@@ -278,8 +278,6 @@ class LatLng extends PointX implements latLng.LatLng {
         return Distance.greatCircle(this, point);
       case DistanceMethod.vincenty:
         return Distance.vincenty(this, point);
-      default:
-        throw Exception('Unknown distance calculation method: $method');
     }
   }
 

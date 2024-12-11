@@ -7,21 +7,23 @@ class SiderealTimeInfo {
   SiderealTimeInfo(this.tt, this.st);
 }
 
-
-
 SiderealTimeInfo? siderealTimeCache;
 
-double sidereal_time(AstroTime time) {  // calculates Greenwich Apparent Sidereal Time (GAST)
+double _siderealTime(AstroTime time) {
+  // calculates Greenwich Apparent Sidereal Time (GAST)
   if (siderealTimeCache == null || siderealTimeCache!.tt != time.tt) {
     final t = time.tt / 36525.0;
-    final eqeq = 15 * eTilt(time).ee;  // Replace with eqeq = 0 to get GMST instead of GAST (if we ever need it)
+    final eqeq = 15 *
+        eTilt(time)
+            .ee; // Replace with eqeq = 0 to get GMST instead of GAST (if we ever need it)
     final theta = era(time);
-    final st = (eqeq + 0.014506 +
-        (((( - 0.0000000368 * t
-            - 0.000029956) * t
-            - 0.00000044) * t
-            + 1.3915817) * t
-            + 4612.156534) * t);
+    final st = (eqeq +
+        0.014506 +
+        ((((-0.0000000368 * t - 0.000029956) * t - 0.00000044) * t +
+                        1.3915817) *
+                    t +
+                4612.156534) *
+            t);
 
     var gst = ((st / 3600 + theta) % 360) / 15;
     if (gst < 0) {
@@ -29,8 +31,10 @@ double sidereal_time(AstroTime time) {  // calculates Greenwich Apparent Siderea
     }
     siderealTimeCache = SiderealTimeInfo(time.tt, gst);
   }
-  return siderealTimeCache!.st; // Return sidereal hours in the half-open range [0, 24).
+  return siderealTimeCache!
+      .st; // Return sidereal hours in the half-open range [0, 24).
 }
+
 /// @brief Calculates Greenwich Apparent Sidereal Time (GAST).
 ///
 /// Given a date and time, this function calculates the rotation of the
@@ -54,5 +58,5 @@ double sidereal_time(AstroTime time) {  // calculates Greenwich Apparent Siderea
 /// @returns {number}
 double siderealTime(dynamic date) {
   final time = AstroTime(date);
-  return sidereal_time(time);
+  return _siderealTime(time);
 }

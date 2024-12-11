@@ -1045,7 +1045,7 @@ GlobalSolarEclipseInfo geoidIntersect(ShadowInfo shadow) {
     }
 
     // Adjust longitude for Earth's rotation at the given UT.
-    final gast = sidereal_time(peak);
+    final gast = _siderealTime(peak);
     longitude = (RAD2DEG * atan2(py, px) - (15 * gast)) % 360.0;
     if (longitude <= -180.0) {
       longitude += 360.0;

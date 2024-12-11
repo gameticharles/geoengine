@@ -664,7 +664,7 @@ double HelioDistance(Body body, dynamic date) {
       AstroTime(date); // Assuming AstroTime function is defined elsewhere
   if (vsopTable.containsKey(body.name)) {
     return vsopFormula(
-        vsopTable[body.name]![RAD_INDEX], time.tt / DAYS_PER_MILLENNIUM, false);
+        vsopTable[body.name]![radIndex], time.tt / daysPerMillennium, false);
   }
 
   return helioVector(body, time).length();

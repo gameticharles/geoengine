@@ -119,56 +119,56 @@ class AxisInfo {
         return earthRotationAxis(time);
 
       case Body.Moon:
-        final E1 = DEG2RAD * (125.045 - 0.0529921 * d);
-        final E2 = DEG2RAD * (250.089 - 0.1059842 * d);
-        final E3 = DEG2RAD * (260.008 + 13.0120009 * d);
-        final E4 = DEG2RAD * (176.625 + 13.3407154 * d);
-        final E5 = DEG2RAD * (357.529 + 0.9856003 * d);
-        final E6 = DEG2RAD * (311.589 + 26.4057084 * d);
-        final E7 = DEG2RAD * (134.963 + 13.0649930 * d);
-        final E8 = DEG2RAD * (276.617 + 0.3287146 * d);
-        final E9 = DEG2RAD * (34.226 + 1.7484877 * d);
-        final E10 = DEG2RAD * (15.134 - 0.1589763 * d);
-        final E11 = DEG2RAD * (119.743 + 0.0036096 * d);
-        final E12 = DEG2RAD * (239.961 + 0.1643573 * d);
-        final E13 = DEG2RAD * (25.053 + 12.9590088 * d);
+        final e1 = DEG2RAD * (125.045 - 0.0529921 * d);
+        final e2 = DEG2RAD * (250.089 - 0.1059842 * d);
+        final e3 = DEG2RAD * (260.008 + 13.0120009 * d);
+        final e4 = DEG2RAD * (176.625 + 13.3407154 * d);
+        final e5 = DEG2RAD * (357.529 + 0.9856003 * d);
+        final e6 = DEG2RAD * (311.589 + 26.4057084 * d);
+        final e7 = DEG2RAD * (134.963 + 13.0649930 * d);
+        final e8 = DEG2RAD * (276.617 + 0.3287146 * d);
+        final e9 = DEG2RAD * (34.226 + 1.7484877 * d);
+        final e10 = DEG2RAD * (15.134 - 0.1589763 * d);
+        final e11 = DEG2RAD * (119.743 + 0.0036096 * d);
+        final e12 = DEG2RAD * (239.961 + 0.1643573 * d);
+        final e13 = DEG2RAD * (25.053 + 12.9590088 * d);
 
         ra = 269.9949 +
             0.0031 * T -
-            3.8787 * sin(E1) -
-            0.1204 * sin(E2) +
-            0.0700 * sin(E3) -
-            0.0172 * sin(E4) +
-            0.0072 * sin(E6) -
-            0.0052 * sin(E10) +
-            0.0043 * sin(E13);
+            3.8787 * sin(e1) -
+            0.1204 * sin(e2) +
+            0.0700 * sin(e3) -
+            0.0172 * sin(e4) +
+            0.0072 * sin(e6) -
+            0.0052 * sin(e10) +
+            0.0043 * sin(e13);
 
         dec = 66.5392 +
             0.0130 * T +
-            1.5419 * cos(E1) +
-            0.0239 * cos(E2) -
-            0.0278 * cos(E3) +
-            0.0068 * cos(E4) -
-            0.0029 * cos(E6) +
-            0.0009 * cos(E7) +
-            0.0008 * cos(E10) -
-            0.0009 * cos(E13);
+            1.5419 * cos(e1) +
+            0.0239 * cos(e2) -
+            0.0278 * cos(e3) +
+            0.0068 * cos(e4) -
+            0.0029 * cos(e6) +
+            0.0009 * cos(e7) +
+            0.0008 * cos(e10) -
+            0.0009 * cos(e13);
 
         w = 38.3213 +
             (13.17635815 - 1.4e-12 * d) * d +
-            3.5610 * sin(E1) +
-            0.1208 * sin(E2) -
-            0.0642 * sin(E3) +
-            0.0158 * sin(E4) +
-            0.0252 * sin(E5) -
-            0.0066 * sin(E6) -
-            0.0047 * sin(E7) -
-            0.0046 * sin(E8) +
-            0.0028 * sin(E9) +
-            0.0052 * sin(E10) +
-            0.0040 * sin(E11) +
-            0.0019 * sin(E12) -
-            0.0044 * sin(E13);
+            3.5610 * sin(e1) +
+            0.1208 * sin(e2) -
+            0.0642 * sin(e3) +
+            0.0158 * sin(e4) +
+            0.0252 * sin(e5) -
+            0.0066 * sin(e6) -
+            0.0047 * sin(e7) -
+            0.0046 * sin(e8) +
+            0.0028 * sin(e9) +
+            0.0052 * sin(e10) +
+            0.0040 * sin(e11) +
+            0.0019 * sin(e12) -
+            0.0044 * sin(e13);
         break;
 
       case Body.Mars:
@@ -199,27 +199,27 @@ class AxisInfo {
         break;
 
       case Body.Jupiter:
-        final Ja = DEG2RAD * (99.360714 + 4850.4046 * T);
-        final Jb = DEG2RAD * (175.895369 + 1191.9605 * T);
-        final Jc = DEG2RAD * (300.323162 + 262.5475 * T);
-        final Jd = DEG2RAD * (114.012305 + 6070.2476 * T);
-        final Je = DEG2RAD * (49.511251 + 64.3000 * T);
+        final ja = DEG2RAD * (99.360714 + 4850.4046 * T);
+        final jb = DEG2RAD * (175.895369 + 1191.9605 * T);
+        final jc = DEG2RAD * (300.323162 + 262.5475 * T);
+        final jd = DEG2RAD * (114.012305 + 6070.2476 * T);
+        final je = DEG2RAD * (49.511251 + 64.3000 * T);
 
         ra = 268.056595 -
             0.006499 * T +
-            0.000117 * sin(Ja) +
-            0.000938 * sin(Jb) +
-            0.001432 * sin(Jc) +
-            0.000030 * sin(Jd) +
-            0.002150 * sin(Je);
+            0.000117 * sin(ja) +
+            0.000938 * sin(jb) +
+            0.001432 * sin(jc) +
+            0.000030 * sin(jd) +
+            0.002150 * sin(je);
 
         dec = 64.495303 +
             0.002413 * T +
-            0.000050 * cos(Ja) +
-            0.000404 * cos(Jb) +
-            0.000617 * cos(Jc) -
-            0.000013 * cos(Jd) +
-            0.000926 * cos(Je);
+            0.000050 * cos(ja) +
+            0.000404 * cos(jb) +
+            0.000617 * cos(jc) -
+            0.000013 * cos(jd) +
+            0.000926 * cos(je);
 
         w = 284.95 + 870.536 * d;
         break;
@@ -254,13 +254,13 @@ class AxisInfo {
     }
 
     // Calculate the north pole vector using the given angles.
-    final radlat = DEG2RAD * dec;
-    final radlon = DEG2RAD * ra;
-    final rcoslat = cos(radlat);
+    final radLat = DEG2RAD * dec;
+    final radLon = DEG2RAD * ra;
+    final rCosLat = cos(radLat);
     final north = AstroVector(
-      rcoslat * cos(radlon),
-      rcoslat * sin(radlon),
-      sin(radlat),
+      rCosLat * cos(radLon),
+      rCosLat * sin(radLon),
+      sin(radLat),
       time,
     );
 

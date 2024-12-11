@@ -35,9 +35,9 @@ class AtmosphereInfo {
 ///
 /// @returns {AtmosphereInfo}
 AtmosphereInfo atmosphere(double elevationMeters) {
-  const double P0 = 101325.0; // pressure at sea level [pascals]
-  const double T0 = 288.15; // temperature at sea level [kelvins]
-  const double T1 = 216.65; // temperature between 20 km and 32 km [kelvins]
+  const double p0 = 101325.0; // pressure at sea level [pascals]
+  const double t0 = 288.15; // temperature at sea level [kelvins]
+  const double t1 = 216.65; // temperature between 20 km and 32 km [kelvins]
 
   if (!elevationMeters.isFinite ||
       elevationMeters < -500.0 ||
@@ -48,18 +48,18 @@ AtmosphereInfo atmosphere(double elevationMeters) {
   double temperature;
   double pressure;
   if (elevationMeters <= 11000.0) {
-    temperature = T0 - 0.0065 * elevationMeters;
-    pressure = P0 * pow(T0 / temperature, -5.25577);
+    temperature = t0 - 0.0065 * elevationMeters;
+    pressure = p0 * pow(t0 / temperature, -5.25577);
   } else if (elevationMeters <= 20000.0) {
-    temperature = T1;
+    temperature = t1;
     pressure = 22632.0 * exp(-0.00015768832 * (elevationMeters - 11000.0));
   } else {
-    temperature = T1 + 0.001 * (elevationMeters - 20000.0);
-    pressure = 5474.87 * pow(T1 / temperature, 34.16319);
+    temperature = t1 + 0.001 * (elevationMeters - 20000.0);
+    pressure = 5474.87 * pow(t1 / temperature, 34.16319);
   }
 
   // Calculate density relative to sea level value
-  final density = (pressure / temperature) / (P0 / T0);
+  final density = (pressure / temperature) / (p0 / t0);
 
   return AtmosphereInfo(pressure, temperature, density);
 }

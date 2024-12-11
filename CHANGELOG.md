@@ -5,6 +5,7 @@
 * **[FEATURE]** Added Error Ellipse class.
 * **[IMPROVEMENT]** Integrated the least squares adjustment class with the error ellipse class.
 * **[BUG_FIX]** Fixed the error ellipse calculation.
+* **[BUG_FIX]** Fixed bugs and warnings.
 
 ## 0.2.1
 

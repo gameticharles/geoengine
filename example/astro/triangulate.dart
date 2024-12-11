@@ -8,7 +8,7 @@ import 'package:geoengine/src/astro/astronomy.dart';
 
 import 'dart:io';
 
-const UsageText = """
+const usageText = """
 USAGE:  node triangulate.js  lat1 lon1 elv1 az1 alt1  lat2 lon2 elv2 az2 alt2
 
 Calculate the best-fit location of a point as observed

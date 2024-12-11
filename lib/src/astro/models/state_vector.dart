@@ -205,28 +205,28 @@ class StateVector {
       final vert = (point == 4) ? sin60 : -sin60;
 
       // Rotated radial vector
-      final Dx = cos60 * dx + vert * ux;
-      final Dy = cos60 * dy + vert * uy;
-      final Dz = cos60 * dz + vert * uz;
+      final dX = cos60 * dx + vert * ux;
+      final dY = cos60 * dy + vert * uy;
+      final dZ = cos60 * dz + vert * uz;
 
       // Rotated tangent vector
-      final Ux = cos60 * ux - vert * dx;
-      final Uy = cos60 * uy - vert * dy;
-      final Uz = cos60 * uz - vert * dz;
+      final uX = cos60 * ux - vert * dx;
+      final uY = cos60 * uy - vert * dy;
+      final uZ = cos60 * uz - vert * dz;
 
       // Calculate L4/L5 positions relative to the major body.
-      final px = R * Dx;
-      final py = R * Dy;
-      final pz = R * Dz;
+      final px = R * dX;
+      final py = R * dY;
+      final pz = R * dZ;
 
       // Use dot products to find radial and tangential components of the relative velocity.
       final vRad = vx * dx + vy * dy + vz * dz;
       final vTan = vx * ux + vy * uy + vz * uz;
 
       // Calculate L4/L5 velocities.
-      final pvx = vRad * Dx + vTan * Ux;
-      final pvy = vRad * Dy + vTan * Uy;
-      final pvz = vRad * Dz + vTan * Uz;
+      final pvx = vRad * dX + vTan * uX;
+      final pvy = vRad * dY + vTan * uY;
+      final pvz = vRad * dZ + vTan * uZ;
 
       p = StateVector(px, py, pz, pvx, pvy, pvz, majorState.t);
     } else {

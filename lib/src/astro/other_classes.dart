@@ -1,3 +1,5 @@
+// ignore_for_file: non_constant_identifier_names
+
 part of 'astronomy.dart';
 
 class PascalArray1 {
@@ -125,11 +127,11 @@ class MajorBodies {
   }
 }
 
-class grav_sim_t {
+class GravSimT {
   MajorBodies bary;
   BodyGravCalc grav;
 
-  grav_sim_t(this.bary, this.grav);
+  GravSimT(this.bary, this.grav);
 }
 
 /// @brief Indicates whether a crossing through the ecliptic plane is ascending or descending.
@@ -143,9 +145,9 @@ class NodeEventKind {
   final int value;
   const NodeEventKind._internal(this.value);
 
-  static const Invalid = NodeEventKind._internal(0);
-  static const Ascending = NodeEventKind._internal(1);
-  static const Descending = NodeEventKind._internal(-1);
+  static const invalid = NodeEventKind._internal(0);
+  static const ascending = NodeEventKind._internal(1);
+  static const descending = NodeEventKind._internal(-1);
 
   @override
   String toString() {
@@ -282,4 +284,3 @@ class HourAngleEvent {
 
   HourAngleEvent(this.time, this.hor);
 }
-

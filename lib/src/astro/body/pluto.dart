@@ -295,7 +295,7 @@ List<BodyGravCalc>? getSegment(List<List<BodyGravCalc>?> cache, double tt) {
     // Simulate forwards from the lower time bound.
     double stepTt = seg[0].tt;
     for (int i = 1; i < plutoNSteps - 1; ++i) {
-      seg[i] = GravSim(stepTt += plutoDT, seg[i - 1]).grav;
+      seg[i] = gravSim(stepTt += plutoDT, seg[i - 1]).grav;
     }
 
     // Simulate backwards from the upper time bound.
@@ -306,7 +306,7 @@ List<BodyGravCalc>? getSegment(List<List<BodyGravCalc>?> cache, double tt) {
             TerseVector(0, 0, 0)));
     reverse[plutoNSteps - 1] = seg[plutoNSteps - 1];
     for (int i = plutoNSteps - 2; i > 0; --i) {
-      reverse[i] = GravSim(stepTt -= plutoDT, reverse[i + 1]).grav;
+      reverse[i] = gravSim(stepTt -= plutoDT, reverse[i + 1]).grav;
     }
 
     // Fade-mix the two series so that there are no discontinuities.
@@ -324,11 +324,11 @@ List<BodyGravCalc>? getSegment(List<List<BodyGravCalc>?> cache, double tt) {
   return cache[segIndex];
 }
 
-grav_sim_t calcPlutoOneWay(List<dynamic> entry, double targetTt, double dt) {
+GravSimT calcPlutoOneWay(List<dynamic> entry, double targetTt, double dt) {
   var sim = gravFromState(entry);
   final n = ((targetTt - sim.grav.tt) / dt).ceil();
   for (var i = 0; i < n; ++i) {
-    sim = GravSim((i + 1 == n) ? targetTt : (sim.grav.tt + dt), sim.grav);
+    sim = gravSim((i + 1 == n) ? targetTt : (sim.grav.tt + dt), sim.grav);
   }
   return sim;
 }
@@ -341,7 +341,7 @@ StateVector calcPluto(AstroTime time, bool helio) {
     // The target time is outside the year range 0000..4000.
     // Calculate it by crawling backward from 0000 or forward from 4000.
     // FIXFIXFIX - This is super slow. Could optimize this with extra caching if needed.
-    grav_sim_t sim;
+    GravSimT sim;
     if (time.tt < plutoStateTable[0][0]) {
       sim = calcPlutoOneWay(plutoStateTable[0], time.tt, -plutoDT.toDouble());
     } else {

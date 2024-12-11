@@ -656,19 +656,19 @@ class Moon {
     // Step 10 days at a time, searching for an interval where that latitude crosses zero.
 
     AstroTime time1 = AstroTime(startDate ?? date);
-    Spherical eclip1 = EclipticGeoMoon(time1);
+    Spherical eclip1 = eclipticGeoMoon(time1);
 
     for (;;) {
       AstroTime time2 = time1.addDays(MoonNodeStepDays);
-      Spherical eclip2 = EclipticGeoMoon(time2);
+      Spherical eclip2 = eclipticGeoMoon(time2);
       if (eclip1.lat * eclip2.lat <= 0.0) {
         // There is a node somewhere inside this closed time interval.
         // Figure out whether it is an ascending node or a descending node.
         NodeEventKind kind = (eclip2.lat > eclip1.lat)
-            ? NodeEventKind.Ascending
-            : NodeEventKind.Descending;
+            ? NodeEventKind.ascending
+            : NodeEventKind.descending;
         final result =
-            search((t) => kind.value * EclipticGeoMoon(t).lat, time1, time2);
+            search((t) => kind.value * eclipticGeoMoon(t).lat, time1, time2);
         if (result == null) {
           throw 'Could not find moon node.'; // should never happen
         }
@@ -693,13 +693,13 @@ class Moon {
         (prevNode ?? searchMoonNode()).time.addDays(MoonNodeStepDays);
     NodeEventInfo node = searchMoonNode(time);
     switch (prevNode!.kind) {
-      case NodeEventKind.Ascending:
-        if (node.kind != NodeEventKind.Descending) {
+      case NodeEventKind.ascending:
+        if (node.kind != NodeEventKind.descending) {
           throw 'Internal error: previous node was ascending, but this node was: ${node.kind}';
         }
         break;
-      case NodeEventKind.Descending:
-        if (node.kind != NodeEventKind.Ascending) {
+      case NodeEventKind.descending:
+        if (node.kind != NodeEventKind.ascending) {
           throw 'Internal error: previous node was descending, but this node was: ${node.kind}';
         }
         break;

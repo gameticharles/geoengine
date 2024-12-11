@@ -73,7 +73,7 @@ double planetOrbitalPeriod(Body body) {
   throw "Unknown orbital period for: $body";
 }
 
-double deltaT_EspenakMeeus(double ut) {
+double deltaTEspenakMeeus(double ut) {
   double u, u2, u3, u4, u5, u6, u7;
   /*
         Fred Espenak writes about Delta-T generically here:
@@ -224,13 +224,13 @@ double deltaT_EspenakMeeus(double ut) {
 
 typedef DeltaTimeFunction = double Function(double ut);
 
-double deltaT_JplHorizons(double ut) {
+double deltaTJplHorizons(double ut) {
   const double daysPerTropicalYear = 365.242190;
-  return deltaT_EspenakMeeus(
+  return deltaTEspenakMeeus(
       ut < 17.0 * daysPerTropicalYear ? ut : 17.0 * daysPerTropicalYear);
 }
 
-DeltaTimeFunction deltaT = deltaT_EspenakMeeus;
+DeltaTimeFunction deltaT = deltaTEspenakMeeus;
 
 void setDeltaTFunction(DeltaTimeFunction func) {
   deltaT = func;
@@ -355,14 +355,14 @@ double refraction(String? refraction, double altitude) {
   return refr;
 }
 
-const double DAYS_PER_MILLENNIUM = 365250.0;
-const int LON_INDEX = 0;
-const int LAT_INDEX = 1;
-const int RAD_INDEX = 2;
+const double daysPerMillennium = 365250.0;
+const int lonIndex = 0;
+const int latIndex = 1;
+const int radIndex = 2;
 
 double vsopFormula(
     List<List<List<double>>> formula, double t, bool clampAngle) {
-  double tpower = 1;
+  double tPower = 1;
   double coord = 0;
 
   for (var series in formula) {
@@ -373,13 +373,13 @@ double vsopFormula(
       double freq = entry[2];
       sum += ampl * cos(phas + (t * freq));
     }
-    double incr = tpower * sum;
+    double incr = tPower * sum;
     if (clampAngle) {
       incr %=
           PI2; // improve precision for longitudes: they can be hundreds of radians
     }
     coord += incr;
-    tpower *= t;
+    tPower *= t;
   }
 
   return coord;
@@ -409,11 +409,11 @@ TerseVector vsopRotate(List<double> eclip) {
 }
 
 AstroVector calcVsop(List<List<List<List<double>>>> model, AstroTime time) {
-  double t = time.tt / DAYS_PER_MILLENNIUM; // millennia since 2000
+  double t = time.tt / daysPerMillennium; // millennia since 2000
 
-  double lon = vsopFormula(model[LON_INDEX], t, true);
-  double lat = vsopFormula(model[LAT_INDEX], t, false);
-  double rad = vsopFormula(model[RAD_INDEX], t, false);
+  double lon = vsopFormula(model[lonIndex], t, true);
+  double lat = vsopFormula(model[latIndex], t, false);
+  double rad = vsopFormula(model[radIndex], t, false);
 
   List<double> eclip = vsopSphereToRect(lon, lat, rad);
 
@@ -452,16 +452,16 @@ double vsopDeriv(dynamic formula, double t) {
 }
 
 BodyState calcVsopPosVel(List<List<List<List<double>>>> model, double tt) {
-  final t = tt / DAYS_PER_MILLENNIUM;
+  final t = tt / daysPerMillennium;
 
   // Calculate the VSOP "B" trigonometric series to obtain ecliptic spherical coordinates.
-  final lon = vsopFormula(model[LON_INDEX], t, true);
-  final lat = vsopFormula(model[LAT_INDEX], t, false);
-  final rad = vsopFormula(model[RAD_INDEX], t, false);
+  final lon = vsopFormula(model[lonIndex], t, true);
+  final lat = vsopFormula(model[latIndex], t, false);
+  final rad = vsopFormula(model[radIndex], t, false);
 
-  final dlonDt = vsopDeriv(model[LON_INDEX], t);
-  final dlatDt = vsopDeriv(model[LAT_INDEX], t);
-  final dradDt = vsopDeriv(model[RAD_INDEX], t);
+  final dlonDt = vsopDeriv(model[lonIndex], t);
+  final dlatDt = vsopDeriv(model[latIndex], t);
+  final dradDt = vsopDeriv(model[radIndex], t);
 
   // Use spherical coords and spherical derivatives to calculate
   // the velocity vector in rectangular coordinates.
@@ -484,9 +484,9 @@ BodyState calcVsopPosVel(List<List<List<List<double>>>> model, double tt) {
 
   // Convert speed units from [AU/millennium] to [AU/day].
   final List<double> eclipVel = [
-    vx / DAYS_PER_MILLENNIUM,
-    vy / DAYS_PER_MILLENNIUM,
-    vz / DAYS_PER_MILLENNIUM
+    vx / daysPerMillennium,
+    vy / daysPerMillennium,
+    vz / daysPerMillennium
   ];
 
   // Rotate the vectors from ecliptic to equatorial coordinates.
@@ -532,7 +532,7 @@ TerseVector accelerationIncrement(
   return delta.mul(gm / (r2 * sqrt(r2)));
 }
 
-grav_sim_t GravSim(double tt2, BodyGravCalc calc1) {
+GravSimT gravSim(double tt2, BodyGravCalc calc1) {
   final double dt = tt2 - calc1.tt;
 
   // Calculate where the major bodies (Sun, Jupiter...Neptune) will be at tt2.
@@ -551,17 +551,17 @@ grav_sim_t GravSim(double tt2, BodyGravCalc calc1) {
   final acc = bary2.acceleration(pos);
   final grav = BodyGravCalc(tt2, pos, vel, acc);
 
-  return grav_sim_t(bary2, grav);
+  return GravSimT(bary2, grav);
 }
 
-grav_sim_t gravFromState(List entry) {
+GravSimT gravFromState(List entry) {
   final state = bodyStateFromTable(entry);
   final bary = MajorBodies(state.tt);
   final r = state.r.add(bary.Sun.r);
   final v = state.v.add(bary.Sun.v);
   final a = bary.acceleration(r);
   final grav = BodyGravCalc(state.tt, r, v, a);
-  return grav_sim_t(bary, grav);
+  return GravSimT(bary, grav);
 }
 
 /// Solve for light travel time of a vector function.
@@ -675,7 +675,7 @@ EclipticCoordinates ecliptic(AstroVector eqj) {
 ///      The date and time for which to calculate the Moon's position.
 ///
 /// @returns {Spherical}
-Spherical EclipticGeoMoon(date) {
+Spherical eclipticGeoMoon(date) {
   var time = AstroTime(date);
   var moon = Moon(time);
 

@@ -10,7 +10,7 @@ import 'package:proj4dart/src/common/datum_utils.dart' as datum_utils;
 import 'package:proj4dart/src/common/utils.dart' as utils;
 import 'package:proj4dart/src/constants/values.dart' as consts;
 import 'package:mgrs_dart/mgrs_dart.dart' as mgrs_dart;
-import 'package:latlng/latlng.dart' as latLng;
+import 'package:latlng/latlng.dart' as lat_lng;
 import 'package:geoengine/src/utils/utils.dart';
 
 export 'package:geoxml/geoxml.dart';

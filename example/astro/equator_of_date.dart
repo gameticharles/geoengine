@@ -7,7 +7,7 @@
 import 'package:geoengine/src/astro/astronomy.dart';
 import 'dart:io';
 
-const UsageText = """
+const usageText = """
 USAGE:  dart equator_of_date.js [a|n] ra dec [yyyy-mm-ddThh:mm:ssZ]
 
 Converts J2000 equatorial coordinates to

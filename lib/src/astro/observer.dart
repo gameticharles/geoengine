@@ -97,8 +97,12 @@ Observer inverseTerra(List<double> ovec, double st) {
     // Calculate exact longitude.
     lonDeg = (RAD2DEG * stlocl) - (15.0 * st);
     // Normalize longitude to the range (-180, +180].
-    while (lonDeg <= -180) lonDeg += 360;
-    while (lonDeg > 180) lonDeg -= 360;
+    while (lonDeg <= -180) {
+      lonDeg += 360;
+    }
+    while (lonDeg > 180) {
+      lonDeg -= 360;
+    }
 
     // Numerically solve for exact latitude, using Newton's Method.
     // Start with initial latitude estimate, based on a spherical Earth.
@@ -143,10 +147,11 @@ Observer inverseTerra(List<double> ovec, double st) {
     // Solve for exact height in meters.
     // There are two formulas I can use. Use whichever has the less risky denominator.
     final double adjust = EARTH_EQUATORIAL_RADIUS_KM / denom;
-    if (sinLat.abs() > cosLat.abs())
+    if (sinLat.abs() > cosLat.abs()) {
       heightKm = z / sinLat - EARTH_FLATTENING_SQUARED * adjust;
-    else
+    } else {
       heightKm = p / cosLat - adjust;
+    }
   }
 
   return Observer(latDeg, lonDeg, 1000 * heightKm);

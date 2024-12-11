@@ -1,7 +1,7 @@
 part of '../astronomy.dart';
 
-var ConstelRot;
-var Epoch2000;
+dynamic constelRot;
+dynamic epoch2000;
 
 /// @brief Reports the constellation that a given celestial point lies within.
 ///
@@ -53,16 +53,16 @@ class ConstellationInfo {
     }
 
     // Lazy-initialize rotation matrix.
-    if (ConstelRot == null) {
-      ConstelRot =
+    if (constelRot == null) {
+      constelRot =
           RotationMatrix.rotationEQJtoEQD(AstroTime(-45655.74141261017));
-      Epoch2000 = AstroTime(0);
+      epoch2000 = AstroTime(0);
     }
 
     // Convert coordinates from J2000 to B1875.
     final sph2000 = Spherical(dec, 15.0 * ra, 1.0);
-    final vec2000 = AstroVector.vectorFromSphere(sph2000, Epoch2000);
-    final vec1875 = AstroVector.rotateVector(ConstelRot, vec2000);
+    final vec2000 = AstroVector.vectorFromSphere(sph2000, epoch2000);
+    final vec1875 = AstroVector.rotateVector(constelRot, vec2000);
     final equ1875 = EquatorialCoordinates.fromVector(vec1875);
 
     // Search for the constellation using the B1875 coordinates.
@@ -70,7 +70,7 @@ class ConstellationInfo {
         10 / (4 * 60); // conversion factor from compact units to DEC degrees
     final fr =
         fd / 15; // conversion factor from compact units to RA sidereal hours
-    for (final b in ConstelBounds) {
+    for (final b in constelBounds) {
       // Convert compact angular units to RA in hours, DEC in degrees.
       final decBounds = b[3] * fd;
       final raLow = b[1] * fr;
@@ -78,7 +78,7 @@ class ConstellationInfo {
       if (decBounds <= equ1875.dec &&
           raLow <= equ1875.ra &&
           equ1875.ra < raHigh) {
-        final c = ConstelNames[b[0]];
+        final c = constelNames[b[0]];
         return ConstellationInfo(c[0], c[1], equ1875.ra, equ1875.dec);
       }
     }
@@ -88,7 +88,7 @@ class ConstellationInfo {
   }
 }
 
-final List<List<String>> ConstelNames = [
+final List<List<String>> constelNames = [
   ['And', 'Andromeda'] //  0
   ,
   ['Ant', 'Antila'] //  1
@@ -266,7 +266,7 @@ final List<List<String>> ConstelNames = [
   ['Vul', 'Vulpecula'] // 87
 ];
 
-final List<List<dynamic>> ConstelBounds = [
+final List<List<dynamic>> constelBounds = [
   [83, 0, 8640, 2112] // UMi
   ,
   [83, 2880, 5220, 2076] // UMi

@@ -1,6 +1,6 @@
+// ignore_for_file: unused_element
+
 import '../../../../geoengine.dart';
-import 'request.dart';
-import 'strategy.dart';
 
 /// A concrete implementation of the GeocoderStrategy for the OpenStreetMap Nominatim API.
 ///

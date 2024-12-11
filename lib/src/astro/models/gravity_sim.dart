@@ -57,9 +57,9 @@ class GravitySimulator {
     prev = duplicate();
   }
 
-  Body get OriginBody => originBody;
+  Body get bodyOrigin => originBody;
 
-  AstroTime get Time => curr.time;
+  AstroTime get time => curr.time;
 
   List<StateVector> update(dynamic date) {
     final time = AstroTime(date);

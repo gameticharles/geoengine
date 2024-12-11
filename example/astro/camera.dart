@@ -17,7 +17,6 @@ import 'package:geoengine/geoengine.dart';
 
 void camera(Observer observer, AstroTime time) {
   const tolerance = 1.0e-15;
-  const RAD2DEG = 57.295779513082321;
 
   // Calculate the topocentric equatorial coordinates of date for the Moon.
   // Assume aberration does not matter because the Moon is so close and has such a small relative velocity.

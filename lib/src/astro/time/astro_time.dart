@@ -41,19 +41,19 @@ class AstroTime {
       return;
     }
 
-    final MillisPerDay = 1000 * 3600 * 24;
+    final millisPerDay = 1000 * 3600 * 24;
 
     if (date is DateTime) {
       this.date = date;
       ut = (date.millisecondsSinceEpoch - J2000.millisecondsSinceEpoch) /
-          MillisPerDay;
+          millisPerDay;
       tt = terrestrialTime(ut);
       return;
     }
 
     if (date is num) {
       this.date = DateTime.fromMillisecondsSinceEpoch(
-          J2000.millisecondsSinceEpoch + (date * MillisPerDay).round());
+          J2000.millisecondsSinceEpoch + (date * millisPerDay).round());
       ut = date.toDouble();
       tt = terrestrialTime(ut);
       return;

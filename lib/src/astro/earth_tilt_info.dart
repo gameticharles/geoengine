@@ -82,15 +82,15 @@ class EarthTiltInfo {
   });
 }
 
-EarthTiltInfo? cache_e_tilt;
+EarthTiltInfo? cacheETilt;
 
 EarthTiltInfo eTilt(AstroTime time) {
-  if (cache_e_tilt == null || (cache_e_tilt!.tt - time.tt).abs() > 1.0e-6) {
+  if (cacheETilt == null || (cacheETilt!.tt - time.tt).abs() > 1.0e-6) {
     final nut = iau2000b(time);
     final meanOb = meanObliq(time);
     final trueOb = meanOb + (nut.deps / 3600.0);
     final double ee = nut.dpsi * cos(meanOb * DEG2RAD) / 15.0;
-    cache_e_tilt = EarthTiltInfo(
+    cacheETilt = EarthTiltInfo(
       tt: time.tt,
       dpsi: nut.dpsi,
       deps: nut.deps,
@@ -99,7 +99,7 @@ EarthTiltInfo eTilt(AstroTime time) {
       tobl: trueOb,
     );
   }
-  return cache_e_tilt!;
+  return cacheETilt!;
 }
 
 
