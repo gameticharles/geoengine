@@ -13,8 +13,7 @@
 */
 
 import 'dart:math';
-import 'package:geoengine/src/astro/astronomy.dart';
-
+import 'package:geoengine/geoengine.dart';
 
 void camera(Observer observer, AstroTime time) {
   const tolerance = 1.0e-15;

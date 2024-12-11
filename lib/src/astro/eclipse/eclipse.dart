@@ -20,25 +20,23 @@ part of '../astronomy.dart';
 ///      The angular altitude of the center of the Sun above/below the horizon, at `time`,
 ///      corrected for atmospheric refraction and expressed in degrees.
 class EclipseEvent {
-   AstroTime time;
-   double altitude;
+  AstroTime time;
+  double altitude;
 
   EclipseEvent(this.time, this.altitude);
 }
 
-abstract class EclipseInfo{
-
+abstract class EclipseInfo {
   EclipseKind kind;
   double? obscuration;
 
   /// @brief The date and time of the eclipse peak.
-  /// 
+  ///
   /// @type {AstroTime} for GlobalSolarEclipseInfo and LunarEclipseInfo
   /// @type {EclipseEvent} for LocalSolarEclipseInfo
   dynamic peak;
 
   EclipseInfo(this.kind, this.obscuration, this.peak);
-
 }
 
 /// @brief Returns information about a lunar eclipse.
@@ -77,18 +75,18 @@ abstract class EclipseInfo{
 /// @property {AstroTime} peak
 ///      The time of the eclipse at its peak.
 ///
-/// @property {number} sd_penum
+/// @property {number} sdPenum
 ///      The semi-duration of the penumbral phase in minutes.
 ///
-/// @property {number} sd_partial
+/// @property {number} sdPartial
 ///      The semi-duration of the penumbral phase in minutes, or 0.0 if none.
 ///
-/// @property {number} sd_total
+/// @property {number} sdTotal
 ///      The semi-duration of the penumbral phase in minutes, or 0.0 if none.
 ///
 class LunarEclipseInfo extends EclipseInfo {
   static const double _minutesPerDay = 24 * 60;
-  
+
   double sdPenum;
   double sdPartial;
   double sdTotal;
@@ -100,10 +98,9 @@ class LunarEclipseInfo extends EclipseInfo {
     super.peak,
     this.sdPenum,
     this.sdPartial,
-    this.sdTotal,{
+    this.sdTotal, {
     this.magnitude,
-  }
-  );
+  });
 
   /// Formats a number with leading zeros to match the specified width
   String _pad(num number, int width) {
@@ -114,15 +111,15 @@ class LunarEclipseInfo extends EclipseInfo {
   String _formatDateTime(AstroTime time) {
     final date = time.date;
     return '${_pad(date.year, 4)}-${_pad(date.month, 2)}-${_pad(date.day, 2)} '
-           '${_pad(date.hour, 2)}:${_pad(date.minute, 2)}:${_pad(date.second, 2)}'
-           '.${_pad(date.millisecond, 3)} UTC';
+        '${_pad(date.hour, 2)}:${_pad(date.minute, 2)}:${_pad(date.second, 2)}'
+        '.${_pad(date.millisecond, 3)} UTC';
   }
 
   /// Converts minutes to a human-readable duration string
   String _formatDuration(double minutes) {
     final hours = minutes ~/ 60;
     final remainingMinutes = (minutes % 60).round();
-    
+
     if (hours > 0 && remainingMinutes > 0) {
       return '$hours hour${hours > 1 ? 's' : ''}, $remainingMinutes minute${remainingMinutes > 1 ? 's' : ''}';
     } else if (hours > 0) {
@@ -136,28 +133,30 @@ class LunarEclipseInfo extends EclipseInfo {
   AstroTime get partialBegin => peak.addDays(-sdPartial / _minutesPerDay);
 
   /// Gets the start time of the total eclipse phase (if applicable)
-  AstroTime? get totalBegin => 
+  AstroTime? get totalBegin =>
       sdTotal > 0 ? peak.addDays(-sdTotal / _minutesPerDay) : null;
 
   /// Gets the end time of the total eclipse phase (if applicable)
-  AstroTime? get totalEnd => 
+  AstroTime? get totalEnd =>
       sdTotal > 0 ? peak.addDays(sdTotal / _minutesPerDay) : null;
 
   /// Gets the end time of the partial eclipse phase
   AstroTime get partialEnd => peak.addDays(sdPartial / _minutesPerDay);
 
   /// Gets the overall eclipse duration
-  double get overallDuration => 
-    (2 * sdPenum + 2 * sdPartial + 2 * sdTotal); // Convert semi-durations to full durations.
+  double get overallDuration => (2 * sdPenum +
+      2 * sdPartial +
+      2 * sdTotal); // Convert semi-durations to full durations.
 
-  double get totalityDuration => sdTotal * 2; // Convert semi-duration to full duration.
+  double get totalityDuration =>
+      sdTotal * 2; // Convert semi-duration to full duration.
 
   /// Gets the obscuration percentage
-  String get obscurationPercentage => 
+  String get obscurationPercentage =>
       '${(this.obscuration! * 100).toStringAsFixed(1)}%';
 
   /// Calculates penumbral magnitude
-  double get penumbraMagnitude => 
+  double get penumbraMagnitude =>
       magnitude ?? ((overallDuration / (_minutesPerDay * 2)) * 2.5);
 
   /// Creates a formatted string for an eclipse phase
@@ -223,23 +222,29 @@ class LunarEclipseInfo extends EclipseInfo {
     buffer.writeln('**Quick Facts About This Eclipse**');
     buffer.writeln('Data | Value | Comments');
     buffer.writeln('--- | --- | ---');
-    
+
     // Magnitude and Obscuration
-    buffer.writeln('Magnitude | ${magnitude?.toStringAsFixed(3) ?? 'N/A'} | Fraction of the Moon\'s diameter covered by Earth\'s umbra');
-    buffer.writeln('Obscuration | $obscurationPercentage | Percentage of the Moon\'s area covered by Earth\'s umbra');
-    buffer.writeln('Penumbral magnitude | ${penumbraMagnitude.toStringAsFixed(3)} | Fraction of the Moon\'s diameter covered by Earth\'s penumbra');
-    
+    buffer.writeln(
+        'Magnitude | ${magnitude?.toStringAsFixed(3) ?? 'N/A'} | Fraction of the Moon\'s diameter covered by Earth\'s umbra');
+    buffer.writeln(
+        'Obscuration | $obscurationPercentage | Percentage of the Moon\'s area covered by Earth\'s umbra');
+    buffer.writeln(
+        'Penumbral magnitude | ${penumbraMagnitude.toStringAsFixed(3)} | Fraction of the Moon\'s diameter covered by Earth\'s penumbra');
+
     // Duration details
     buffer.writeln();
-    buffer.writeln('Overall duration | ${_formatDuration(overallDuration)} | Period between the beginning and end of all eclipse phases');
-    
-    if (sdTotal > 0) {
-      buffer.writeln('Duration of totality | ${_formatDuration(sdTotal * 2)} | Period between the beginning and end of the total phase');
-    }
-    
-    buffer.writeln('Duration of partial phases | ${_formatDuration(sdPartial)} | Combined period of both partial phases');
-    buffer.writeln('Duration of penumbral phases | ${_formatDuration(sdPenum )} | Combined period of both penumbral phases');
+    buffer.writeln(
+        'Overall duration | ${_formatDuration(overallDuration)} | Period between the beginning and end of all eclipse phases');
 
+    if (sdTotal > 0) {
+      buffer.writeln(
+          'Duration of totality | ${_formatDuration(sdTotal * 2)} | Period between the beginning and end of the total phase');
+    }
+
+    buffer.writeln(
+        'Duration of partial phases | ${_formatDuration(sdPartial)} | Combined period of both partial phases');
+    buffer.writeln(
+        'Duration of penumbral phases | ${_formatDuration(sdPenum)} | Combined period of both penumbral phases');
 
     return buffer.toString();
   }
@@ -304,7 +309,7 @@ class LocalSolarEclipseInfo extends EclipseInfo {
   final EclipseEvent? totalEnd;
   final EclipseEvent partialEnd;
 
-    LocalSolarEclipseInfo(
+  LocalSolarEclipseInfo(
     super.kind,
     super.obscuration,
     this.partialBegin,
@@ -352,7 +357,8 @@ class LocalSolarEclipseInfo extends EclipseInfo {
 
   /// Gets the duration of the partial phases
   Duration get partialDuration {
-    return partialEnd.time.date.difference(partialBegin.time.date) - totalityDuration;
+    return partialEnd.time.date.difference(partialBegin.time.date) -
+        totalityDuration;
   }
 
   /// Gets the overall duration of the eclipse
@@ -371,7 +377,8 @@ class LocalSolarEclipseInfo extends EclipseInfo {
 
     // Eclipse type and obscuration
     buffer.writeln('${kind.name} Solar Eclipse');
-    buffer.writeln('Peak Sun obscuration: ${(this.obscuration! * 100).toStringAsFixed(1)}%');
+    buffer.writeln(
+        'Peak Sun obscuration: ${(this.obscuration! * 100).toStringAsFixed(1)}%');
     buffer.writeln();
 
     // Timeline of events
@@ -380,7 +387,8 @@ class LocalSolarEclipseInfo extends EclipseInfo {
     if (totalBegin != null) {
       buffer.writeln(_formatEvent('Total eclipse begins', totalBegin!));
     }
-    buffer.writeln(_formatEvent('Peak of eclipse', peak)); // Assuming altitude of 0° for peak
+    buffer.writeln(_formatEvent(
+        'Peak of eclipse', peak)); // Assuming altitude of 0° for peak
     if (totalEnd != null) {
       buffer.writeln(_formatEvent('Total eclipse ends', totalEnd!));
     }
@@ -391,17 +399,20 @@ class LocalSolarEclipseInfo extends EclipseInfo {
     buffer.writeln('**Quick Facts About This Eclipse**');
     buffer.writeln('Data | Value | Comments');
     buffer.writeln('--- | --- | ---');
-    buffer.writeln('Overall duration | ${_formatDuration(overallDuration)} | Period between the beginning and end of all eclipse phases');
+    buffer.writeln(
+        'Overall duration | ${_formatDuration(overallDuration)} | Period between the beginning and end of all eclipse phases');
     if (totalityDuration > Duration()) {
-      buffer.writeln('Duration of totality | ${_formatDuration(totalityDuration)} | Period between the beginning and end of the total phase');
+      buffer.writeln(
+          'Duration of totality | ${_formatDuration(totalityDuration)} | Period between the beginning and end of the total phase');
     }
-    buffer.writeln('Duration of partial phases | ${_formatDuration(partialDuration)} | Combined period of both partial phases');
-    buffer.writeln('Obscuration | ${(this.obscuration! * 100).toStringAsFixed(1)}% | Percentage of the Sun\'s area covered by the Moon');
+    buffer.writeln(
+        'Duration of partial phases | ${_formatDuration(partialDuration)} | Combined period of both partial phases');
+    buffer.writeln(
+        'Obscuration | ${(this.obscuration! * 100).toStringAsFixed(1)}% | Percentage of the Sun\'s area covered by the Moon');
 
     return buffer.toString();
   }
 }
-
 
 /// @brief Reports the time and geographic location of the peak of a solar eclipse.
 ///
@@ -481,8 +492,8 @@ class GlobalSolarEclipseInfo extends EclipseInfo {
   String _formatDateTime(AstroTime time) {
     final date = time.date;
     return '${_pad(date.year, 4)}-${_pad(date.month, 2)}-${_pad(date.day, 2)} '
-           '${_pad(date.hour, 2)}:${_pad(date.minute, 2)}:${_pad(date.second, 2)}'
-           '.${_pad(date.millisecond, 3)} UTC';
+        '${_pad(date.hour, 2)}:${_pad(date.minute, 2)}:${_pad(date.second, 2)}'
+        '.${_pad(date.millisecond, 3)} UTC';
   }
 
   /// Formats coordinates as a readable string
@@ -518,7 +529,8 @@ class GlobalSolarEclipseInfo extends EclipseInfo {
 
     // Peak obscuration
     if (this.obscuration != null) {
-      buffer.writeln('Peak Sun obscuration: ${(this.obscuration! * 100).toStringAsFixed(1)}%');
+      buffer.writeln(
+          'Peak Sun obscuration: ${(this.obscuration! * 100).toStringAsFixed(1)}%');
     } else {
       buffer.writeln('Peak Sun obscuration: N/A (Partial Eclipse)');
     }
@@ -531,8 +543,10 @@ class GlobalSolarEclipseInfo extends EclipseInfo {
     // Location information
     buffer.writeln();
     buffer.writeln('Location at Peak:');
-    buffer.writeln('Latitude/Longitude: ${_formatCoordinates(latitude, longitude)}');
-    buffer.writeln('Distance to Earth Center: ${distance.toStringAsFixed(2)} km');
+    buffer.writeln(
+        'Latitude/Longitude: ${_formatCoordinates(latitude, longitude)}');
+    buffer
+        .writeln('Distance to Earth Center: ${distance.toStringAsFixed(2)} km');
 
     // Quick facts
     buffer.writeln();
@@ -540,19 +554,22 @@ class GlobalSolarEclipseInfo extends EclipseInfo {
     buffer.writeln('Data | Value | Comments');
     buffer.writeln('--- | --- | ---');
     buffer.writeln('Eclipse Kind | ${kind.name} | Type of solar eclipse');
-    buffer.writeln('Obscuration | ${this.obscuration != null ? '${(this.obscuration! * 100).toStringAsFixed(1)}%' : 'N/A'} | Fraction of the Sun\'s area covered by the Moon');
-    buffer.writeln('Peak Time | ${_formatDateTime(peak)} | Instant of maximum eclipse');
-    buffer.writeln('Latitude | ${latitude != null ? '${latitude!.toStringAsFixed(2)}°' : 'N/A'} | Location of peak shadow center');
-    buffer.writeln('Longitude | ${longitude != null ? '${longitude!.toStringAsFixed(2)}°' : 'N/A'} | Location of peak shadow center');
-    buffer.writeln('Distance | ${distance.toStringAsFixed(2)} km | Shadow axis distance to Earth\'s center');
+    buffer.writeln(
+        'Obscuration | ${this.obscuration != null ? '${(this.obscuration! * 100).toStringAsFixed(1)}%' : 'N/A'} | Fraction of the Sun\'s area covered by the Moon');
+    buffer.writeln(
+        'Peak Time | ${_formatDateTime(peak)} | Instant of maximum eclipse');
+    buffer.writeln(
+        'Latitude | ${latitude != null ? '${latitude!.toStringAsFixed(2)}°' : 'N/A'} | Location of peak shadow center');
+    buffer.writeln(
+        'Longitude | ${longitude != null ? '${longitude!.toStringAsFixed(2)}°' : 'N/A'} | Location of peak shadow center');
+    buffer.writeln(
+        'Distance | ${distance.toStringAsFixed(2)} km | Shadow axis distance to Earth\'s center');
 
     return buffer.toString();
   }
 }
 
-
-class Eclipse{
-
+class Eclipse {
   /// @brief Searches for a solar eclipse visible anywhere on the Earth's surface.
   ///
   /// This function finds the first solar eclipse that occurs after `startTime`.
@@ -566,10 +583,11 @@ class Eclipse{
   ///      The date and time for starting the search for a solar eclipse.
   ///
   /// @returns {GlobalSolarEclipseInfo}
- static  GlobalSolarEclipseInfo searchGlobalSolarEclipse(dynamic startTime) {
+  static GlobalSolarEclipseInfo searchGlobalSolarEclipse(dynamic startTime) {
     startTime = AstroTime(startTime);
-    const double pruneLatitude = 1.8; // Moon's ecliptic latitude beyond which eclipse is impossible
-    
+    const double pruneLatitude =
+        1.8; // Moon's ecliptic latitude beyond which eclipse is impossible
+
     // Iterate through consecutive new moons until we find a solar eclipse visible somewhere on Earth.
     var nmtime = startTime;
     for (var nmCount = 0; nmCount < 12; ++nmCount) {
@@ -585,7 +603,7 @@ class Eclipse{
         // Search near the new moon for the time when the center of the Earth
         // is closest to the line passing through the centers of the Sun and Moon.
         var shadow = ShadowInfo.peakMoonShadow(newmoon);
-        if (shadow.r < shadow.p + EARTH_MEAN_RADIUS_KM ) {
+        if (shadow.r < shadow.p + EARTH_MEAN_RADIUS_KM) {
           // This is at least a partial solar eclipse visible somewhere on Earth.
           // Try to find an intersection between the shadow axis and the Earth's oblate geoid.
           return geoidIntersect(shadow);
@@ -601,7 +619,6 @@ class Eclipse{
     throw 'Failed to find solar eclipse within 12 full moons.';
   }
 
-
   /// @brief Searches for the next global solar eclipse in a series.
   ///
   /// After using {@link SearchGlobalSolarEclipse} to find the first solar eclipse
@@ -614,12 +631,12 @@ class Eclipse{
   ///      A date and time near a new moon. Solar eclipse search will start at the next new moon.
   ///
   /// @returns {GlobalSolarEclipseInfo}
-  static GlobalSolarEclipseInfo nextGlobalSolarEclipse(dynamic prevEclipseTime) {
+  static GlobalSolarEclipseInfo nextGlobalSolarEclipse(
+      dynamic prevEclipseTime) {
     prevEclipseTime = AstroTime(prevEclipseTime);
     var startTime = prevEclipseTime.addDays(10.0);
     return searchGlobalSolarEclipse(startTime);
   }
-
 
   /// @brief Searches for a lunar eclipse.
   ///
@@ -635,7 +652,8 @@ class Eclipse{
   ///
   /// @returns {LunarEclipseInfo}
   static LunarEclipseInfo searchLunarEclipse(dynamic date) {
-    const double pruneLatitude = 1.8; // full Moon's ecliptic latitude above which eclipse is impossible
+    const double pruneLatitude =
+        1.8; // full Moon's ecliptic latitude above which eclipse is impossible
     var fmTime = AstroTime(date);
     for (var fmCount = 0; fmCount < 12; ++fmCount) {
       // Search for the next full moon. Any eclipse will be near it.
@@ -657,23 +675,28 @@ class Eclipse{
           var obscuration1 = 0.0;
           var sdTotal = 0.0;
           var sdPartial = 0.0;
-          var sdPenum = ShadowInfo.shadowSemiDurationMinutes(shadow.time, shadow.p + MOON_MEAN_RADIUS_KM, 200.0);
+          var sdPenum = ShadowInfo.shadowSemiDurationMinutes(
+              shadow.time, shadow.p + MOON_MEAN_RADIUS_KM, 200.0);
 
           if (shadow.r < shadow.k + MOON_MEAN_RADIUS_KM) {
             // This is at least a partial eclipse.
             kind = EclipseKind.Partial;
-            sdPartial = ShadowInfo.shadowSemiDurationMinutes(shadow.time, shadow.k + MOON_MEAN_RADIUS_KM, sdPenum);
+            sdPartial = ShadowInfo.shadowSemiDurationMinutes(
+                shadow.time, shadow.k + MOON_MEAN_RADIUS_KM, sdPenum);
 
             if (shadow.r + MOON_MEAN_RADIUS_KM < shadow.k) {
               // This is a total eclipse.
               kind = EclipseKind.Total;
               obscuration1 = 1.0;
-              sdTotal = ShadowInfo.shadowSemiDurationMinutes(shadow.time, shadow.k - MOON_MEAN_RADIUS_KM, sdPartial);
+              sdTotal = ShadowInfo.shadowSemiDurationMinutes(
+                  shadow.time, shadow.k - MOON_MEAN_RADIUS_KM, sdPartial);
             } else {
-              obscuration1 = obscuration(MOON_MEAN_RADIUS_KM, shadow.k, shadow.r);
+              obscuration1 =
+                  obscuration(MOON_MEAN_RADIUS_KM, shadow.k, shadow.r);
             }
           }
-          return LunarEclipseInfo(kind, obscuration1, shadow.time, sdPenum, sdPartial, sdTotal);
+          return LunarEclipseInfo(
+              kind, obscuration1, shadow.time, sdPenum, sdPartial, sdTotal);
         }
       }
 
@@ -699,11 +722,10 @@ class Eclipse{
   /// @returns {LunarEclipseInfo}
   static LunarEclipseInfo nextLunarEclipse(dynamic prevEclipseTime) {
     var startTime = AstroTime(prevEclipseTime);
-    startTime = startTime.addDays(10); // Add 10 days to the previous eclipse time
+    startTime =
+        startTime.addDays(10); // Add 10 days to the previous eclipse time
     return searchLunarEclipse(startTime);
   }
-
-
 
   /// @brief Searches for a solar eclipse visible at a specific location on the Earth's surface.
   ///
@@ -726,10 +748,12 @@ class Eclipse{
   ///      The geographic location of the observer.
   ///
   /// @returns {LocalSolarEclipseInfo}
-  static LocalSolarEclipseInfo searchLocalSolarEclipse(dynamic startTime, Observer observer) {
+  static LocalSolarEclipseInfo searchLocalSolarEclipse(
+      dynamic startTime, Observer observer) {
     startTime = AstroTime(startTime);
     verifyObserver(observer);
-    const pruneLatitude = 1.8; // Moon's ecliptic latitude beyond which eclipse is impossible
+    const pruneLatitude =
+        1.8; // Moon's ecliptic latitude beyond which eclipse is impossible
 
     // Iterate through consecutive new moons until we find a solar eclipse visible somewhere on Earth.
     var nmtime = startTime;
@@ -753,7 +777,8 @@ class Eclipse{
           // Ignore any eclipse that happens completely at night.
           // More precisely, the center of the Sun must be above the horizon
           // at the beginning or the end of the eclipse, or we skip the event.
-          if (eclipse.partialBegin.altitude > 0.0 || eclipse.partialEnd.altitude > 0.0) {
+          if (eclipse.partialBegin.altitude > 0.0 ||
+              eclipse.partialEnd.altitude > 0.0) {
             return eclipse;
           }
         }
@@ -782,42 +807,41 @@ class Eclipse{
   ///      The geographic location of the observer.
   ///
   /// @returns {LocalSolarEclipseInfo}
-  static LocalSolarEclipseInfo nextLocalSolarEclipse(dynamic prevEclipseTime, Observer observer) {
+  static LocalSolarEclipseInfo nextLocalSolarEclipse(
+      dynamic prevEclipseTime, Observer observer) {
     prevEclipseTime = AstroTime(prevEclipseTime);
     final startTime = prevEclipseTime.addDays(10.0);
     return searchLocalSolarEclipse(startTime, observer);
   }
 
-
-
   /// Searches for eclipses based on given parameters.
-  /// 
+  ///
   /// [startTime] - The time to start searching from (defaults to current time)
   /// [eclipses] - Type of eclipses to search for (solar, lunar, or all)
   /// [observer] - Optional observer location for local solar eclipses
   /// [eclipseCount] - Number of eclipses to find (defaults to 5)
-  static List<EclipseInfo> search({
-    dynamic startTime,
-    Eclipses eclipses = Eclipses.all,
-    Observer? observer,
-    int eclipseCount = 5
-  }) {
+  static List<EclipseInfo> search(
+      {dynamic startTime,
+      Eclipses eclipses = Eclipses.all,
+      Observer? observer,
+      int eclipseCount = 5}) {
     // Initialize start time
     final searchStart = AstroTime(startTime ?? DateTime.now());
     List<EclipseInfo> eclipseResult = [];
-    
+
     // Handle initial eclipse(s) based on type
     switch (eclipses) {
       case Eclipses.solar:
-        final eclipse = observer != null 
+        final eclipse = observer != null
             ? searchLocalSolarEclipse(searchStart, observer)
             : searchGlobalSolarEclipse(searchStart);
         eclipseResult.add(eclipse);
-        
+
         // Find subsequent solar eclipses
         for (var i = 1; i < eclipseCount; i++) {
           final nextEclipse = observer != null
-              ? nextLocalSolarEclipse((eclipseResult.last.peak as EclipseEvent).time, observer)
+              ? nextLocalSolarEclipse(
+                  (eclipseResult.last.peak as EclipseEvent).time, observer)
               : nextGlobalSolarEclipse(eclipseResult.last.peak as AstroTime);
           eclipseResult.add(nextEclipse);
         }
@@ -826,7 +850,7 @@ class Eclipse{
       case Eclipses.lunar:
         var eclipse = searchLunarEclipse(searchStart);
         eclipseResult.add(eclipse);
-        
+
         // Find subsequent lunar eclipses
         for (var i = 1; i < eclipseCount; i++) {
           eclipse = nextLunarEclipse(eclipse.peak as AstroTime);
@@ -859,18 +883,17 @@ class Eclipse{
         while (eclipseResult.length < eclipseCount) {
           final lastEclipse = eclipseResult.last;
           final isLastLunar = lastEclipse is LunarEclipseInfo;
-          
+
           if (!isLastLunar) {
             final nextEclipse = observer != null
-                ? nextLocalSolarEclipse((lastEclipse.peak as EclipseEvent).time, observer)
+                ? nextLocalSolarEclipse(
+                    (lastEclipse.peak as EclipseEvent).time, observer)
                 : nextGlobalSolarEclipse(lastEclipse.peak as AstroTime);
             eclipseResult.add(nextEclipse);
           } else {
-            final nextEclipse = nextLunarEclipse(
-              observer != null
-                  ? (lastEclipse.peak as EclipseEvent).time
-                  : lastEclipse.peak as AstroTime
-            );
+            final nextEclipse = nextLunarEclipse(observer != null
+                ? (lastEclipse.peak as EclipseEvent).time
+                : lastEclipse.peak as AstroTime);
             eclipseResult.add(nextEclipse);
           }
         }
@@ -879,7 +902,6 @@ class Eclipse{
 
     return eclipseResult;
   }
-
 }
 
 /// Calculates the fraction of the area of one disc that is obscured by another disc.
@@ -958,7 +980,8 @@ double solarEclipseObscuration(AstroVector hm, AstroVector lo) {
   final sunMoonSeparation = angleBetween(lo, ho);
 
   // Find the fraction of the Sun's apparent disc area that is covered by the Moon.
-  final obscuration1 = obscuration(sunRadius, moonRadius, sunMoonSeparation * DEG2RAD);
+  final obscuration1 =
+      obscuration(sunRadius, moonRadius, sunMoonSeparation * DEG2RAD);
 
   // HACK: In marginal cases, we need to clamp obscuration to less than 1.0.
   // This function is never called for total eclipses, so it should never return 1.0.
@@ -977,8 +1000,10 @@ GlobalSolarEclipseInfo geoidIntersect(ShadowInfo shadow) {
   // coordinates that are perfectly aligned with the Earth's equator at this
   // moment in time.
   final rot = RotationMatrix.rotationEQJtoEQD(shadow.time);
-  final v = AstroVector.rotateVector(rot, shadow.dir); // shadow-axis vector in equator-of-date coordinates
-  final e = AstroVector.rotateVector(rot, shadow.target); // lunacentric Earth in equator-of-date coordinates
+  final v = AstroVector.rotateVector(
+      rot, shadow.dir); // shadow-axis vector in equator-of-date coordinates
+  final e = AstroVector.rotateVector(
+      rot, shadow.target); // lunacentric Earth in equator-of-date coordinates
 
   // Convert all distances from AU to km.
   // But dilate the z-coordinates so that the Earth becomes a perfect sphere.
@@ -1035,7 +1060,8 @@ GlobalSolarEclipseInfo geoidIntersect(ShadowInfo shadow) {
 
     // Put the EQD geocentric coordinates of the observer into the vector 'o'.
     // Also convert back from kilometers to astronomical units.
-    var o = AstroVector(px / KM_PER_AU, py / KM_PER_AU, pz / KM_PER_AU, shadow.time);
+    var o = AstroVector(
+        px / KM_PER_AU, py / KM_PER_AU, pz / KM_PER_AU, shadow.time);
 
     // Rotate the observer's geocentric EQD back to the EQJ system.
     o = AstroVector.rotateVector(inv, o);
@@ -1046,7 +1072,8 @@ GlobalSolarEclipseInfo geoidIntersect(ShadowInfo shadow) {
     o.z += shadow.target.z;
 
     // Recalculate the shadow using a vector from the Moon's center toward the observer.
-    final surface = ShadowInfo.calcShadow(MOON_POLAR_RADIUS_KM, shadow.time, o, shadow.dir);
+    final surface =
+        ShadowInfo.calcShadow(MOON_POLAR_RADIUS_KM, shadow.time, o, shadow.dir);
 
     // If we did everything right, the shadow distance should be very close to zero.
     // That's because we already determined the observer 'o' is on the shadow axis!
@@ -1055,16 +1082,18 @@ GlobalSolarEclipseInfo geoidIntersect(ShadowInfo shadow) {
     }
 
     kind = eclipseKindFromUmbra(surface.k);
-    obscuration = (kind == EclipseKind.Total) ? 1.0 : solarEclipseObscuration(shadow.dir, o);
+    obscuration = (kind == EclipseKind.Total)
+        ? 1.0
+        : solarEclipseObscuration(shadow.dir, o);
   } else {
     // This is a partial solar eclipse. It does not make practical sense to calculate obscuration.
     // Anyone who wants obscuration should use Astronomy.searchLocalSolarEclipse for a specific location on the Earth.
     obscuration = null;
   }
 
-  return GlobalSolarEclipseInfo(kind, obscuration, peak, distance, latitude, longitude);
+  return GlobalSolarEclipseInfo(
+      kind, obscuration, peak, distance, latitude, longitude);
 }
-
 
 double localPartialDistance(ShadowInfo shadow) {
   return shadow.p - shadow.r;
@@ -1076,33 +1105,32 @@ double localTotalDistance(ShadowInfo shadow) {
   return (shadow.k.abs()) - shadow.r;
 }
 
-
 double sunAltitude(AstroTime time, Observer observer) {
-  final equ = equator(Body.Sun, time, observer, true, true); // Adjust Body.Sun to your actual implementation
-  final hor = HorizontalCoordinates.horizon(time, observer, equ.ra, equ.dec, 'normal'); // Adjust 'normal' to your actual implementation
+  final equ = equator(Body.Sun, time, observer, true,
+      true); // Adjust Body.Sun to your actual implementation
+  final hor = HorizontalCoordinates.horizon(time, observer, equ.ra, equ.dec,
+      'normal'); // Adjust 'normal' to your actual implementation
   return hor.altitude;
 }
-
-
 
 EclipseEvent calcEvent(Observer observer, AstroTime time) {
   final altitude = sunAltitude(time, observer);
   return EclipseEvent(time, altitude);
 }
 
-
-EclipseEvent localEclipseTransition(Observer observer, double direction, ShadowFunc func, AstroTime t1, AstroTime t2) {
+EclipseEvent localEclipseTransition(Observer observer, double direction,
+    ShadowFunc func, AstroTime t1, AstroTime t2) {
   double evaluate(AstroTime time) {
     final shadow = ShadowInfo.localMoonShadow(time, observer);
     return direction * func(shadow);
   }
+
   final searchResult = search(evaluate, t1, t2);
   if (searchResult == null) {
     throw "Local eclipse transition search failed.";
   }
   return calcEvent(observer, searchResult);
 }
-
 
 LocalSolarEclipseInfo localEclipse(ShadowInfo shadow, Observer observer) {
   const partialWindow = 0.2;
@@ -1124,22 +1152,20 @@ LocalSolarEclipseInfo localEclipse(ShadowInfo shadow, Observer observer) {
     t2 = shadow.time.addDays(totalWindow);
     totalBegin = localEclipseTransition(
         observer, 1.0, localTotalDistance, t1, shadow.time);
-    totalEnd =
-        localEclipseTransition(observer, -1.0, localTotalDistance, shadow.time, t2);
+    totalEnd = localEclipseTransition(
+        observer, -1.0, localTotalDistance, shadow.time, t2);
     kind = eclipseKindFromUmbra(shadow.k);
   } else {
     kind = EclipseKind.Partial;
   }
 
-  final obscuration =
-      (kind == EclipseKind.Total) ? 1.0 : solarEclipseObscuration(shadow.dir, shadow.target);
+  final obscuration = (kind == EclipseKind.Total)
+      ? 1.0
+      : solarEclipseObscuration(shadow.dir, shadow.target);
 
-  return LocalSolarEclipseInfo(kind, obscuration, partialBegin, totalBegin, peak,
-      totalEnd, partialEnd);
+  return LocalSolarEclipseInfo(
+      kind, obscuration, partialBegin, totalBegin, peak, totalEnd, partialEnd);
 }
-
-
-
 
 /// @brief Returns apparent geocentric true ecliptic coordinates of date for the Sun.
 ///
@@ -1185,7 +1211,6 @@ EclipticCoordinates sunPosition(dynamic date) {
       EclipticCoordinates.rotateEquatorialToEcliptic(vec, cosOb, sinOb);
   return sunEcliptic;
 }
-
 
 /// @brief Searches for when the Sun reaches a given ecliptic longitude.
 ///
@@ -1248,4 +1273,3 @@ AstroTime? searchSunLongitude(
   return search(sunOffset, t1, t2,
       options: SearchOptions(dtToleranceSeconds: 0.01));
 }
-

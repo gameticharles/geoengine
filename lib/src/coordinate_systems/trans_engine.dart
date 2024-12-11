@@ -384,10 +384,6 @@ class CoordinateConversion {
             geodeticToGeodetic(point: pg, projSrc: projSrc, projDst: projDst);
         result = geodeticToProjected(point: gg, projection: projDst);
         break;
-
-      default:
-        result = projSrc.transform(projDst, point.toPoint());
-        break;
     }
     return point.copyWith(
       x: result.x,

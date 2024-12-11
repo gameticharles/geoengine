@@ -1,6 +1,4 @@
 import '../../../geoengine.dart';
-import 'strategies/request.dart';
-import 'strategies/strategy.dart';
 
 /// A class to perform geocoding operations using different strategies.
 ///
@@ -23,7 +21,7 @@ class Geocoder {
 
   /// Constructs a Geocoder instance with the specified geocoding strategy.
   ///
-  /// [strategy]: An instance of a class that implements the GeocoderStrategy interface.
+  /// [strategyFactory]: An instance of a class that implements the GeocoderStrategy interface.
   /// [config]: (Optional) Configuration options for the strategy.
   /// [throttleDuration]: (Optional) Duration to wait between successive requests.
   Geocoder({

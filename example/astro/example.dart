@@ -1,7 +1,11 @@
+import 'package:geoengine/geoengine.dart';
+
 void main(List<String> args) {
   var date = DateTime.now();
   final latitude = 6.56784;
   final longitude = -1.5674;
+  Eclipse.searchGlobalSolarEclipse(date);
+  Observer(latitude, longitude, 230);
 }
 
 /*

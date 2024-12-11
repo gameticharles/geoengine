@@ -1,5 +1,9 @@
 # CHANGE LOGS
 
+## 0.2.1
+
+* **[BUG_FIX]** Fixed astronomical calculations not working well.
+
 ## 0.2.0
 
 * **[FEATURE]** Added astronomical calculations.

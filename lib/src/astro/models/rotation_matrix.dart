@@ -9,7 +9,7 @@ class RotationMatrix {
   /// a number[3][3] array. It throws an exception if `rot` is not of that shape.
   /// Otherwise it creates a new {@link RotationMatrix} object based on `rot`.
   ///
-  /// @param {number[][]} rot
+  /// @property {number[][]} rot
   ///      An array [3][3] of numbers. Defines a rotation matrix used to premultiply
   ///      a 3D vector to reorient it into another coordinate system.
   ///

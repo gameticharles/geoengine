@@ -141,7 +141,7 @@ class EquatorialCoordinates {
 ///
 /// @property {number} ra
 ///      The right ascension of the celestial body in sidereal hours.
-///      The value is in the reange [0, 24).
+///      The value is in the range [0, 24).
 ///      If `altitude` was adjusted for atmospheric reaction, `ra`
 ///      is likewise adjusted.
 ///
@@ -281,7 +281,7 @@ class HorizontalCoordinates {
 /// orbit around the Sun.
 /// Includes Cartesian coordinates `(ex, ey, ez)` measured in
 /// <a href="https://en.wikipedia.org/wiki/Astronomical_unit">astronomical units</a> (AU)
-/// and spherical coordinates `(elon, elat)` measured in degrees.
+/// and spherical coordinates `(elon, eLat)` measured in degrees.
 ///
 /// @property {Vector} vec
 ///      Ecliptic cartesian vector with components measured in astronomical units (AU).
@@ -292,7 +292,7 @@ class HorizontalCoordinates {
 ///      The z-axis is oriented perpendicular to the ecliptic plane,
 ///      along the direction of the Sun's north pole.
 ///
-/// @property {number} elat
+/// @property {number} eLat
 ///      The ecliptic latitude of the body in degrees.
 ///      This is the angle north or south of the ecliptic plane.
 ///      The value is in the range [-90, +90].
@@ -324,13 +324,13 @@ class EclipticCoordinates {
     final ez = -equ.y * sinOb + equ.z * cosOb;
 
     final xyproj = sqrt(ex * ex + ey * ey);
-    double elon = 0;
+    double eLon = 0;
     if (xyproj > 0) {
-      elon = RAD2DEG * atan2(ey, ex);
-      if (elon < 0) elon += 360;
+      eLon = RAD2DEG * atan2(ey, ex);
+      if (eLon < 0) eLon += 360;
     }
-    final elat = RAD2DEG * atan2(ez, xyproj);
+    final eLat = RAD2DEG * atan2(ez, xyproj);
     final ecl = AstroVector(ex, ey, ez, equ.time);
-    return EclipticCoordinates(ecl, elat, elon);
+    return EclipticCoordinates(ecl, eLat, eLon);
   }
 }

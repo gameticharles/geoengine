@@ -18,6 +18,7 @@ export 'package:proj4dart/proj4dart.dart' hide Point;
 
 export 'package:geoengine/src/geocoder/geocoder.dart';
 export 'package:geoengine/src/leveling/leveling.dart';
+export 'package:geoengine/src/astro/astronomy.dart';
 
 part 'src/geodata/geodata.dart';
 part 'src/points/x_point.dart';
