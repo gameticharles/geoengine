@@ -1,4 +1,4 @@
-library geojson;
+library;
 
 import 'dart:collection';
 import 'dart:convert';

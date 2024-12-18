@@ -120,19 +120,19 @@ class GeoData {
       driver = _getDriverForExtension(filePath);
     }
 
+    FileIO fileIO = FileIO();
+    Stream<String> lines;
+
+    if (filePath.isNotEmpty) {
+      // Read file
+      lines = fileIO.readFileAsStream(filePath);
+    } else {
+      throw ArgumentError('Either inputFilePath must be provided.');
+    }
+
     switch (driver) {
       case 'TXT':
       case 'CSV':
-        FileIO fileIO = FileIO();
-        Stream<String> lines;
-
-        if (filePath.isNotEmpty) {
-          // Read file
-          lines = fileIO.readFileAsStream(filePath);
-        } else {
-          throw ArgumentError('Either inputFilePath must be provided.');
-        }
-
         List<String> headers = [];
         final List<Map<String, dynamic>> data = [];
 
@@ -175,10 +175,18 @@ class GeoData {
         // Read GeoJSON
         //GeoJSON.fromMap(map);
         break;
+      case 'GPX':
+        var res = await GeoXml.fromGpxStream(lines);
+        print(res.toString());
+        break;
+      case 'GML':
+      case 'KML':
+        var res = await GeoXml.fromKmlStream(lines);
+        print(res.toString());
+        break;
       // Add more cases for other drivers
       default:
-        // Handle unknown or unsupported driver
-        break;
+        return GeoData._([], []); // Placeholder return
     }
 
     return GeoData._([], []); // Placeholder return
@@ -203,10 +211,11 @@ class GeoData {
       driver = _getDriverForExtension(filePath);
     }
 
+    // Export to CSV TXT
+
     switch (driver) {
       case 'TXT':
       case 'CSV':
-        // Export to CSV TXT
         FileIO fileIO = FileIO();
         final buffer = StringBuffer();
         buffer.writeln(headers.join(delimiter));
@@ -223,8 +232,50 @@ class GeoData {
         // Export to Shapefile
         break;
       case 'GeoJSON':
-        // Export to GeoJSON
+        // Read GeoJSON
+        //GeoJSON.fromMap(map);
+        break;
+      case 'GPX':
+        // create gpx object
+        var gpx = GeoXml();
+        gpx.creator = "dart-gpx library";
+        gpx.wpts = [
+          Wpt(
+              lat: 36.62,
+              lon: 101.77,
+              ele: 10.0,
+              name: 'Xining',
+              desc: 'China'),
+        ];
 
+        // generate xml string
+        var gpxString = gpx.toGpxString(pretty: true);
+        print(gpxString);
+
+        break;
+      case 'GML':
+      case 'KML':
+        // create gpx object
+        var geoXml = GeoXml();
+        geoXml.creator = "dart geoxml library";
+        geoXml.wpts = [
+          Wpt(
+              lat: 36.62,
+              lon: 101.77,
+              ele: 10.0,
+              name: 'Xining',
+              desc: 'China'),
+        ];
+
+        // generate xml string
+        var kmlString = geoXml.toKmlString(
+            pretty: true, altitudeMode: AltitudeMode.clampToGround);
+        print(kmlString);
+
+        // // generate xml string with altitude mode - clampToGround
+        //  kmlString = KmlWriter(altitudeMode: AltitudeMode.clampToGround)
+        //     .asString(geoXml, pretty: true);
+        // print(kmlString);
         break;
       // Add more cases for other drivers
       default:

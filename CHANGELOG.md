@@ -1,5 +1,9 @@
 # CHANGE LOGS
 
+## 0.2.3
+
+* **[IMPROVEMENT]** Increased the version of `advance_math` to 4.0.2.
+
 ## 0.2.2
 
 * **[FEATURE]** Added Error Ellipse class.
