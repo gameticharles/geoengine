@@ -2,9 +2,9 @@ import 'package:advance_math/advance_math.dart';
 
 void main(List<String> arguments) {
   var center = Point(0, 0);
-  var circle = Circle(center, 5);
+  var circle = Circle(center: center, 5);
   print(circle.area()); // Expected output: 78.53981633974483
-  print(circle.circumference()); // Expected output: 31.41592653589793
+  print(circle.circumference); // Expected output: 31.41592653589793
   print(circle.isPointInside(Point(3, 4))); // Expected output: true
 
   // Define a spherical triangle with one angle-side pair
