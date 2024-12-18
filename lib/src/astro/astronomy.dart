@@ -26,7 +26,7 @@
     SOFTWARE.
 */
 
-library astronomy;
+library;
 
 import 'package:advance_math/advance_math.dart';
 
