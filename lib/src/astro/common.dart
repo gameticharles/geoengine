@@ -51,7 +51,7 @@ num frac(num x) {
 ///
 /// @returns {number}
 ///      The angle between the two vectors expressed in degrees.
-///      The value is in the range [0, 180].
+///      The value is in the range `[0, 180]`.
 double angleBetween(AstroVector a, AstroVector b) {
   final double aa = (a.x * a.x + a.y * a.y + a.z * a.z);
   if (aa.abs() < 1.0e-8) {
@@ -831,7 +831,7 @@ InterpResult? quadInterp(
 ///
 /// Search for next time <i>t</i> (such that <i>t</i> is between `t1` and `t2`)
 /// that `func(t)` crosses from a negative value to a non-negative value.
-/// The given function must have "smooth" behavior over the entire inclusive range [`t1`, `t2`],
+/// The given function must have "smooth" behavior over the entire inclusive range `[`t1`, `t2`]`,
 /// meaning that it behaves like a continuous differentiable function.
 /// It is not required that `t1` &lt; `t2`; `t1` &gt; `t2`
 /// allows searching backward in time.

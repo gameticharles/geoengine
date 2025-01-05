@@ -149,7 +149,7 @@ class Distance extends Length {
   ///
   /// [point] The start point.
   /// [distance] The distance to travel.
-  /// [bearing] The initial bearing angle.
+  /// [initialBearing] The initial bearing angle.
   /// [ellipsoid] The ellipsoid model to use. Defaults to WGS84.
   ///
   /// Returns the calculated [LatLng] destination point.

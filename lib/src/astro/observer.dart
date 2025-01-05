@@ -61,7 +61,7 @@ class Observer {
   ///      range 0 to 100000 meters.
   ///
   /// @returns {number}
-  ///      The effective gravitational acceleration expressed in meters per second squared [m/s^2].
+  ///      The effective gravitational acceleration expressed in meters per second squared `[m/s^2]`.
   static double gravity(double latitude, double height) {
     final double s = sin(latitude * DEG2RAD);
     final double s2 = s * s;

@@ -191,12 +191,12 @@ Map<String, double>? userDefinedStar(Body body) {
 ///
 /// @param {number} ra
 ///      The right ascension to be assigned to the star, expressed in J2000 equatorial coordinates (EQJ).
-///      The value is in units of sidereal hours, and must be within the half-open range [0, 24).
+///      The value is in units of sidereal hours, and must be within the half-open range `(0, 24)`.
 ///
 /// @param {number} dec
 ///      The declination to be assigned to the star, expressed in J2000 equatorial coordinates (EQJ).
 ///      The value is in units of degrees north (positive) or south (negative) of the J2000 equator,
-///      and must be within the closed range [-90, +90].
+///      and must be within the closed range `[-90, +90]`.
 ///
 /// @param {number} distanceLightYears
 ///      The distance between the star and the Sun, expressed in light-years.
@@ -766,7 +766,7 @@ StateVector baryState(Body body, dynamic date) {
 ///      The time at which the angle from the Sun is to be found.
 ///
 /// @returns {number}
-///      An angle in degrees in the range [0, 180].
+///      An angle in degrees in the range `[0, 180]`.
 double angleFromSun(Body body, dynamic date) {
   if (body == Body.Earth) {
     throw Exception('The Earth does not have an angle as seen from itself.');
@@ -784,7 +784,7 @@ double angleFromSun(Body body, dynamic date) {
 /// This function calculates the angle around the plane of the Earth's orbit
 /// of a celestial body, as seen from the center of the Sun.
 /// The angle is measured prograde (in the direction of the Earth's orbit around the Sun)
-/// in degrees from the true equinox of date. The ecliptic longitude is always in the range [0, 360).
+/// in degrees from the true equinox of date. The ecliptic longitude is always in the range (0, 360).
 ///
 /// @param {Body} body
 ///      A body other than the Sun.
@@ -886,7 +886,7 @@ double synodicPeriod(Body body) {
 /// This function determines where one body appears around the ecliptic plane
 /// (the plane of the Earth's orbit around the Sun) as seen from the Earth,
 /// relative to the another body's apparent position.
-/// The function returns an angle in the half-open range [0, 360) degrees.
+/// The function returns an angle in the half-open range (0, 360) degrees.
 /// The value is the ecliptic longitude of `body1` relative to the ecliptic
 /// longitude of `body2`.
 ///
@@ -910,7 +910,7 @@ double synodicPeriod(Body body) {
 ///      The date and time of the observation.
 ///
 /// @returns {number}
-///      An angle in the range [0, 360), expressed in degrees.
+///      An angle in the range (0, 360), expressed in degrees.
 double pairLongitude(Body body1, Body body2, dynamic date) {
   if (body1 == Body.Earth || body2 == Body.Earth) {
     throw Exception('The Earth does not have a longitude as seen from itself.');
@@ -1342,7 +1342,7 @@ AstroTime? searchRiseSet(Body body, Observer observer, double direction,
 /// @param {number} altitude
 ///      The desired altitude angle of the body's center above (positive)
 ///      or below (negative) the observer's local horizon, expressed in degrees.
-///      Must be in the range [-90, +90].
+///      Must be in the range `[-90, +90]`.
 ///
 /// @returns {AstroTime | null}
 ///      The date and time of the altitude event, or null if no such event

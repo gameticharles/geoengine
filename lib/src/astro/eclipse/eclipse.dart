@@ -52,7 +52,7 @@ abstract class EclipseInfo {
 /// The `kind` field thus holds one of the enum values `EclipseKind.Penumbral`, `EclipseKind.Partial`,
 /// or `EclipseKind.Total`, depending on the kind of lunar eclipse found.
 ///
-/// The `obscuration` field holds a value in the range [0, 1] that indicates what fraction
+/// The `obscuration` field holds a value in the range (0, 1) that indicates what fraction
 /// of the Moon's apparent disc area is covered by the Earth's umbra at the eclipse's peak.
 /// This indicates how dark the peak eclipse appears. For penumbral eclipses, the obscuration
 /// is 0, because the Moon does not pass through the Earth's umbra. For partial eclipses,
@@ -921,7 +921,7 @@ class Eclipse {
 /// @param a The radius of the first disc.
 /// @param b The radius of the second disc.
 /// @param c The distance between the centers of the two discs.
-/// @returns The fraction of the area of the first disc that is obscured by the second disc, in the range [0, 1].
+/// @returns The fraction of the area of the first disc that is obscured by the second disc, in the range `[0, 1]`.
 /// @throws If any of the input parameters are non-positive.
 double obscuration(double a, double b, double c) {
   if (a <= 0.0) {

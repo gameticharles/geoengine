@@ -18,7 +18,7 @@ part of 'astronomy.dart';
 ///      This angle is measured in 3D space and is not projected onto the ecliptic plane.
 ///      When `elongation` is less than a few degrees, the body is very
 ///      difficult to see from the Earth because it is lost in the Sun's glare.
-///      The elongation is always in the range [0, 180].
+///      The elongation is always in the range `(0, 180)`.
 ///
 /// @property {number}  ecliptic_separation
 ///      The absolute value of the difference between the body's ecliptic longitude

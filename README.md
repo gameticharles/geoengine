@@ -17,7 +17,8 @@
 
 [![stars](https://img.shields.io/github/stars/gameticharles/geoengine)](https://github.com/gameticharles/geoengine/stargazers)
 [![forks](https://img.shields.io/github/forks/gameticharles/geoengine)](https://github.com/gameticharles/geoengine/network/members)
-[![CI](https://img.shields.io/github/workflow/status/gameticharles/geoengine/Dart%20CI/master?logo=github-actions&logoColor=white)](https://github.com/gameticharles/matrix/actions)
+[![Github watchers](https://img.shields.io./github/watchers/gameticharles/geoengine)](https://github.com/gameticharles/geoengine/MyBadges)
+[![Issues](https://img.shields.io./github/issues-raw/gameticharles/geoengine)](https://github.com/gameticharles/geoengine/issues)
 
 GeoEngine is a comprehensive Dart library designed for geospatial and geomatic calculations. It provides a wide range of functionalities including distance calculations, coordinate conversions, geocoding, polygon operations, geodetic network analysis, and much more.
 

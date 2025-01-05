@@ -59,16 +59,16 @@ class SearchOptions {
 /// in a gravity simulation at a given moment in time.
 ///
 /// @property tt
-///      The J2000 terrestrial time of the state [days].
+///      The J2000 terrestrial time of the state `days`.
 ///
 /// @property r
-///      The position vector [au].
+///      The position vector `au`.
 ///
 /// @property v
-///      The velocity vector [au/day].
+///      The velocity vector `au/day`.
 ///
 /// @property a
-///      The acceleration vector [au/day^2].
+///      The acceleration vector `au/day^2`.
 class BodyGravCalc {
   double tt;
   TerseVector r;

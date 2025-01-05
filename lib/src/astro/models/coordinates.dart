@@ -75,10 +75,10 @@ class Spherical {
 /// @brief Holds right ascension, declination, and distance of a celestial object.
 ///
 /// @property {number} ra
-///      Right ascension in sidereal hours: [0, 24).
+///      Right ascension in sidereal hours: (0, 24).
 ///
 /// @property {number} dec
-///      Declination in degrees: [-90, +90].
+///      Declination in degrees: (-90, +90).
 ///
 /// @property {number} dist
 ///      Distance to the celestial object expressed in
@@ -131,23 +131,23 @@ class EquatorialCoordinates {
 /// @property {number} azimuth
 ///      A horizontal compass direction angle in degrees measured starting at north
 ///      and increasing positively toward the east.
-///      The value is in the range [0, 360).
+///      The value is in the range (0, 360).
 ///      North = 0, east = 90, south = 180, west = 270.
 ///
 /// @property {number} altitude
 ///      A vertical angle in degrees above (positive) or below (negative) the horizon.
-///      The value is in the range [-90, +90].
+///      The value is in the range (-90, +90).
 ///      The altitude angle is optionally adjusted upward due to atmospheric refraction.
 ///
 /// @property {number} ra
 ///      The right ascension of the celestial body in sidereal hours.
-///      The value is in the range [0, 24).
+///      The value is in the range (0, 24).
 ///      If `altitude` was adjusted for atmospheric reaction, `ra`
 ///      is likewise adjusted.
 ///
 /// @property {number} dec
 ///      The declination of of the celestial body in degrees.
-///      The value in the range [-90, +90].
+///      The value in the range (-90, +90).
 ///      If `altitude` was adjusted for atmospheric reaction, `dec`
 ///      is likewise adjusted.
 class HorizontalCoordinates {
@@ -295,7 +295,7 @@ class HorizontalCoordinates {
 /// @property {number} eLat
 ///      The ecliptic latitude of the body in degrees.
 ///      This is the angle north or south of the ecliptic plane.
-///      The value is in the range [-90, +90].
+///      The value is in the range `(-90, +90)`.
 ///      Positive values are north and negative values are south.
 ///
 /// @property {number} elon
@@ -334,4 +334,3 @@ class EclipticCoordinates {
     return EclipticCoordinates(ecl, eLat, eLon);
   }
 }
-

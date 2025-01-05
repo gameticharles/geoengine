@@ -20,23 +20,23 @@ part of '../astronomy.dart';
 ///      The time associated with the shadow calculation.
 ///
 /// @property {number} u
-///      The distance [au] between the center of the casting body and the shadow plane.
+///      The distance `[au]` between the center of the casting body and the shadow plane.
 ///
 /// @property {number} r
-///      The distance [km] between center of receiving body and the shadow axis.
+///      The distance `[km]` between center of receiving body and the shadow axis.
 ///
 /// @property {number} k
-///      The umbra radius [km] at the shadow plane.
+///      The umbra radius `[km]` at the shadow plane.
 ///
 /// @property {number} p
-///      The penumbra radius [km] at the shadow plane.
+///      The penumbra radius `[km]` at the shadow plane.
 ///
 /// @property {Vector} target
 ///      The location in space where we are interested in determining how close a shadow falls.
 ///      For example, when calculating lunar eclipses, `target` would be the center of the Moon
 ///      expressed in geocentric coordinates. Then we can evaluate how far the center of the Earth's
 ///      shadow cone approaches the center of the Moon.
-///      The vector components are expressed in [au].
+///      The vector components are expressed in `[au]`.
 ///
 /// @property {Vector} dir
 ///      The direction in space that the shadow points away from the center of a shadow-casting body.

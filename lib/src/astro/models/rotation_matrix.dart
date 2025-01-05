@@ -6,11 +6,11 @@ class RotationMatrix {
   /// @brief Creates a rotation matrix that can be used to transform one coordinate system to another.
   ///
   /// This function verifies that the `rot` parameter is of the correct format:
-  /// a number[3][3] array. It throws an exception if `rot` is not of that shape.
+  /// a `number[3][3]` array. It throws an exception if `rot` is not of that shape.
   /// Otherwise it creates a new {@link RotationMatrix} object based on `rot`.
   ///
-  /// @property {number[][]} rot
-  ///      An array [3][3] of numbers. Defines a rotation matrix used to premultiply
+  /// @property `{number[][]}` rot
+  ///      An array `[3][3]` of numbers. Defines a rotation matrix used to premultiply
   ///      a 3D vector to reorient it into another coordinate system.
   ///
   /// @returns {RotationMatrix}
@@ -260,7 +260,7 @@ class RotationMatrix {
   ///      Positive angles indicate rotation counterclockwise as seen from the positive
   ///      direction along that axis, looking towards the origin point of the orientation system.
   ///      Any finite number of degrees is allowed, but best precision will result from
-  ///      keeping `angle` in the range [-360, +360].
+  ///      keeping `angle` in the range `[-360, +360]`.
   ///
   /// @returns {RotationMatrix}
   ///      A pivoted matrix object.

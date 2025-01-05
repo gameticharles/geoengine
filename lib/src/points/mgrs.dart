@@ -205,7 +205,7 @@ class MGRS {
   /// `31 N 448000 5411000`, which would include the 1m square ``).
   ///
   /// [digits]: Precision of returned grid reference (eg 4 = km, 10 = m). The values should
-  /// be between these numbers [2, 4, 6, 8, 10]. Default value is 10.
+  /// be between these numbers `[2, 4, 6, 8, 10]`. Default value is 10.
   ///
   /// Returns a string representation of the grid reference in standard format.
   ///
