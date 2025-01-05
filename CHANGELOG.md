@@ -6,6 +6,7 @@
 * **[IMPROVEMENT]** Added `bodyPosition` to return `EquatorialCoordinates` and `HorizontalCoordinates`.
 * **[IMPROVEMENT]** Improved `Moon` with more functions like `moonRise`, `moonSet`, `illumination`, `moonQuarter`, `nextMoonQuarter`, `nextMoonQuarters`, `moonPhase`.
 * **[IMPROVEMENT]** Improved `Eclipse` to search for `lunar`, `solar` or both eclipses.
+* **[FEATURE]** Added other kinds of `MoonQuarter` like the `SuperMoon` and `MicroMoon`.
 * **[FEATURE]** Added Astronomy to the README.md
 
 ## 0.2.3
