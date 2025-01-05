@@ -619,7 +619,7 @@ EquatorialCoordinates equator(
   verifyBoolean(aberration);
 
   var time = AstroTime(date);
-  var gcObserver = geoPos(time, observer);
+  var gcObserver = Observer.geoPos(time, observer);
   var gc = geoVector(body, time, aberration);
 
   var j2000 = [
@@ -1512,4 +1512,29 @@ double hourAngle(Body body, dynamic date, Observer observer) {
     hourAngle += 24.0;
   }
   return hourAngle;
+}
+
+/// Calculates the body's position in equatorial and horizontal coordinates.
+///
+/// This function takes the body, date, and observer information, and calculates
+/// the body's position in both equatorial (right ascension and declination) and
+/// horizontal (azimuth and altitude) coordinates.
+///
+/// @param body The celestial body to calculate the position for.
+/// @param date The date and time for which to calculate the position.
+/// @param observer The observer's location and other relevant information.
+/// @return A map containing the body's equatorial and horizontal coordinates.
+({double ra, double dec, double azimuth, double altitude}) bodyPosition(
+    Body body, dynamic date, Observer observer) {
+  var equ2000 = equator(body, date, observer, false, true);
+  var equOfDate = equator(body, date, observer, true, true);
+  var hor = HorizontalCoordinates.horizon(
+      date, observer, equOfDate.ra, equOfDate.dec, 'normal');
+
+  return (
+    ra: equ2000.ra,
+    dec: equ2000.dec,
+    azimuth: hor.azimuth,
+    altitude: hor.altitude
+  );
 }

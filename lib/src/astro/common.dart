@@ -1,5 +1,11 @@
 part of 'astronomy.dart';
 
+/// Verifies that the given boolean value is either true or false.
+///
+/// If the value is not a valid boolean, an [Exception] is thrown.
+///
+/// @param b The boolean value to verify.
+/// @returns The verified boolean value.
 bool verifyBoolean(bool b) {
   if (b != true && b != false) {
     throw Exception('Value is not boolean: $b');
@@ -7,6 +13,12 @@ bool verifyBoolean(bool b) {
   return b;
 }
 
+/// Verifies that the given number is a finite value.
+///
+/// If the value is not a finite number, an [Exception] is thrown.
+///
+/// @param x The number to verify.
+/// @returns The verified number.
 double verifyNumber(double x) {
   if (!x.isFinite) {
     throw Exception('Value is not a finite number: $x');
@@ -14,6 +26,13 @@ double verifyNumber(double x) {
   return x;
 }
 
+/// Returns the fractional part of the given number.
+///
+/// This function takes a [num] value and returns the fractional part of that value.
+/// The fractional part is the part of the number that is to the right of the decimal point.
+///
+/// @param x The number to get the fractional part of.
+/// @returns The fractional part of the given number.
 num frac(num x) {
   return x - x.floorToDouble();
 }
@@ -222,8 +241,16 @@ double deltaTEspenakMeeus(double ut) {
   return -20 + (32 * u * u);
 }
 
+/// A function that calculates the difference between UT and UT1.
 typedef DeltaTimeFunction = double Function(double ut);
 
+/// Calculates the difference between Universal Time (UT) and UT1 using the JPL Horizons model.
+///
+/// This function is a wrapper around [deltaTEspenakMeeus] that limits the input UT to a maximum of 17 tropical years.
+/// The JPL Horizons model is only valid for a limited range of UT, so this function ensures the input is within that range.
+///
+/// @param ut The Universal Time expressed as a floating point number of days since the 2000.0 epoch.
+/// @returns The difference between UT and UT1 in days.
 double deltaTJplHorizons(double ut) {
   const double daysPerTropicalYear = 365.242190;
   return deltaTEspenakMeeus(
@@ -232,6 +259,11 @@ double deltaTJplHorizons(double ut) {
 
 DeltaTimeFunction deltaT = deltaTEspenakMeeus;
 
+/// Sets the function used to calculate the difference between Universal Time (UT) and UT1.
+///
+/// This function allows the caller to override the default delta time function, [deltaTEspenakMeeus], with a custom implementation.
+///
+/// @param func The new delta time function to use.
 void setDeltaTFunction(DeltaTimeFunction func) {
   deltaT = func;
 }
@@ -249,6 +281,7 @@ double terrestrialTime(double ut) {
   return ut + deltaT(ut) / 86400;
 }
 
+/// Rotate a vector by a rotation matrix.
 List<double> rotate(RotationMatrix rot, List<double> vec) {
   return [
     rot.rot[0][0] * vec[0] + rot.rot[1][0] * vec[1] + rot.rot[2][0] * vec[2],
@@ -268,17 +301,28 @@ double era(AstroTime time) {
   return theta;
 }
 
+/// Applies the precession rotation to the given position vector.
 List<double> precession(
     List<double> pos, AstroTime time, PrecessDirection dir) {
   final r = RotationMatrix.precessionRot(time, dir);
   return rotate(r, pos);
 }
 
+/// Applies the nutation rotation to the given position vector.
+///
+/// The nutation rotation is a small adjustment to the precession rotation
+/// that accounts for the periodic wobble of the Earth's axis.
+///
+/// @param pos The position vector to rotate.
+/// @param time The time at which to calculate the nutation.
+/// @param dir The direction of the nutation rotation (into or out of J2000).
+/// @return The rotated position vector.
 List<double> nutation(List<double> pos, AstroTime time, PrecessDirection dir) {
   final r = RotationMatrix.nutationRot(time, dir);
   return rotate(r, pos);
 }
 
+/// Applies the precession and nutation rotations to the given position vector.
 List<double> gyration(List<double> pos, AstroTime time, PrecessDirection dir) {
   // Combine nutation and precession into a single operation I call "gyration".
   // The order they are composed depends on the direction,

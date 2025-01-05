@@ -46,6 +46,9 @@ part 'body/body.dart';
 part 'body/moon/libration.dart';
 part 'body/moon/moon_phase.dart';
 part 'body/moon/moon.dart';
+
+part 'body/sun/sun.dart';
+
 part 'body/pluto.dart';
 part 'body/saturn.dart';
 
@@ -70,7 +73,7 @@ typedef ShadowFunc = double Function(ShadowInfo shadow);
 
 void main() {
   //bruteSearchPlanetApsis(Body.Mercury, AstroTime(34.22)).dist_km;
-  print(nextTransit(Body.Venus, DateTime.now()).finish);
+  print(TransitInfo.nextTransit(Body.Venus, DateTime.now()).finish);
   AstroTime time = AstroTime(64473.24);
 
   // print( rotationAxis(Body.Mars, time).dec);

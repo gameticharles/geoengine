@@ -334,3 +334,4 @@ class EclipticCoordinates {
     return EclipticCoordinates(ecl, eLat, eLon);
   }
 }
+

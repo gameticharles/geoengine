@@ -54,12 +54,10 @@ void main() {
   ];
 
   for (var body in bodies) {
-    var equ2000 = equator(body, date, observer, false, true);
-    var equOfDate = equator(body, date, observer, true, true);
-    var hor = HorizontalCoordinates.horizon(
-        date, observer, equOfDate.ra, equOfDate.dec, 'normal');
+    var res = bodyPosition(body, date, observer);
 
     print(
-        '${body.name.padRight(8)} ${format(equ2000.ra)} ${format(equ2000.dec)} ${format(hor.azimuth)} ${format(hor.altitude)}');
+        '${body.name.padRight(8)} ${format(res.ra)} ${format(res.dec)} ${format(res.azimuth)} ${format(res.altitude)}');
   }
 }
+

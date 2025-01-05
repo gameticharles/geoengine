@@ -819,12 +819,13 @@ class Eclipse {
   /// [startTime] - The time to start searching from (defaults to current time)
   /// [eclipses] - Type of eclipses to search for (solar, lunar, or all)
   /// [observer] - Optional observer location for local solar eclipses
-  /// [eclipseCount] - Number of eclipses to find (defaults to 5)
-  static List<EclipseInfo> search(
-      {dynamic startTime,
-      Eclipses eclipses = Eclipses.all,
-      Observer? observer,
-      int eclipseCount = 5}) {
+  /// [eclipseCount] - Number of eclipses to find (defaults to 10)
+  static List<EclipseInfo> search({
+    dynamic startTime,
+    Eclipses eclipses = Eclipses.all,
+    Observer? observer,
+    int eclipseCount = 10,
+  }) {
     // Initialize start time
     final searchStart = AstroTime(startTime ?? DateTime.now());
     List<EclipseInfo> eclipseResult = [];
@@ -859,44 +860,52 @@ class Eclipse {
         break;
 
       case Eclipses.all:
-        // Find both initial lunar and solar eclipses
-        final lunarEclipse = searchLunarEclipse(searchStart);
+        // Step 1: Gather solar and lunar eclipses separately
+        List<EclipseInfo> solarEclipses = [];
+        List<EclipseInfo> lunarEclipses = [];
+
+        // Search for the first solar eclipse
         final solarEclipse = observer != null
             ? searchLocalSolarEclipse(searchStart, observer)
             : searchGlobalSolarEclipse(searchStart);
+        solarEclipses.add(solarEclipse);
 
-        // Add them in chronological order
-        final lunarTime = (lunarEclipse.peak as AstroTime).date;
-        final solarTime = observer != null
-            ? (solarEclipse.peak as EclipseEvent).time.date
-            : (solarEclipse.peak as AstroTime).date;
+        // Search for the first lunar eclipse
+        final lunarEclipse = searchLunarEclipse(searchStart);
+        lunarEclipses.add(lunarEclipse);
 
-        if (lunarTime.isBefore(solarTime)) {
-          eclipseResult.add(lunarEclipse);
-          eclipseResult.add(solarEclipse);
-        } else {
-          eclipseResult.add(solarEclipse);
-          eclipseResult.add(lunarEclipse);
+        // Step 2: Add subsequent solar and lunar eclipses
+        for (var i = 1; solarEclipses.length < eclipseCount; i++) {
+          final lastSolarEclipse = solarEclipses.last;
+          final nextSolarEclipse = observer != null
+              ? nextLocalSolarEclipse(
+                  (lastSolarEclipse.peak as EclipseEvent).time, observer)
+              : nextGlobalSolarEclipse(lastSolarEclipse.peak as AstroTime);
+          solarEclipses.add(nextSolarEclipse);
         }
 
-        // Continue finding alternating eclipses until we reach the count
-        while (eclipseResult.length < eclipseCount) {
-          final lastEclipse = eclipseResult.last;
-          final isLastLunar = lastEclipse is LunarEclipseInfo;
-
-          if (!isLastLunar) {
-            final nextEclipse = observer != null
-                ? nextLocalSolarEclipse(
-                    (lastEclipse.peak as EclipseEvent).time, observer)
-                : nextGlobalSolarEclipse(lastEclipse.peak as AstroTime);
-            eclipseResult.add(nextEclipse);
-          } else {
-            final nextEclipse = nextLunarEclipse(observer != null
-                ? (lastEclipse.peak as EclipseEvent).time
-                : lastEclipse.peak as AstroTime);
-            eclipseResult.add(nextEclipse);
-          }
+        for (var i = 1; lunarEclipses.length < eclipseCount; i++) {
+          final lastLunarEclipse = lunarEclipses.last;
+          final newNextLunarEclipse =
+              nextLunarEclipse(lastLunarEclipse.peak as AstroTime);
+          lunarEclipses.add(newNextLunarEclipse);
         }
+
+        // Step 3: Merge and sort them by date
+        final allEclipses = [...solarEclipses, ...lunarEclipses];
+
+        allEclipses.sort((a, b) {
+          final dateA = (a.peak is EclipseEvent)
+              ? (a.peak as EclipseEvent).time.date
+              : (a.peak as AstroTime).date;
+          final dateB = (b.peak is EclipseEvent)
+              ? (b.peak as EclipseEvent).time.date
+              : (b.peak as AstroTime).date;
+          return dateA.compareTo(dateB);
+        });
+
+        // Step 4: Limit the results
+        eclipseResult = allEclipses.take(eclipseCount).toList();
         break;
     }
 

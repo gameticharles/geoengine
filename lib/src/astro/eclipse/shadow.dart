@@ -94,7 +94,7 @@ class ShadowInfo {
 
   static ShadowInfo localMoonShadow(AstroTime time, Observer observer) {
     // Calculate observer's geocentric position.
-    List<double> pos = geoPos(time, observer);
+    List<double> pos = Observer.geoPos(time, observer);
 
     // Calculate light-travel and aberration corrected Sun.
     AstroVector s = geoVector(Body.Sun, time, true);

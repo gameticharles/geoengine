@@ -7,7 +7,11 @@ class NutationAngles {
   NutationAngles(this.dpsi, this.deps);
 }
 
-
+/// Calculates the nutation angles for the given [AstroTime].
+/// The nutation angles represent the deviation of the true obliquity of the ecliptic
+/// from the mean obliquity of the ecliptic.
+/// The returned [NutationAngles] contain the nutation in longitude (dpsi) and
+/// the nutation in obliquity (deps).
 NutationAngles iau2000b(AstroTime time) {
   double mod(double x) {
     return (x % ASEC360) * ASEC2RAD;
@@ -50,19 +54,25 @@ NutationAngles iau2000b(AstroTime time) {
   return NutationAngles(-0.000135 + (dp * 1.0e-7), 0.000388 + (de * 1.0e-7));
 }
 
-
+/// Calculates the mean obliquity of the ecliptic for the given [AstroTime].
+/// The mean obliquity of the ecliptic is the angle between the plane of the Earth's
+/// equator and the plane of the Earth's orbit around the Sun.
+///
+/// This function uses a polynomial approximation to calculate the mean obliquity
+/// in arcseconds, which is then converted to degrees.
+///
+/// @param time The [AstroTime] for which to calculate the mean obliquity.
+/// @return The mean obliquity of the ecliptic in degrees.
 double meanObliq(AstroTime time) {
   var t = time.tt / 36525.0;
-  var asec = (
-    (((( -  0.0000000434   * t
-       -  0.000000576  ) * t
-       +  0.00200340   ) * t
-       -  0.0001831    ) * t
-       - 46.836769     ) * t + 84381.406
-  );
+  var asec =
+      (((((-0.0000000434 * t - 0.000000576) * t + 0.00200340) * t - 0.0001831) *
+                      t -
+                  46.836769) *
+              t +
+          84381.406);
   return asec / 3600.0;
 }
-
 
 class EarthTiltInfo {
   late double tt;
@@ -84,6 +94,15 @@ class EarthTiltInfo {
 
 EarthTiltInfo? cacheETilt;
 
+/// Calculates the Earth's tilt information for the given [AstroTime].
+///
+/// This function retrieves the nutation angles and mean obliquity of the ecliptic
+/// for the given time, and uses them to calculate the true obliquity of the
+/// ecliptic and the equation of the equinoxes. The results are cached to avoid
+/// redundant calculations.
+///
+/// @param time The [AstroTime] for which to calculate the Earth's tilt information.
+/// @return An [EarthTiltInfo] object containing the calculated tilt information.
 EarthTiltInfo eTilt(AstroTime time) {
   if (cacheETilt == null || (cacheETilt!.tt - time.tt).abs() > 1.0e-6) {
     final nut = iau2000b(time);
@@ -102,7 +121,12 @@ EarthTiltInfo eTilt(AstroTime time) {
   return cacheETilt!;
 }
 
-
+/// Converts a vector in ecliptic coordinates to a vector in equatorial coordinates
+/// for the given obliquity angle.
+///
+/// @param oblDegrees The obliquity angle in degrees.
+/// @param pos A list of 3 doubles representing the vector in ecliptic coordinates.
+/// @return A list of 3 doubles representing the vector in equatorial coordinates.
 List<double> oblEcl2EquVec(double oblDegrees, List<double> pos) {
   final obl = oblDegrees * DEG2RAD;
   final cosObl = cos(obl);
@@ -115,7 +139,15 @@ List<double> oblEcl2EquVec(double oblDegrees, List<double> pos) {
   ];
 }
 
-
+/// Converts a vector in ecliptic coordinates to a vector in equatorial coordinates
+/// for the given [AstroTime].
+///
+/// This function uses the mean obliquity of the ecliptic at the given time to
+/// perform the coordinate transformation.
+///
+/// @param time The [AstroTime] for which to perform the coordinate transformation.
+/// @param pos A list of 3 doubles representing the vector in ecliptic coordinates.
+/// @return A list of 3 doubles representing the vector in equatorial coordinates.
 List<double> ecl2equVec(AstroTime time, List<double> pos) {
   return oblEcl2EquVec(meanObliq(time), pos);
 }

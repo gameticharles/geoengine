@@ -87,3 +87,28 @@ enum ApsisKind {
   Pericenter,
   Apocenter,
 }
+
+///  A Full or New Moon that occurs when the center of the Moon is
+/// less than 360,000 kilometers (ca. 223,694 miles) from the center of Earth.
+///
+///  A Full Moon or New Moon that takes place when the center of the Moon
+/// is farther than 405,000 kilometers (ca. 251,655 miles) from the center of Earth.
+/// 
+/// source: https://en.wikipedia.org/wiki/Moon_phases, https://timeanddate.com
+enum SpecialMoon {
+  /// When a Full Moon takes place when the Moon is near its closest approach
+  /// to Earth, it is called a Super Full Moon.
+  SuperFullMoon,
+
+  /// When there is a New Moon around the closest point to Earth,
+  /// it is known as a Super New Moon.
+  SuperNewMoon,
+
+  /// When a Full Moon takes place when the Moon is near its farthest approach
+  /// to Earth, it is called a Micro Full Moon.
+  MicroFullMoon,
+
+  /// When there is a New Moon around the farthest point to Earth,
+  /// it is known as a Micro New Moon.
+  MicroNewMoon,
+}

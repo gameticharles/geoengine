@@ -8,26 +8,15 @@
 */
 
 import 'package:geoengine/src/astro/astronomy.dart';
-import 'dart:io';
 
-double _ecliptic(dynamic time) {
+double _eclipticLat(dynamic time) {
   // Return the Moon's ecliptic latitude at the given time.
-  var vec = Moon(time).geoMoon();
-  var ecl = ecliptic(vec);
-  return ecl.eLat;
+  return Moon(time).eclipticCoordinates().eLat;
 }
 
-double _equatorial(dynamic time) {
+double _equatorialDec(dynamic time) {
   // Return the Moon's declination angle at the given time.
-  // Start with the Moon's position vector in J2000 coordinates.
-  var eqj = Moon(time).geoMoon();
-  // Find rotation matrix to convert J2000 coordinates to equator-of-date.
-  var rot = RotationMatrix.rotationEQJtoEQD(time);
-  // Transform coordinates into equator-of-date.
-  var eqd = AstroVector.rotateVector(rot, eqj);
-  // Convert to angular coordinates to find declination angle.
-  var equ = EquatorialCoordinates.fromVector(eqd);
-  return equ.dec;
+  return Moon(time).equatorial().dec;
 }
 
 AstroTime _search(
@@ -63,29 +52,24 @@ void solve(AstroTime time1, int direction, double Function(AstroTime) func,
   print('$time  Moon next reaches $comment = ${angle.toStringAsFixed(7)}.');
 }
 
-DateTime parseDate(String text) {
-  try {
-    final d = DateTime.parse(text);
-    return d;
-  } catch (e) {
-    stderr.writeln('ERROR: Not a valid date: "$text"');
-    exit(1);
-  }
-}
-
 void main() {
-  var dates = [DateTime(2023, 9, 10, 06, 0, 0), DateTime.now()];
+  var dates = [
+    DateTime(2023, 9, 10, 6, 0, 0),
+    DateTime(2023, 9, 8, 6, 0, 0),
+    DateTime(2023, 8, 28, 6, 0, 0),
+    DateTime(2023, 8, 26, 6, 0, 0),
+    DateTime.now(),
+  ];
   for (var i = 0; i < dates.length; ++i) {
     var time1 = AstroTime(dates[i]);
     print('$time1  Starting search.');
-    solve(time1, -1, _ecliptic, 'maximum ecliptic latitude');
-    solve(time1, 1, _ecliptic, 'minimum ecliptic latitude');
-    solve(time1, -1, _equatorial, 'maximum declination');
-    solve(time1, 1, _equatorial, 'minimum declination');
+    solve(time1, -1, _eclipticLat, 'maximum ecliptic latitude');
+    solve(time1, -1, _equatorialDec, 'maximum declination');
+    solve(time1, 1, _eclipticLat, 'minimum ecliptic latitude');
+    solve(time1, 1, _equatorialDec, 'minimum declination');
     print('');
   }
 }
-
 
 /*
     ---------------------------------------------------------------------------------------

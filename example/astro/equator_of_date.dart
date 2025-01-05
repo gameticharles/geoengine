@@ -47,7 +47,7 @@ DateTime parseDate(String text) {
   }
 }
 
-void demo() {
+void main() {
   final arguments = Platform.environment['args']?.split(' ') ?? [];
   if (arguments.length < 5 || arguments.length > 6) {
     stderr.writeln('UsageText');
@@ -99,8 +99,4 @@ void demo() {
     // Success!
     exit(0);
   }
-}
-
-void main() {
-  demo();
 }

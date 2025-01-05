@@ -1,5 +1,13 @@
 # CHANGE LOGS
 
+## 1.0.0
+
+* **[FEATURE]** Added `Sun` class.
+* **[IMPROVEMENT]** Added `bodyPosition` to return `EquatorialCoordinates` and `HorizontalCoordinates`.
+* **[IMPROVEMENT]** Improved `Moon` with more functions like `moonRise`, `moonSet`, `illumination`, `moonQuarter`, `nextMoonQuarter`, `nextMoonQuarters`, `moonPhase`.
+* **[IMPROVEMENT]** Improved `Eclipse` to search for `lunar`, `solar` or both eclipses.
+* **[FEATURE]** Added Astronomy to the README.md
+
 ## 0.2.3
 
 * **[IMPROVEMENT]** Increased the version of `advance_math` to 4.0.2.

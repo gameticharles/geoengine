@@ -56,10 +56,10 @@ void solve(bool refract, Observer observer, AstroTime time, double azimuth,
 
   final horVec =
       AstroVector.vectorFromHorizon(horSphere, time, refractionOption);
-  print(horVec.x);
-  print(horVec.y);
-  print(horVec.z);
-  print(horVec.time);
+  // print(horVec.x);
+  // print(horVec.y);
+  // print(horVec.z);
+  // print(horVec.time);
 
   // Make a rotation matrix for this observer and date/time that converts
   // horizontal coordinates (HOR) to equatorial coordinates in the J2000 epoch (EQJ).
@@ -95,31 +95,18 @@ void solve(bool refract, Observer observer, AstroTime time, double azimuth,
   print(line);
 }
 
-void demo() {
-  final arguments = Platform.environment['args']?.split(' ') ?? [];
-  if (arguments.length == 6 || arguments.length == 7) {
-    final latitude = parseNumber(arguments[2], 'latitude');
-    final longitude = parseNumber(arguments[3], 'longitude');
-    final observer = Observer(latitude, longitude, 0);
-    final azimuth = parseNumber(arguments[4], 'azimuth');
-    final altitude = parseNumber(arguments[5], 'altitude');
-    final time = AstroTime(
-        (arguments.length == 7) ? parseDate(arguments[6]) : DateTime.now());
-
-    print(
-        'Refract?    J2000_RA  J2000_DEC  OFDATE_RA OFDATE_DEC  ALT_error   AZ_error');
-
-    solve(false, observer, time, azimuth, altitude);
-    solve(true, observer, time, azimuth, altitude);
-
-    exit(0);
-  } else {
-    print(
-        'USAGE: dart equatorial.dart latitude longitude azimuth altitude [date]');
-    exit(1);
-  }
-}
-
 void main() {
-  demo();
+  final azimuth = 180.0;
+  final altitude = 230.0;
+
+  final latitude = 6.56784;
+  final longitude = -1.5674;
+  final observer = Observer(latitude, longitude, 230);
+  final time = AstroTime(DateTime.now());
+
+  print(
+      'Refract?    J2000_RA  J2000_DEC  OFDATE_RA OFDATE_DEC  ALT_error   AZ_error');
+
+  solve(false, observer, time, azimuth, altitude);
+  solve(true, observer, time, azimuth, altitude);
 }

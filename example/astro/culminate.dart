@@ -21,7 +21,6 @@
 */
 
 import 'package:geoengine/src/astro/astronomy.dart';
-import 'dart:io';
 
 void displayEvent(String name, HourAngleEvent evt) {
   String text;
@@ -59,6 +58,4 @@ void main() {
         date); // Replace with actual method to search hour angle.
     displayEvent(body.name, culm);
   }
-
-  exit(0);
 }

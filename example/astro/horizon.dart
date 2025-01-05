@@ -101,8 +101,7 @@ void main() {
 
   final observer = Observer(latitude, longitude, 230);
 
-    findEclipticCrossings(observer, AstroTime(date));
-    exit(0);
- 
+  findEclipticCrossings(observer, AstroTime(date));
+
 }
 

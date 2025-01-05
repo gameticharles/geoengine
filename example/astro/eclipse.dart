@@ -11,6 +11,7 @@
     node lunar_eclipse [date]
 */
 
+import 'package:advance_math/advance_math.dart';
 import 'package:geoengine/src/astro/astronomy.dart';
 
 void main(List<String> args) {
@@ -19,11 +20,10 @@ void main(List<String> args) {
   final longitude = -1.5674;
 
   final observer = Observer(latitude, longitude, 230);
-  var eclipses = Eclipse.search(
-      startTime: date, eclipses: Eclipses.lunar, observer: observer);
+  List<EclipseInfo> eclipses = Eclipse.search(startTime: date, eclipses: Eclipses.all);
 
   for (var eclipse in eclipses) {
     print(eclipse);
-    print('');
+    printLine();
   }
 }

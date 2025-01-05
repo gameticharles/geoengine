@@ -8,7 +8,7 @@ class Moon {
   late double geo_eclip_lat;
   late double distance_au;
 
-  Moon([dynamic date = null]) {
+  Moon([dynamic date]) {
     this.date = AstroTime(date ?? DateTime.now());
     final m = _calcMoon(this.date);
     geo_eclip_lon = m["geo_eclip_lon"]!;
@@ -350,8 +350,36 @@ class Moon {
     };
   }
 
+  EclipticCoordinates eclipticCoordinates() {
+    // Return the Moon's ecliptic latitude at the given time.
+    return ecliptic(geoMoon());
+  }
+
+  EquatorialCoordinates equatorial() {
+    // Return the Moon's declination angle at the given time.
+    // Start with the Moon's position vector in J2000 coordinates.
+    var eqj = geoMoon();
+    // Find rotation matrix to convert J2000 coordinates to equator-of-date.
+    var rot = RotationMatrix.rotationEQJtoEQD(date);
+    // Transform coordinates into equator-of-date.
+    var eqd = AstroVector.rotateVector(rot, eqj);
+    // Convert to angular coordinates to find declination angle.
+    return EquatorialCoordinates.fromVector(eqd);
+  }
+
+  /// Calculate the Moon's position in the sky at a given time.
   double moonEclipticLatitudeDegrees() {
     return RAD2DEG * geo_eclip_lat;
+  }
+
+  /// Calculate the Moon's Rise times
+  AstroTime? moonRise(Observer observer) {
+    return searchRiseSet(Body.Moon, observer, 1, date, 300);
+  }
+
+  /// Calculate the Moon's Set times
+  AstroTime? moonSet(Observer observer) {
+    return searchRiseSet(Body.Moon, observer, -1, date, 300);
   }
 
   /// Calculate the Moon's ecliptic phase angle,
@@ -360,10 +388,10 @@ class Moon {
   ///  90 degrees = first quarter,
   /// 180 degrees = full moon,
   /// 270 degrees = third quarter.
-  ({double phaseAngle, String phaseName}) moonPhase() {
+  double moonPhase() {
     var phase = pairLongitude(Body.Moon, Body.Sun, date);
 
-    return (phaseAngle: phase, phaseName: 'phaseName');
+    return phase;
   }
 
   /// Calculate the fraction of the Moon's disc
@@ -389,11 +417,16 @@ class Moon {
     return MoonQuarter.searchMoonQuarter(date);
   }
 
+  /// Calculate the next Moon quarter
+  MoonQuarter nextMoonQuarter() {
+    return MoonQuarter.nextMoonQuarter(moonQuarter());
+  }
+
   /// Calculate the next Moon quarters
   /// and return a list of them.
   ///
   /// The default is to return the next 4 quarters.
-  List<MoonQuarter> nextMoonQuarter([int nextCounts = 4]) {
+  List<MoonQuarter> nextMoonQuarters([int nextCounts = 4]) {
     List<MoonQuarter> moonQuarters = [];
     MoonQuarter mq = moonQuarter();
     for (var i = 0; i < nextCounts; ++i) {

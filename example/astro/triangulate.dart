@@ -86,7 +86,7 @@ void intersect(
   final miss = addScale(1, a, -1, b); // miss = a-b
 
   final dist = (KM_PER_AU * 1000 / 2) * miss.length(); // error radius in meters
-  final obs = vectorObserver(c, true);
+  final obs = Observer.vectorObserver(c, true);
 
   print(
       'Solution: lat = ${obs.latitude.toStringAsFixed(6)}, lon = ${obs.longitude.toStringAsFixed(6)}, elv = ${obs.height.toStringAsFixed(3)} meters; error = ${dist.toStringAsFixed(3)} meters');
@@ -115,8 +115,8 @@ void demo() {
     var time = AstroTime(0.0);
 
     // Convert geographic coordinates of the observers to vectors.
-    var pos1 = observerVector(time, obs1, true);
-    var pos2 = observerVector(time, obs2, true);
+    var pos1 = Observer.observerVector(time, obs1, true);
+    var pos2 = Observer.observerVector(time, obs2, true);
 
     // Convert horizontal coordinates into unit direction vectors.
     var dir1 = directionVector(time, obs1, alt1, az1);

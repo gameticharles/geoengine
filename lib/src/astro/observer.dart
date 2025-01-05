@@ -1,38 +1,18 @@
 part of 'astronomy.dart';
 
-/// @brief Calculates the gravitational acceleration experienced by an observer on the Earth.
+/// Verifies the validity of an [Observer] object.
 ///
-/// This function implements the WGS 84 Ellipsoidal Gravity Formula.
-/// The result is a combination of inward gravitational acceleration
-/// with outward centrifugal acceleration, as experienced by an observer
-/// in the Earth's rotating frame of reference.
-/// The resulting value increases toward the Earth's poles and decreases
-/// toward the equator, consistent with changes of the weight measured
-/// by a spring scale of a fixed mass moved to different latitudes and heights
-/// on the Earth.
-///
-/// @param {number} latitude
-///      The latitude of the observer in degrees north or south of the equator.
-///      By formula symmetry, positive latitudes give the same answer as negative
-///      latitudes, so the sign does not matter.
-///
-/// @param {number} height
-///      The height above the sea level geoid in meters.
-///      No range checking is done; however, accuracy is only valid in the
-///      range 0 to 100000 meters.
-///
-/// @returns {number}
-///      The effective gravitational acceleration expressed in meters per second squared [m/s^2].
-double observerGravity(double latitude, double height) {
-  final double s = sin(latitude * DEG2RAD);
-  final double s2 = s * s;
-  final double g0 = 9.7803253359 *
-      (1.0 + 0.00193185265241 * s2) /
-      sqrt(1.0 - 0.00669437999013 * s2);
-  return g0 *
-      (1.0 -
-          (3.15704e-07 - 2.10269e-09 * s2) * height +
-          7.37452e-14 * height * height);
+/// This internal function checks that the latitude, longitude, and height
+/// properties of the [Observer] object are valid, throwing an [ArgumentError]
+/// if the latitude is outside the range of -90 to +90 degrees.
+void verifyObserver(Observer observer) {
+  verifyNumber(observer.latitude);
+  verifyNumber(observer.longitude);
+  verifyNumber(observer.height);
+  if (observer.latitude < -90 || observer.latitude > 90) {
+    throw ArgumentError(
+        'Latitude ${observer.latitude} is out of range. Must be -90..+90.');
+  }
 }
 
 /// @brief Represents the geographic location of an observer on the surface of the Earth.
@@ -58,230 +38,287 @@ class Observer {
   Observer(this.latitude, this.longitude, this.height) {
     verifyObserver(this);
   }
-}
 
-void verifyObserver(Observer observer) {
-  verifyNumber(observer.latitude);
-  verifyNumber(observer.longitude);
-  verifyNumber(observer.height);
-  if (observer.latitude < -90 || observer.latitude > 90) {
-    throw ArgumentError(
-        'Latitude ${observer.latitude} is out of range. Must be -90..+90.');
+  /// @brief Calculates the gravitational acceleration experienced by an observer on the Earth.
+  ///
+  /// This function implements the WGS 84 Ellipsoidal Gravity Formula.
+  /// The result is a combination of inward gravitational acceleration
+  /// with outward centrifugal acceleration, as experienced by an observer
+  /// in the Earth's rotating frame of reference.
+  /// The resulting value increases toward the Earth's poles and decreases
+  /// toward the equator, consistent with changes of the weight measured
+  /// by a spring scale of a fixed mass moved to different latitudes and heights
+  /// on the Earth.
+  ///
+  /// @param {number} latitude
+  ///      The latitude of the observer in degrees north or south of the equator.
+  ///      By formula symmetry, positive latitudes give the same answer as negative
+  ///      latitudes, so the sign does not matter.
+  ///
+  /// @param {number} height
+  ///      The height above the sea level geoid in meters.
+  ///      No range checking is done; however, accuracy is only valid in the
+  ///      range 0 to 100000 meters.
+  ///
+  /// @returns {number}
+  ///      The effective gravitational acceleration expressed in meters per second squared [m/s^2].
+  static double gravity(double latitude, double height) {
+    final double s = sin(latitude * DEG2RAD);
+    final double s2 = s * s;
+    final double g0 = 9.7803253359 *
+        (1.0 + 0.00193185265241 * s2) /
+        sqrt(1.0 - 0.00669437999013 * s2);
+    return g0 *
+        (1.0 -
+            (3.15704e-07 - 2.10269e-09 * s2) * height +
+            7.37452e-14 * height * height);
   }
-}
 
-List<double> geoPos(AstroTime time, Observer observer) {
-  final gast = siderealTime(time);
-  final pos = terra(observer, gast).pos;
-  return gyration(pos, time, PrecessDirection.Into2000);
-}
+  /// Calculates the geographic position of an observer at the given time.
+  ///
+  /// This function takes an [AstroTime] object and an [Observer] object, and
+  /// returns the geographic position of the observer as a list of three doubles
+  /// representing the latitude, longitude, and height above the Earth's surface.
+  ///
+  /// The function first calculates the Greenwich Apparent Sidereal Time (GAST)
+  /// using the [siderealTime] function, then uses the [TerraInfo.terra] method
+  /// to calculate the observer's position. Finally, it applies the [gyration]
+  /// function to convert the position to the J2000 coordinate system.
+  ///
+  /// @param time The [AstroTime] object representing the time of interest.
+  /// @param observer The [Observer] object representing the observer's location.
+  /// @return A list of three doubles representing the observer's latitude,
+  ///         longitude, and height above the Earth's surface.
+  static List<double> geoPos(AstroTime time, Observer observer) {
+    final gast = siderealTime(time);
+    final pos = TerraInfo.terra(observer, gast).pos;
+    return gyration(pos, time, PrecessDirection.Into2000);
+  }
 
-Observer inverseTerra(List<double> ovec, double st) {
-  // Convert from AU to kilometers
-  final double x = ovec[0] * KM_PER_AU;
-  final double y = ovec[1] * KM_PER_AU;
-  final double z = ovec[2] * KM_PER_AU;
-  final double p = sqrt(x * x + y * y);
-
-  double lonDeg, latDeg, heightKm;
-
-  if (p < 1.0e-6) {
-    // Special case: within 1 millimeter of a pole!
-    // Use arbitrary longitude, and latitude determined by polarity of z.
-    lonDeg = 0;
-    latDeg = (z > 0.0) ? 90 : -90;
-    // Elevation is calculated directly from z.
-    heightKm = z.abs() - EARTH_POLAR_RADIUS_KM;
-  } else {
-    final double stlocl = atan2(y, x);
-    // Calculate exact longitude.
-    lonDeg = (RAD2DEG * stlocl) - (15.0 * st);
-    // Normalize longitude to the range (-180, +180].
-    while (lonDeg <= -180) {
-      lonDeg += 360;
+  /// @brief Calculates geocentric equatorial coordinates of an observer on the surface of the Earth.
+  ///
+  /// This function calculates a vector from the center of the Earth to
+  /// a point on or near the surface of the Earth, expressed in equatorial
+  /// coordinates. It takes into account the rotation of the Earth at the given
+  /// time, along with the given latitude, longitude, and elevation of the observer.
+  ///
+  /// The caller may pass `ofdate` as `true` to return coordinates relative to the Earth's
+  /// equator at the specified time, or `false` to use the J2000 equator.
+  ///
+  /// The returned vector has components expressed in astronomical units (AU).
+  /// To convert to kilometers, multiply the `x`, `y`, and `z` values by
+  /// the constant value {@link KM_PER_AU}.
+  ///
+  /// The inverse of this function is also available: {@link VectorObserver}.
+  ///
+  /// @param {FlexibleDateTime} date
+  ///      The date and time for which to calculate the observer's position vector.
+  ///
+  /// @param {Observer} observer
+  ///      The geographic location of a point on or near the surface of the Earth.
+  ///
+  /// @param {boolean} ofdate
+  ///      Selects the date of the Earth's equator in which to express the equatorial coordinates.
+  ///      The caller may pass `false` to use the orientation of the Earth's equator
+  ///      at noon UTC on January 1, 2000, in which case this function corrects for precession
+  ///      and nutation of the Earth as it was at the moment specified by the `time` parameter.
+  ///      Or the caller may pass `true` to use the Earth's equator at `time`
+  ///      as the orientation.
+  ///
+  /// @returns {Vector}
+  ///      An equatorial vector from the center of the Earth to the specified location
+  ///      on (or near) the Earth's surface.
+  static AstroVector observerVector(
+      dynamic date, Observer observer, bool ofdate) {
+    final time = AstroTime(date);
+    final gast = siderealTime(time);
+    var ovec = TerraInfo.terra(observer, gast).pos;
+    if (!ofdate) {
+      ovec = gyration(ovec, time, PrecessDirection.Into2000);
     }
-    while (lonDeg > 180) {
-      lonDeg -= 360;
-    }
+    return AstroVector.fromArray(ovec, time);
+  }
 
-    // Numerically solve for exact latitude, using Newton's Method.
-    // Start with initial latitude estimate, based on a spherical Earth.
-    double lat = atan2(z, p);
-    double cosLat, sinLat, denom;
-    int count = 0;
+  /// Calculates the geographic position of an observer from an equatorial vector.
+  ///
+  /// This function takes an equatorial vector `ovec` and the sidereal time `st`,
+  /// and returns the geographic position of the observer as an [Observer] object
+  /// with latitude, longitude, and height above the Earth's surface.
+  ///
+  /// The function first converts the equatorial vector from astronomical units (AU)
+  /// to kilometers, then calculates the longitude, latitude, and height using
+  /// a series of geometric calculations. It handles the special case where the
+  /// observer is within 1 millimeter of a pole, and uses Newton's method to
+  /// numerically solve for the exact latitude.
+  ///
+  /// @param ovec The equatorial vector representing the observer's position.
+  /// @param st The sidereal time at the observer's location.
+  /// @return An [Observer] object with the geographic position of the observer.
+  static Observer inverseTerra(List<double> ovec, double st) {
+    // Convert from AU to kilometers
+    final double x = ovec[0] * KM_PER_AU;
+    final double y = ovec[1] * KM_PER_AU;
+    final double z = ovec[2] * KM_PER_AU;
+    final double p = sqrt(x * x + y * y);
 
-    while (true) {
-      if (++count > 10) throw 'inverseTerra failed to converge.';
+    double lonDeg, latDeg, heightKm;
 
-      // Calculate the error function W(lat).
-      // We try to find the root of W, meaning where the error is 0.
-      cosLat = cos(lat);
-      sinLat = sin(lat);
-      final double factor =
-          (EARTH_FLATTENING_SQUARED - 1) * EARTH_EQUATORIAL_RADIUS_KM;
-      final double cos2 = cosLat * cosLat;
-      final double sin2 = sinLat * sinLat;
-      final double radicand = cos2 + EARTH_FLATTENING_SQUARED * sin2;
-      denom = sqrt(radicand);
-      final double W =
-          (factor * sinLat * cosLat) / denom - z * cosLat + p * sinLat;
-
-      if (W.abs() < 1.0e-8) break; // The error is now negligible
-
-      // Error is still too large. Find the next estimate.
-      // Calculate D = the derivative of W with respect to lat.
-      final double D = factor *
-              ((cos2 - sin2) / denom -
-                  sin2 *
-                      cos2 *
-                      (EARTH_FLATTENING_SQUARED - 1) /
-                      (factor * radicand)) +
-          z * sinLat +
-          p * cosLat;
-      lat -= W / D;
-    }
-
-    // We now have a solution for the latitude in radians.
-    latDeg = RAD2DEG * lat;
-
-    // Solve for exact height in meters.
-    // There are two formulas I can use. Use whichever has the less risky denominator.
-    final double adjust = EARTH_EQUATORIAL_RADIUS_KM / denom;
-    if (sinLat.abs() > cosLat.abs()) {
-      heightKm = z / sinLat - EARTH_FLATTENING_SQUARED * adjust;
+    if (p < 1.0e-6) {
+      // Special case: within 1 millimeter of a pole!
+      // Use arbitrary longitude, and latitude determined by polarity of z.
+      lonDeg = 0;
+      latDeg = (z > 0.0) ? 90 : -90;
+      // Elevation is calculated directly from z.
+      heightKm = z.abs() - EARTH_POLAR_RADIUS_KM;
     } else {
-      heightKm = p / cosLat - adjust;
+      final double stlocl = atan2(y, x);
+      // Calculate exact longitude.
+      lonDeg = (RAD2DEG * stlocl) - (15.0 * st);
+      // Normalize longitude to the range (-180, +180].
+      while (lonDeg <= -180) {
+        lonDeg += 360;
+      }
+      while (lonDeg > 180) {
+        lonDeg -= 360;
+      }
+
+      // Numerically solve for exact latitude, using Newton's Method.
+      // Start with initial latitude estimate, based on a spherical Earth.
+      double lat = atan2(z, p);
+      double cosLat, sinLat, denom;
+      int count = 0;
+
+      while (true) {
+        if (++count > 10) throw 'inverseTerra failed to converge.';
+
+        // Calculate the error function W(lat).
+        // We try to find the root of W, meaning where the error is 0.
+        cosLat = cos(lat);
+        sinLat = sin(lat);
+        final double factor =
+            (EARTH_FLATTENING_SQUARED - 1) * EARTH_EQUATORIAL_RADIUS_KM;
+        final double cos2 = cosLat * cosLat;
+        final double sin2 = sinLat * sinLat;
+        final double radicand = cos2 + EARTH_FLATTENING_SQUARED * sin2;
+        denom = sqrt(radicand);
+        final double W =
+            (factor * sinLat * cosLat) / denom - z * cosLat + p * sinLat;
+
+        if (W.abs() < 1.0e-8) break; // The error is now negligible
+
+        // Error is still too large. Find the next estimate.
+        // Calculate D = the derivative of W with respect to lat.
+        final double D = factor *
+                ((cos2 - sin2) / denom -
+                    sin2 *
+                        cos2 *
+                        (EARTH_FLATTENING_SQUARED - 1) /
+                        (factor * radicand)) +
+            z * sinLat +
+            p * cosLat;
+        lat -= W / D;
+      }
+
+      // We now have a solution for the latitude in radians.
+      latDeg = RAD2DEG * lat;
+
+      // Solve for exact height in meters.
+      // There are two formulas I can use. Use whichever has the less risky denominator.
+      final double adjust = EARTH_EQUATORIAL_RADIUS_KM / denom;
+      if (sinLat.abs() > cosLat.abs()) {
+        heightKm = z / sinLat - EARTH_FLATTENING_SQUARED * adjust;
+      } else {
+        heightKm = p / cosLat - adjust;
+      }
     }
+
+    return Observer(latDeg, lonDeg, 1000 * heightKm);
   }
 
-  return Observer(latDeg, lonDeg, 1000 * heightKm);
-}
+  /// @brief Calculates geocentric equatorial position and velocity of an observer on the surface of the Earth.
+  ///
+  /// This function calculates position and velocity vectors of an observer
+  /// on or near the surface of the Earth, expressed in equatorial
+  /// coordinates. It takes into account the rotation of the Earth at the given
+  /// time, along with the given latitude, longitude, and elevation of the observer.
+  ///
+  /// The caller may pass `ofdate` as `true` to return coordinates relative to the Earth's
+  /// equator at the specified time, or `false` to use the J2000 equator.
+  ///
+  /// The returned position vector has components expressed in astronomical units (AU).
+  /// To convert to kilometers, multiply the `x`, `y`, and `z` values by
+  /// the constant value {@link KM_PER_AU}.
+  /// The returned velocity vector has components expressed in AU/day.
+  ///
+  /// @param {FlexibleDateTime} date
+  ///      The date and time for which to calculate the observer's position and velocity vectors.
+  ///
+  /// @param {Observer} observer
+  ///      The geographic location of a point on or near the surface of the Earth.
+  ///
+  /// @param {boolean} ofdate
+  ///      Selects the date of the Earth's equator in which to express the equatorial coordinates.
+  ///      The caller may pass `false` to use the orientation of the Earth's equator
+  ///      at noon UTC on January 1, 2000, in which case this function corrects for precession
+  ///      and nutation of the Earth as it was at the moment specified by the `time` parameter.
+  ///      Or the caller may pass `true` to use the Earth's equator at `time`
+  ///      as the orientation.
+  ///
+  /// @returns {StateVector}
+  static StateVector observerState(
+      dynamic date, Observer observer, bool ofdate) {
+    final time = AstroTime(date);
+    final gast = siderealTime(time);
+    final svec = TerraInfo.terra(observer, gast);
+    final state = StateVector(
+      svec.pos[0],
+      svec.pos[1],
+      svec.pos[2],
+      svec.vel[0],
+      svec.vel[1],
+      svec.vel[2],
+      time,
+    );
 
-/// @brief Calculates geocentric equatorial coordinates of an observer on the surface of the Earth.
-///
-/// This function calculates a vector from the center of the Earth to
-/// a point on or near the surface of the Earth, expressed in equatorial
-/// coordinates. It takes into account the rotation of the Earth at the given
-/// time, along with the given latitude, longitude, and elevation of the observer.
-///
-/// The caller may pass `ofdate` as `true` to return coordinates relative to the Earth's
-/// equator at the specified time, or `false` to use the J2000 equator.
-///
-/// The returned vector has components expressed in astronomical units (AU).
-/// To convert to kilometers, multiply the `x`, `y`, and `z` values by
-/// the constant value {@link KM_PER_AU}.
-///
-/// The inverse of this function is also available: {@link VectorObserver}.
-///
-/// @param {FlexibleDateTime} date
-///      The date and time for which to calculate the observer's position vector.
-///
-/// @param {Observer} observer
-///      The geographic location of a point on or near the surface of the Earth.
-///
-/// @param {boolean} ofdate
-///      Selects the date of the Earth's equator in which to express the equatorial coordinates.
-///      The caller may pass `false` to use the orientation of the Earth's equator
-///      at noon UTC on January 1, 2000, in which case this function corrects for precession
-///      and nutation of the Earth as it was at the moment specified by the `time` parameter.
-///      Or the caller may pass `true` to use the Earth's equator at `time`
-///      as the orientation.
-///
-/// @returns {Vector}
-///      An equatorial vector from the center of the Earth to the specified location
-///      on (or near) the Earth's surface.
-AstroVector observerVector(dynamic date, Observer observer, bool ofdate) {
-  final time = AstroTime(date);
-  final gast = siderealTime(time);
-  var ovec = terra(observer, gast).pos;
-  if (!ofdate) {
-    ovec = gyration(ovec, time, PrecessDirection.Into2000);
-  }
-  return AstroVector.fromArray(ovec, time);
-}
+    if (!ofdate) {
+      return StateVector.gyrationPosVel(state, time, PrecessDirection.Into2000);
+    }
 
-/// @brief Calculates geocentric equatorial position and velocity of an observer on the surface of the Earth.
-///
-/// This function calculates position and velocity vectors of an observer
-/// on or near the surface of the Earth, expressed in equatorial
-/// coordinates. It takes into account the rotation of the Earth at the given
-/// time, along with the given latitude, longitude, and elevation of the observer.
-///
-/// The caller may pass `ofdate` as `true` to return coordinates relative to the Earth's
-/// equator at the specified time, or `false` to use the J2000 equator.
-///
-/// The returned position vector has components expressed in astronomical units (AU).
-/// To convert to kilometers, multiply the `x`, `y`, and `z` values by
-/// the constant value {@link KM_PER_AU}.
-/// The returned velocity vector has components expressed in AU/day.
-///
-/// @param {FlexibleDateTime} date
-///      The date and time for which to calculate the observer's position and velocity vectors.
-///
-/// @param {Observer} observer
-///      The geographic location of a point on or near the surface of the Earth.
-///
-/// @param {boolean} ofdate
-///      Selects the date of the Earth's equator in which to express the equatorial coordinates.
-///      The caller may pass `false` to use the orientation of the Earth's equator
-///      at noon UTC on January 1, 2000, in which case this function corrects for precession
-///      and nutation of the Earth as it was at the moment specified by the `time` parameter.
-///      Or the caller may pass `true` to use the Earth's equator at `time`
-///      as the orientation.
-///
-/// @returns {StateVector}
-StateVector observerState(dynamic date, Observer observer, bool ofdate) {
-  final time = AstroTime(date);
-  final gast = siderealTime(time);
-  final svec = terra(observer, gast);
-  final state = StateVector(
-    svec.pos[0],
-    svec.pos[1],
-    svec.pos[2],
-    svec.vel[0],
-    svec.vel[1],
-    svec.vel[2],
-    time,
-  );
-
-  if (!ofdate) {
-    return StateVector.gyrationPosVel(state, time, PrecessDirection.Into2000);
+    return state;
   }
 
-  return state;
-}
-
-/// @brief Calculates the geographic location corresponding to an equatorial vector.
-///
-/// This is the inverse function of {@link ObserverVector}.
-/// Given a geocentric equatorial vector, it returns the geographic
-/// latitude, longitude, and elevation for that vector.
-///
-/// @param {Vector} vector
-///      The geocentric equatorial position vector for which to find geographic coordinates.
-///      The components are expressed in Astronomical Units (AU).
-///      You can calculate AU by dividing kilometers by the constant {@link KM_PER_AU}.
-///      The time `vector.t` determines the Earth's rotation.
-///
-/// @param {boolean} ofdate
-///      Selects the date of the Earth's equator in which `vector` is expressed.
-///      The caller may select `false` to use the orientation of the Earth's equator
-///      at noon UTC on January 1, 2000, in which case this function corrects for precession
-///      and nutation of the Earth as it was at the moment specified by `vector.t`.
-///      Or the caller may select `true` to use the Earth's equator at `vector.t`
-///      as the orientation.
-///
-/// @returns {Observer}
-///      The geographic latitude, longitude, and elevation above sea level
-///      that corresponds to the given equatorial vector.
-Observer vectorObserver(AstroVector vector, bool ofdate) {
-  final gast = siderealTime(vector.time);
-  var ovec = [vector.x, vector.y, vector.z];
-  if (!ofdate) {
-    ovec = precession(ovec, vector.time, PrecessDirection.From2000);
-    ovec = nutation(ovec, vector.time, PrecessDirection.From2000);
+  /// @brief Calculates the geographic location corresponding to an equatorial vector.
+  ///
+  /// This is the inverse function of {@link ObserverVector}.
+  /// Given a geocentric equatorial vector, it returns the geographic
+  /// latitude, longitude, and elevation for that vector.
+  ///
+  /// @param {Vector} vector
+  ///      The geocentric equatorial position vector for which to find geographic coordinates.
+  ///      The components are expressed in Astronomical Units (AU).
+  ///      You can calculate AU by dividing kilometers by the constant {@link KM_PER_AU}.
+  ///      The time `vector.t` determines the Earth's rotation.
+  ///
+  /// @param {boolean} ofdate
+  ///      Selects the date of the Earth's equator in which `vector` is expressed.
+  ///      The caller may select `false` to use the orientation of the Earth's equator
+  ///      at noon UTC on January 1, 2000, in which case this function corrects for precession
+  ///      and nutation of the Earth as it was at the moment specified by `vector.t`.
+  ///      Or the caller may select `true` to use the Earth's equator at `vector.t`
+  ///      as the orientation.
+  ///
+  /// @returns {Observer}
+  ///      The geographic latitude, longitude, and elevation above sea level
+  ///      that corresponds to the given equatorial vector.
+  static Observer vectorObserver(AstroVector vector, bool ofdate) {
+    final gast = siderealTime(vector.time);
+    var ovec = [vector.x, vector.y, vector.z];
+    if (!ofdate) {
+      ovec = precession(ovec, vector.time, PrecessDirection.From2000);
+      ovec = nutation(ovec, vector.time, PrecessDirection.From2000);
+    }
+    return inverseTerra(ovec, gast);
   }
-  return inverseTerra(ovec, gast);
 }
 
 class TerraInfo {
@@ -289,32 +326,41 @@ class TerraInfo {
   final List<double> vel;
 
   TerraInfo(this.pos, this.vel);
-}
 
-TerraInfo terra(Observer observer, double st) {
-  final phi = observer.latitude * DEG2RAD;
-  final sinphi = sin(phi);
-  final cosphi = cos(phi);
-  final c =
-      1 / sqrt(cosphi * cosphi + EARTH_FLATTENING_SQUARED * sinphi * sinphi);
-  final s = EARTH_FLATTENING_SQUARED * c;
-  final htKm = observer.height / 1000;
-  final ach = EARTH_EQUATORIAL_RADIUS_KM * c + htKm;
-  final ash = EARTH_EQUATORIAL_RADIUS_KM * s + htKm;
-  final stlocl = (15 * st + observer.longitude) * DEG2RAD;
-  final sinst = sin(stlocl);
-  final cosst = cos(stlocl);
+  /// Calculates the geographic location information (position and velocity) corresponding to an observer's location.
+  ///
+  /// This function takes an [Observer] object and the sidereal time [st] to compute the position and velocity of the observer
+  /// in the Earth-centered, Earth-fixed (ECEF) coordinate system. The resulting [TerraInfo] object contains the position
+  /// and velocity vectors in Astronomical Units (AU).
+  ///
+  /// The position vector is calculated using the observer's latitude, longitude, and height above sea level, along with
+  /// the Earth's flattening factor and equatorial radius. The velocity vector is calculated using the observer's latitude
+  /// and the Earth's angular velocity.
+  static TerraInfo terra(Observer observer, double st) {
+    final phi = observer.latitude * DEG2RAD;
+    final sinphi = sin(phi);
+    final cosphi = cos(phi);
+    final c =
+        1 / sqrt(cosphi * cosphi + EARTH_FLATTENING_SQUARED * sinphi * sinphi);
+    final s = EARTH_FLATTENING_SQUARED * c;
+    final htKm = observer.height / 1000;
+    final ach = EARTH_EQUATORIAL_RADIUS_KM * c + htKm;
+    final ash = EARTH_EQUATORIAL_RADIUS_KM * s + htKm;
+    final stlocl = (15 * st + observer.longitude) * DEG2RAD;
+    final sinst = sin(stlocl);
+    final cosst = cos(stlocl);
 
-  return TerraInfo(
-    [
-      ach * cosphi * cosst / KM_PER_AU,
-      ach * cosphi * sinst / KM_PER_AU,
-      ash * sinphi / KM_PER_AU
-    ],
-    [
-      -ANGVEL * ach * cosphi * sinst * 86400 / KM_PER_AU,
-      ANGVEL * ach * cosphi * cosst * 86400 / KM_PER_AU,
-      0
-    ],
-  );
+    return TerraInfo(
+      [
+        ach * cosphi * cosst / KM_PER_AU,
+        ach * cosphi * sinst / KM_PER_AU,
+        ash * sinphi / KM_PER_AU
+      ],
+      [
+        -ANGVEL * ach * cosphi * sinst * 86400 / KM_PER_AU,
+        ANGVEL * ach * cosphi * cosst * 86400 / KM_PER_AU,
+        0
+      ],
+    );
+  }
 }

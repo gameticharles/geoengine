@@ -14,11 +14,11 @@
 import 'package:geoengine/src/astro/astronomy.dart';
 
 void displayEvent(String name, AstroTime? evt) {
-  var text = evt != null ? evt.date.toIso8601String() : '';
+  var text = evt != null ? evt.date.toString() : '';
   print('${name.padRight(8)} : $text');
 }
 
-void demo() {
+void main() {
   final latitude = 6.56784;
   final longitude = -1.5674;
   final observer = Observer(latitude, longitude, 0);
@@ -29,13 +29,9 @@ void demo() {
   AstroTime? moonrise = searchRiseSet(Body.Moon, observer, 1, date, 300);
   AstroTime? moonset = searchRiseSet(Body.Moon, observer, -1, date, 300);
 
-  print('search   : ${date.toIso8601String()}');
+  print('search   : ${date.toString()}');
   displayEvent('sunrise', sunrise);
   displayEvent('sunset', sunset);
   displayEvent('moonrise', moonrise);
   displayEvent('moonset', moonset);
-}
-
-void main() {
-  demo();
 }

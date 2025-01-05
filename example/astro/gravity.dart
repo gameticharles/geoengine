@@ -31,7 +31,7 @@ void main(List<String> args) {
   final latitude = 6.56784;
   // final longitude = -1.5674;
   final height = 230.0;
-  final gravity = observerGravity(latitude, 230);
+  final gravity = Observer.gravity(latitude, 230);
   print(
       'latitude = ${format(latitude, 8, 4)},  height = ${format(height, 6, 0)},  gravity = ${format(gravity, 8, 6)}');
 }

@@ -19,8 +19,11 @@
 [![forks](https://img.shields.io/github/forks/gameticharles/geoengine)](https://github.com/gameticharles/geoengine/network/members)
 [![CI](https://img.shields.io/github/workflow/status/gameticharles/geoengine/Dart%20CI/master?logo=github-actions&logoColor=white)](https://github.com/gameticharles/matrix/actions)
 
-GeoEngine is a comprehensive Dart library designed for geospatial and geomatic calculations. It provides a wide range of functionalities including distance calculations, coordinate conversions, geocoding, polygon operations, geodetic network analysis, and much more. Whether you are a GIS professional, a geomatics engineer, or a developer working on geospatial applications, GeoEngine is the ultimate toolkit for all your geospatial needs.
+GeoEngine is a comprehensive Dart library designed for geospatial and geomatic calculations. It provides a wide range of functionalities including distance calculations, coordinate conversions, geocoding, polygon operations, geodetic network analysis, and much more.
 
+Astronomy: GeoEngine also provides a comprehensive astronomy library for calculating celestial coordinates, moon phases, and eclipses. Predicts lunar phases, eclipses, transits, oppositions, conjunctions, equinoxes, solstices, rise/set times, and other events. Provides vector and angular coordinate transforms among equatorial, ecliptic, horizontal, and galactic orientations.
+
+Whether you are a GIS professional, a geomatics engineer, or a developer working on geospatial applications, GeoEngine is the ultimate toolkit for all your geospatial needs.
 
 ## Getting Started
 
@@ -109,7 +112,7 @@ print('Final bearing: $finalBearing');
 ```
 
 - **Interception**: Intersection of two paths given start points and bearings
-This is a rather more complex calculation than most others on this page, but I've been asked for it a number of times. This comes from Ed William’s aviation formulary. 
+This is a rather more complex calculation than most others on this page, but I've been asked for it a number of times. This comes from Ed William’s aviation formulary.
 
 ```dart
 var point1 = LatLng(51.8853, 0.2545);
@@ -168,6 +171,7 @@ print('Rhumb Destination: ${sPt.rhumbDestinationPoint(dist, bearing)}');
 - **Coordinate Conversion**: Convert between different coordinate systems, such as latitude/longitude to UTM or MGRS.
 
 Get the UTM zone number and letter
+
 ```dart
 var u = UTMZones();
 var uZone = u.getZone(latitude: 6.5655, longitude: -1.5646);
@@ -285,13 +289,13 @@ The `JulianDate` class in GeoEngine provides an interface to work with Julian Da
 
 You can create a `JulianDate` object in different ways:
 
-### From a specific date:
+### From a specific date
 
 ```dart
 JulianDate date1 = JulianDate.fromDate(year: 2023, month: 8, day: 15);
 ```
 
-### Using a DateTime object:
+### Using a DateTime object
 
 ```dart
 var date = DateTime(2023, 8, 15);
@@ -314,7 +318,7 @@ print(date1 >= date2); // false
 
 ## Conversion Functions
 
-### To Julian Date:
+### To Julian Date
 
 ```dart
 double jd = originalDate.toJulianDate();
@@ -323,7 +327,7 @@ print('Julian Date: $jd');
 // Julian Date: 2460171.5
 ```
 
-### To Modified Julian Date:
+### To Modified Julian Date
 
 The Modified Julian Date (MJD) is calculated by subtracting 2,400,000.5 from the Julian Date. It's used for convenience and starts from November 17, 1858.
 
@@ -333,7 +337,7 @@ print('Modified Julian Date (1858/11/17): ${originalDate.toModifiedJulianDate()}
 // Modified Julian Date (1858/11/17): 60171.0
 ```
 
-### Referenced Julian Date:
+### Referenced Julian Date
 
 You can also get a referenced Julian Date by specifying a reference date:
 
@@ -354,7 +358,7 @@ print(convertedDate.dateTime);
 // 2023-08-15 00:00:00.000
 ```
 
-## Example:
+## Example
 
 To get the Modified Julian Date with a specific reference date:
 
@@ -625,7 +629,7 @@ print("\n\nHPC:");
 print(leveling.getDataFrame());
 ```
 
-Once the data are added to the `Levelling` object, you can perform calculations. You can access all the results through the `Levelling` object. 
+Once the data are added to the `Levelling` object, you can perform calculations. You can access all the results through the `Levelling` object.
 You can access all the properties of the object.
 
 ```dart
@@ -675,15 +679,15 @@ print(leveling);
 // Last RL - First RL = -1.959
 // Arithmetic Checks are OK.
 // 
-// BS     IS	   FS	  Rise	  Fall 	  Reduced Level (RL)  Adjustment	 Adjusted RL  Remarks
+// BS     IS    FS   Rise   Fall    Reduced Level (RL)  Adjustment  Adjusted RL  Remarks
 // ---------------------------------------------------------------------
-// 1.751	  	  	    	    	               100.000	      0.000	        100.000	      A
-//   	  0.540	  	    1.211	    	           101.211	      0.003	        101.214	      B
-// 0.300	  	2.100	    	-1.560	            99.651	      0.006	         99.657	      C
-//   	  1.100	  	    	    -0.800	            98.851	      0.006	         98.857	      D
-//   	  1.260	  	    	    -0.160	            98.691	      0.006	         98.697	      E
-// 1.500	  	2.300	    	-1.040	            97.651	      0.009	         97.660	      F
-//   	  	    1.110	0.390	    	            98.041	      0.009	         98.050	      G
+// 1.751                                100.000       0.000         100.000       A
+//      0.540        1.211                 101.211       0.003         101.214       B
+// 0.300    2.100      -1.560             99.651       0.006          99.657       C
+//      1.100             -0.800             98.851       0.006          98.857       D
+//      1.260             -0.160             98.691       0.006          98.697       E
+// 1.500    2.300      -1.040             97.651       0.009          97.660       F
+//           1.110 0.390                  98.041       0.009          98.050       G
 ```
 
 </details>
@@ -896,12 +900,93 @@ The `localGeocoder.search()` and `localGeocoder.reverse()` functions work simila
 
 </details>
 
+<details>
+<summary>Astronomy</summary>
+
+# Astronomy
+
+## Overview
+
+Astronomy is a library for calculating the positions of
+the Sun, Moon, and planets, and for predicting interesting events like oppositions,
+conjunctions, rise and set times, lunar phases, eclipses, transits, and more.
+
+Astronomy library is designed to be small, fast, and accurate to within &plusmn;1 arcminute. It is
+ported from the [Astronomy Engine](https://github.com/cosinekitty/astronomy) which written to support various popular programming languages.
+
+It is based on the authoritative and well-tested models
+[VSOP87](https://en.wikipedia.org/wiki/VSOP_(planets))
+and
+[NOVAS C 3.1](https://aa.usno.navy.mil/software/novas/novas_c/novasc_info.php).
+These libraries are rigorously unit-tested against NOVAS,
+[JPL Horizons](https://ssd.jpl.nasa.gov/horizons.cgi),
+and other reliable sources of ephemeris data.
+Calculations are also verified to be identical among all the supported programming languages.
+
+## Features
+
+- Provides calculations for the Sun, Moon, Mercury, Venus, Earth, Mars, Jupiter, Saturn, Uranus, Neptune, and Pluto.
+
+- Calculates all supported objects for any calendar date and time for millennia
+  before or after the present.
+
+- Provides heliocentric and geocentric Cartesian vectors of all the above bodies.
+
+- Determines apparent horizon-based positions for an observer anywhere on the Earth,
+  given that observer's latitude, longitude, and elevation in meters.
+  Optionally corrects for atmospheric refraction.
+
+- Calculates rise, set, and culmination times of Sun, Moon, and planets.
+
+- Finds civil, nautical, and astronomical twilight times (dusk and dawn).
+
+- Finds date and time of Moon phases: new, first quarter, full, third quarter
+  (or anywhere in between as expressed in degrees of ecliptic longitude).
+
+- Predicts lunar and solar eclipses.
+
+- Predicts transits of Mercury and Venus.
+
+- Predicts lunar apogee and perigee dates, times, and distances.
+
+- Predicts date and time of equinoxes and solstices for a given calendar year.
+
+- Determines apparent visual magnitudes of all the supported celestial bodies.
+
+- Predicts dates of planetary conjunctions, oppositions, and apsides.
+
+- Predicts dates of Venus' peak visual magnitude.
+
+- Predicts dates of maximum elongation for Mercury and Venus.
+
+- Calculates the positions of Jupiter's four largest moons: Io, Europa, Ganymede, and Callisto.
+
+- Allows custom simulation of the movements of user-defined small bodies,
+  such as asteroids and comets, through the Solar System.
+
+- Converts angular and vector coordinates among the following orientations:
+  - Equatorial J2000
+  - Equatorial equator-of-date
+  - Ecliptic J2000
+  - Topocentric Horizontal
+  - Galactic (IAU 1958)
+
+- Determines which constellation contains a given point in the sky.
+
+- Calculates libration of the Moon.
+
+- Calculates axis orientation and rotation angles for the Sun, Moon, and planets.
+
+</details>
+
 ## Documentation
 
 For detailed documentation and examples for each feature, please visit the [GeoEngine Documentation](link-to-documentation).
 
 ## Contributing
-### :beer: Pull requests are welcome!
+
+### :beer: Pull requests are welcome
+
 Don't forget that `open-source` makes no sense without contributors. No matter how big your changes are, it helps us a lot even it is a line of change.
 
 There might be a lot of grammar issues in the docs. It's a big help to us to fix them if you are fluent in English. Reporting bugs and issues are contribution too, yes it is. Please file feature requests and bugs at the [issue tracker][tracker].
