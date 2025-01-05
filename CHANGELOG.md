@@ -3,6 +3,7 @@
 ## 1.0.2
 
 * **[IMPROVEMENT]** Fixed all the document links not working properly
+* **[BUG_FIX]** Fixed broken links.
 
 ## 1.0.1
 
