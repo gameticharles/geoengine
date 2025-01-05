@@ -1,5 +1,9 @@
 # CHANGE LOGS
 
+## 1.0.2
+
+* **[IMPROVEMENT]** Fixed all the document links not working properly
+
 ## 1.0.1
 
 * **[FEATURE]** Edited library description
