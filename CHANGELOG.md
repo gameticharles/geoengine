@@ -1,5 +1,9 @@
 # CHANGE LOGS
 
+## 1.0.1
+
+* **[FEATURE]** Edited library description
+
 ## 1.0.0
 
 * **[FEATURE]** Added `Sun` class.
