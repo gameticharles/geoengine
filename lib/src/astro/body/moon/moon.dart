@@ -517,7 +517,7 @@ class Moon {
     throw 'SearchLunarApsis INTERNAL ERROR: could not find apsis within 2 synodic months of start date.';
   }
 
-  /// @brief Finds the next lunar apsis (perigee or apogee) in a series.
+  /// Finds the next lunar apsis (perigee or apogee) in a series.
   ///
   /// Given a lunar apsis returned by an initial call to {@link SearchLunarApsis},
   /// or a previous call to `NextLunarApsis`, finds the next lunar apsis.
@@ -543,7 +543,7 @@ class Moon {
     return next;
   }
 
-  /// @brief Calculates equatorial geocentric Cartesian coordinates for the Moon.
+  /// Calculates equatorial geocentric Cartesian coordinates for the Moon.
   ///
   /// Given a time of observation, calculates the Moon's position as a vector.
   /// The vector gives the location of the Moon's center relative to the Earth's center
@@ -578,7 +578,7 @@ class Moon {
     return AstroVector(mpos2[0], mpos2[1], mpos2[2], date);
   }
 
-  /// @brief Calculates equatorial geocentric position and velocity of the Moon at a given time.
+  /// Calculates equatorial geocentric position and velocity of the Moon at a given time.
   ///
   /// Given a time of observation, calculates the Moon's position and velocity vectors.
   /// The position and velocity are of the Moon's center relative to the Earth's center.
@@ -613,7 +613,7 @@ class Moon {
     );
   }
 
-  /// @brief Calculates the geocentric position and velocity of the Earth/Moon barycenter.
+  /// Calculates the geocentric position and velocity of the Earth/Moon barycenter.
   ///
   /// Given a time of observation, calculates the geocentric position and velocity vectors
   /// of the Earth/Moon barycenter (EMB).
@@ -669,7 +669,7 @@ class Moon {
 
   final MoonNodeStepDays = 10.0;
 
-  /// @brief Searches for a time when the Moon's center crosses through the ecliptic plane.
+  /// Searches for a time when the Moon's center crosses through the ecliptic plane.
   ///
   /// Searches for the first ascending or descending node of the Moon after `startTime`.
   /// An ascending node is when the Moon's center passes through the ecliptic plane
@@ -712,7 +712,7 @@ class Moon {
     }
   }
 
-  /// @brief Searches for the next time when the Moon's center crosses through the ecliptic plane.
+  /// Searches for the next time when the Moon's center crosses through the ecliptic plane.
   ///
   /// Call {@link SearchMoonNode} to find the first of a series of nodes.
   /// Then call `NextMoonNode` to find as many more consecutive nodes as desired.

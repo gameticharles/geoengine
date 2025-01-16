@@ -20,7 +20,7 @@ class JupiterMoonT {
   });
 }
 
-/// @brief Holds the positions and velocities of Jupiter's major 4 moons.
+/// Holds the positions and velocities of Jupiter's major 4 moons.
 ///
 /// The {@link JupiterMoons} function returns an object of this type
 /// to report position and velocity vectors for Jupiter's largest 4 moons
@@ -228,8 +228,6 @@ StateVector JupiterMoon_elem2pv(AstroTime time, double mu, List<double> elem) {
   );
 }
 
-
-
 StateVector CalcJupiterMoon(AstroTime time, JupiterMoonT m) {
   final double t =
       time.tt + 18262.5; // number of days since 1950-01-01T00:00:00Z
@@ -279,7 +277,7 @@ StateVector CalcJupiterMoon(AstroTime time, JupiterMoonT m) {
   return StateVector.rotateState(RotationMatrix.rotationJUPtoEQJ, state);
 }
 
-/// @brief Calculates jovicentric positions and velocities of Jupiter's largest 4 moons.
+/// Calculates jovicentric positions and velocities of Jupiter's largest 4 moons.
 ///
 /// Calculates position and velocity vectors for Jupiter's moons
 /// Io, Europa, Ganymede, and Callisto, at the given date and time.

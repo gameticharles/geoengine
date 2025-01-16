@@ -1,6 +1,6 @@
 part of '../astronomy.dart';
 
-/// @brief A combination of a position vector, a velocity vector, and a time.
+/// A combination of a position vector, a velocity vector, and a time.
 ///
 /// Holds the state vector of a body at a given time, including its position,
 /// velocity, and the time they are valid.
@@ -31,7 +31,7 @@ class StateVector {
     this.t,
   );
 
-  /// @brief Applies a rotation to a state vector, yielding a rotated vector.
+  /// Applies a rotation to a state vector, yielding a rotated vector.
   ///
   /// This function transforms a state vector in one orientation to a vector
   /// in another orientation.
@@ -92,7 +92,7 @@ class StateVector {
     }
   }
 
-  /// @brief Calculates one of the 5 Lagrange points from body masses and state vectors.
+  /// Calculates one of the 5 Lagrange points from body masses and state vectors.
   ///
   /// Given a more massive "major" body and a much less massive "minor" body,
   /// calculates one of the five Lagrange points in relation to the minor body's
@@ -285,7 +285,7 @@ class StateVector {
     return p;
   }
 
-  /// @brief Calculates one of the 5 Lagrange points for a pair of co-orbiting bodies.
+  /// Calculates one of the 5 Lagrange points for a pair of co-orbiting bodies.
   ///
   /// Given a more massive "major" body and a much less massive "minor" body,
   /// calculates one of the five Lagrange points in relation to the minor body's

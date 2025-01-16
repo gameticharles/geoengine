@@ -1,6 +1,6 @@
 part of '../astronomy.dart';
 
-/// @brief Holds a time and the observed altitude of the Sun at that time.
+/// Holds a time and the observed altitude of the Sun at that time.
 ///
 /// When reporting a solar eclipse observed at a specific location on the Earth
 /// (a "local" solar eclipse), a series of events occur. In addition
@@ -30,7 +30,7 @@ abstract class EclipseInfo {
   EclipseKind kind;
   double? obscuration;
 
-  /// @brief The date and time of the eclipse peak.
+  /// The date and time of the eclipse peak.
   ///
   /// @type {AstroTime} for GlobalSolarEclipseInfo and LunarEclipseInfo
   /// @type {EclipseEvent} for LocalSolarEclipseInfo
@@ -39,7 +39,7 @@ abstract class EclipseInfo {
   EclipseInfo(this.kind, this.obscuration, this.peak);
 }
 
-/// @brief Returns information about a lunar eclipse.
+/// Returns information about a lunar eclipse.
 ///
 /// Returned by {@link SearchLunarEclipse} or {@link NextLunarEclipse}
 /// to report information about a lunar eclipse event.
@@ -250,7 +250,7 @@ class LunarEclipseInfo extends EclipseInfo {
   }
 }
 
-/// @brief Information about a solar eclipse as seen by an observer at a given time and geographic location.
+/// Information about a solar eclipse as seen by an observer at a given time and geographic location.
 ///
 /// Returned by {@link SearchLocalSolarEclipse} or {@link NextLocalSolarEclipse}
 /// to report information about a solar eclipse as seen at a given geographic location.
@@ -414,7 +414,7 @@ class LocalSolarEclipseInfo extends EclipseInfo {
   }
 }
 
-/// @brief Reports the time and geographic location of the peak of a solar eclipse.
+/// Reports the time and geographic location of the peak of a solar eclipse.
 ///
 /// Returned by {@link SearchGlobalSolarEclipse} or {@link NextGlobalSolarEclipse}
 /// to report information about a solar eclipse event.
@@ -570,7 +570,7 @@ class GlobalSolarEclipseInfo extends EclipseInfo {
 }
 
 class Eclipse {
-  /// @brief Searches for a solar eclipse visible anywhere on the Earth's surface.
+  /// Searches for a solar eclipse visible anywhere on the Earth's surface.
   ///
   /// This function finds the first solar eclipse that occurs after `startTime`.
   /// A solar eclipse may be partial, annular, or total.
@@ -619,7 +619,7 @@ class Eclipse {
     throw 'Failed to find solar eclipse within 12 full moons.';
   }
 
-  /// @brief Searches for the next global solar eclipse in a series.
+  /// Searches for the next global solar eclipse in a series.
   ///
   /// After using {@link SearchGlobalSolarEclipse} to find the first solar eclipse
   /// in a series, you can call this function to find the next consecutive solar eclipse.
@@ -638,7 +638,7 @@ class Eclipse {
     return searchGlobalSolarEclipse(startTime);
   }
 
-  /// @brief Searches for a lunar eclipse.
+  /// Searches for a lunar eclipse.
   ///
   /// This function finds the first lunar eclipse that occurs after `startTime`.
   /// A lunar eclipse may be penumbral, partial, or total.
@@ -708,7 +708,7 @@ class Eclipse {
     throw 'Failed to find lunar eclipse within 12 full moons.';
   }
 
-  /// @brief Searches for the next lunar eclipse in a series.
+  /// Searches for the next lunar eclipse in a series.
   ///
   /// After using {@link SearchLunarEclipse} to find the first lunar eclipse
   /// in a series, you can call this function to find the next consecutive lunar eclipse.
@@ -727,7 +727,7 @@ class Eclipse {
     return searchLunarEclipse(startTime);
   }
 
-  /// @brief Searches for a solar eclipse visible at a specific location on the Earth's surface.
+  /// Searches for a solar eclipse visible at a specific location on the Earth's surface.
   ///
   /// This function finds the first solar eclipse that occurs after `startTime`.
   /// A solar eclipse may be partial, annular, or total.
@@ -789,7 +789,7 @@ class Eclipse {
     }
   }
 
-  /// @brief Searches for the next local solar eclipse in a series.
+  /// Searches for the next local solar eclipse in a series.
   ///
   /// After using {@link SearchLocalSolarEclipse} to find the first solar eclipse
   /// in a series, you can call this function to find the next consecutive solar eclipse.
@@ -1118,7 +1118,7 @@ double sunAltitude(AstroTime time, Observer observer) {
   final equ = equator(Body.Sun, time, observer, true,
       true); // Adjust Body.Sun to your actual implementation
   final hor = HorizontalCoordinates.horizon(time, observer, equ.ra, equ.dec,
-      'normal'); // Adjust 'normal' to your actual implementation
+      RefractionType.normal); // Adjust 'normal' to your actual implementation
   return hor.altitude;
 }
 
@@ -1176,7 +1176,7 @@ LocalSolarEclipseInfo localEclipse(ShadowInfo shadow, Observer observer) {
       kind, obscuration, partialBegin, totalBegin, peak, totalEnd, partialEnd);
 }
 
-/// @brief Returns apparent geocentric true ecliptic coordinates of date for the Sun.
+/// Returns apparent geocentric true ecliptic coordinates of date for the Sun.
 ///
 /// This function is used for calculating the times of equinoxes and solstices.
 ///
@@ -1221,7 +1221,7 @@ EclipticCoordinates sunPosition(dynamic date) {
   return sunEcliptic;
 }
 
-/// @brief Searches for when the Sun reaches a given ecliptic longitude.
+/// Searches for when the Sun reaches a given ecliptic longitude.
 ///
 /// Searches for the moment in time when the center of the Sun reaches a given apparent
 /// ecliptic longitude, as seen from the center of the Earth, within a given range of dates.

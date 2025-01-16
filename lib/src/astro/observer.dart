@@ -15,7 +15,7 @@ void verifyObserver(Observer observer) {
   }
 }
 
-/// @brief Represents the geographic location of an observer on the surface of the Earth.
+/// Represents the geographic location of an observer on the surface of the Earth.
 ///
 /// @property {number} latitude
 ///      The observer's geographic latitude in degrees north of the Earth's equator.
@@ -39,7 +39,7 @@ class Observer {
     verifyObserver(this);
   }
 
-  /// @brief Calculates the gravitational acceleration experienced by an observer on the Earth.
+  /// Calculates the gravitational acceleration experienced by an observer on the Earth.
   ///
   /// This function implements the WGS 84 Ellipsoidal Gravity Formula.
   /// The result is a combination of inward gravitational acceleration
@@ -95,7 +95,7 @@ class Observer {
     return gyration(pos, time, PrecessDirection.Into2000);
   }
 
-  /// @brief Calculates geocentric equatorial coordinates of an observer on the surface of the Earth.
+  /// Calculates geocentric equatorial coordinates of an observer on the surface of the Earth.
   ///
   /// This function calculates a vector from the center of the Earth to
   /// a point on or near the surface of the Earth, expressed in equatorial
@@ -235,7 +235,7 @@ class Observer {
     return Observer(latDeg, lonDeg, 1000 * heightKm);
   }
 
-  /// @brief Calculates geocentric equatorial position and velocity of an observer on the surface of the Earth.
+  /// Calculates geocentric equatorial position and velocity of an observer on the surface of the Earth.
   ///
   /// This function calculates position and velocity vectors of an observer
   /// on or near the surface of the Earth, expressed in equatorial
@@ -287,7 +287,7 @@ class Observer {
     return state;
   }
 
-  /// @brief Calculates the geographic location corresponding to an equatorial vector.
+  /// Calculates the geographic location corresponding to an equatorial vector.
   ///
   /// This is the inverse function of {@link ObserverVector}.
   /// Given a geocentric equatorial vector, it returns the geographic

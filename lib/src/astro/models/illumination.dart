@@ -1,6 +1,6 @@
 part of '../astronomy.dart';
 
-/// @brief Information about the apparent brightness and sunlit phase of a celestial object.
+/// Information about the apparent brightness and sunlit phase of a celestial object.
 ///
 /// @property {AstroTime} time
 ///      The date and time pertaining to the other calculated values in this object.
@@ -73,7 +73,7 @@ class IlluminationInfo {
     this.ringTilt,
   }) : phaseFraction = (1 + cos(DEG2RAD * phaseAngle)) / 2;
 
-  /// @brief Calculates visual magnitude and related information about a body.
+  /// Calculates visual magnitude and related information about a body.
   ///
   /// Calculates the phase angle, visual magnitude,
   /// and other values relating to the body's illumination
@@ -157,7 +157,7 @@ class IlluminationInfo {
     );
   }
 
-  /// @brief Searches for the date and time Venus will next appear brightest as seen from the Earth.
+  /// Searches for the date and time Venus will next appear brightest as seen from the Earth.
   ///
   /// @param {Body} body
   ///      Currently only `Body.Venus` is supported.
@@ -176,105 +176,109 @@ class IlluminationInfo {
       throw 'SearchPeakMagnitude currently works for Venus only.';
     }
 
-  const double dt = 0.01;
+    const double dt = 0.01;
 
-  double slope(AstroTime t) {
-    // The Search() function finds a transition from negative to positive values.
-    // The derivative of magnitude y with respect to time t (dy/dt)
-    // is negative as an object gets brighter, because the magnitude numbers
-    // get smaller. At peak magnitude dy/dt = 0, then as the object gets dimmer,
-    // dy/dt > 0.
-    AstroTime t1 = t.addDays(-dt / 2);
-    AstroTime t2 = t.addDays(dt / 2);
-    double y1 = IlluminationInfo.getBodyIllumination(body, t1).mag; // Replace with your actual method to get magnitude
-    double y2 = IlluminationInfo.getBodyIllumination(body, t2).mag; // Replace with your actual method to get magnitude
-    double m = (y2 - y1) / dt;
-    return m;
+    double slope(AstroTime t) {
+      // The Search() function finds a transition from negative to positive values.
+      // The derivative of magnitude y with respect to time t (dy/dt)
+      // is negative as an object gets brighter, because the magnitude numbers
+      // get smaller. At peak magnitude dy/dt = 0, then as the object gets dimmer,
+      // dy/dt > 0.
+      AstroTime t1 = t.addDays(-dt / 2);
+      AstroTime t2 = t.addDays(dt / 2);
+      double y1 = IlluminationInfo.getBodyIllumination(body, t1)
+          .mag; // Replace with your actual method to get magnitude
+      double y2 = IlluminationInfo.getBodyIllumination(body, t2)
+          .mag; // Replace with your actual method to get magnitude
+      double m = (y2 - y1) / dt;
+      return m;
+    }
+
+    AstroTime startTime = AstroTime(startDate);
+
+    // s1 and s2 are relative longitudes within which peak magnitude of Venus can occur.
+    const double s1 = 10.0;
+    const double s2 = 30.0;
+
+    int iter = 0;
+    while (++iter <= 2) {
+      // Find current heliocentric relative longitude between the
+      // inferior planet and the Earth.
+      double plon = eclipticLongitude(body, startTime);
+      double elon = eclipticLongitude(Body.Earth, startTime);
+      double rlon = LongitudeOffset(plon - elon); // clamp to (-180, +180]
+
+      // The slope function is not well-behaved when rlon is near 0 degrees or 180 degrees
+      // because there is a cusp there that causes a discontinuity in the derivative.
+      // So we need to guard against searching near such times.
+
+      double rlonLo, rlonHi, adjustDays;
+      if (rlon >= -s1 && rlon < s1) {
+        // Seek to the window [+s1, +s2].
+        adjustDays = 0;
+        // Search forward for the time t1 when rel lon = +s1.
+        rlonLo = s1;
+        // Search forward for the time t2 when rel lon = +s2.
+        rlonHi = s2;
+      } else if (rlon >= s2 || rlon < -s2) {
+        // Seek to the next search window at [-s2, -s1].
+        adjustDays = 0;
+        // Search forward for the time t1 when rel lon = -s2.
+        rlonLo = -s2;
+        // Search forward for the time t2 when rel lon = -s1.
+        rlonHi = -s1;
+      } else if (rlon >= 0) {
+        // rlon must be in the middle of the window [+s1, +s2].
+        // Search BACKWARD for the time t1 when rel lon = +s1.
+        adjustDays = -synodicPeriod(body) / 4;
+        rlonLo = s1;
+        // Search forward from t1 to find t2 such that rel lon = +s2.
+        rlonHi = s2;
+      } else {
+        // rlon must be in the middle of the window [-s2, -s1].
+        // Search BACKWARD for the time t1 when rel lon = -s2.
+        adjustDays = -synodicPeriod(body) / 4;
+        rlonLo = -s2;
+        // Search forward from t1 to find t2 such that rel lon = -s1.
+        rlonHi = -s1;
+      }
+
+      AstroTime tStart = startTime.addDays(adjustDays);
+      AstroTime t1 = searchRelativeLongitude(body, rlonLo, tStart);
+      AstroTime t2 = searchRelativeLongitude(body, rlonHi, t1);
+
+      // Now we have a time range [t1,t2] that brackets a maximum magnitude event.
+      // Confirm the bracketing.
+      double m1 = slope(t1);
+      if (m1 >= 0) {
+        throw 'SearchPeakMagnitude: internal error: m1 = $m1';
+      }
+
+      double m2 = slope(t2);
+      if (m2 <= 0) {
+        throw 'SearchPeakMagnitude: internal error: m2 = $m2';
+      }
+
+      // Use the generic search algorithm to home in on where the slope crosses from negative to positive.
+      AstroTime? tx = search(slope, t1, t2,
+          options:
+              SearchOptions(initF1: m1, initF2: m2, dtToleranceSeconds: 10));
+
+      if (tx == null) {
+        throw 'SearchPeakMagnitude: failed search iter $iter (t1=${t1.toString()}, t2=${t2.toString()})';
+      }
+
+      if (tx.tt >= startTime.tt) {
+        return IlluminationInfo.getBodyIllumination(body,
+            tx); // Replace with your actual method to get IlluminationInfo
+      }
+
+      // This event is in the past (earlier than startDate).
+      // We need to search forward from t2 to find the next possible window.
+      // We never need to search more than twice.
+      startTime = t2.addDays(1);
+    }
+
+    throw 'SearchPeakMagnitude: failed to find event after 2 tries.';
   }
-
-  AstroTime startTime = AstroTime(startDate);
-
-  // s1 and s2 are relative longitudes within which peak magnitude of Venus can occur.
-  const double s1 = 10.0;
-  const double s2 = 30.0;
-
-  int iter = 0;
-  while (++iter <= 2) {
-    // Find current heliocentric relative longitude between the
-    // inferior planet and the Earth.
-    double plon = eclipticLongitude(body, startTime);
-    double elon = eclipticLongitude(Body.Earth, startTime);
-    double rlon = LongitudeOffset(plon - elon); // clamp to (-180, +180]
-
-    // The slope function is not well-behaved when rlon is near 0 degrees or 180 degrees
-    // because there is a cusp there that causes a discontinuity in the derivative.
-    // So we need to guard against searching near such times.
-
-    double rlonLo, rlonHi, adjustDays;
-    if (rlon >= -s1 && rlon < s1) {
-      // Seek to the window [+s1, +s2].
-      adjustDays = 0;
-      // Search forward for the time t1 when rel lon = +s1.
-      rlonLo = s1;
-      // Search forward for the time t2 when rel lon = +s2.
-      rlonHi = s2;
-    } else if (rlon >= s2 || rlon < -s2) {
-      // Seek to the next search window at [-s2, -s1].
-      adjustDays = 0;
-      // Search forward for the time t1 when rel lon = -s2.
-      rlonLo = -s2;
-      // Search forward for the time t2 when rel lon = -s1.
-      rlonHi = -s1;
-    } else if (rlon >= 0) {
-      // rlon must be in the middle of the window [+s1, +s2].
-      // Search BACKWARD for the time t1 when rel lon = +s1.
-      adjustDays = -synodicPeriod(body) / 4;
-      rlonLo = s1;
-      // Search forward from t1 to find t2 such that rel lon = +s2.
-      rlonHi = s2;
-    } else {
-      // rlon must be in the middle of the window [-s2, -s1].
-      // Search BACKWARD for the time t1 when rel lon = -s2.
-      adjustDays = -synodicPeriod(body) / 4;
-      rlonLo = -s2;
-      // Search forward from t1 to find t2 such that rel lon = -s1.
-      rlonHi = -s1;
-    }
-
-    AstroTime tStart = startTime.addDays(adjustDays);
-    AstroTime t1 = searchRelativeLongitude(body, rlonLo, tStart);
-    AstroTime t2 = searchRelativeLongitude(body, rlonHi, t1);
-
-    // Now we have a time range [t1,t2] that brackets a maximum magnitude event.
-    // Confirm the bracketing.
-    double m1 = slope(t1);
-    if (m1 >= 0) {
-      throw 'SearchPeakMagnitude: internal error: m1 = $m1';
-    }
-
-    double m2 = slope(t2);
-    if (m2 <= 0) {
-      throw 'SearchPeakMagnitude: internal error: m2 = $m2';
-    }
-
-    // Use the generic search algorithm to home in on where the slope crosses from negative to positive.
-    AstroTime? tx = search(slope, t1, t2, options: SearchOptions(initF1: m1, initF2: m2, dtToleranceSeconds: 10));
-    
-    if (tx == null) {
-      throw 'SearchPeakMagnitude: failed search iter $iter (t1=${t1.toString()}, t2=${t2.toString()})';
-    }
-
-    if (tx.tt >= startTime.tt) {
-      return IlluminationInfo.getBodyIllumination(body, tx); // Replace with your actual method to get IlluminationInfo
-    }
-
-    // This event is in the past (earlier than startDate).
-    // We need to search forward from t2 to find the next possible window.
-    // We never need to search more than twice.
-    startTime = t2.addDays(1);
-  }
-
-  throw 'SearchPeakMagnitude: failed to find event after 2 tries.';
-}
-
 }

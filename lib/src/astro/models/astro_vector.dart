@@ -16,7 +16,7 @@ class AstroVector {
     return AstroVector(av[0], av[1], av[2], time);
   }
 
-  /// @brief Given apparent angular horizontal coordinates in `sphere`, calculate horizontal vector.
+  /// Given apparent angular horizontal coordinates in `sphere`, calculate horizontal vector.
   ///
   /// @param {Spherical} sphere
   ///      A structure that contains apparent horizontal coordinates:
@@ -36,7 +36,7 @@ class AstroVector {
   /// @returns {Vector}
   ///      A vector in the horizontal system: `x` = north, `y` = west, and `z` = zenith (up).
   static AstroVector vectorFromHorizon(
-      Spherical sphere, dynamic time, String? refraction) {
+      Spherical sphere, dynamic time, RefractionType refraction) {
     time = AstroTime(time);
 
     // Convert azimuth from clockwise-from-north to counterclockwise-from-north
@@ -52,7 +52,7 @@ class AstroVector {
     return vectorFromSphere(adjustedSphere, time);
   }
 
-  /// @brief Converts spherical coordinates to Cartesian coordinates.
+  /// Converts spherical coordinates to Cartesian coordinates.
   ///
   /// Given spherical coordinates and a time at which they are valid,
   /// returns a vector of Cartesian coordinates. The returned value
@@ -75,7 +75,7 @@ class AstroVector {
         sphere.dist * sin(radLat), time);
   }
 
-  /// @brief Applies a rotation to a vector, yielding a rotated vector.
+  /// Applies a rotation to a vector, yielding a rotated vector.
   ///
   /// This function transforms a vector in one orientation to a vector
   /// in another orientation.

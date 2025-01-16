@@ -35,7 +35,7 @@ double _siderealTime(AstroTime time) {
       .st; // Return sidereal hours in the half-open range [0, 24).
 }
 
-/// @brief Calculates Greenwich Apparent Sidereal Time (GAST).
+/// Calculates Greenwich Apparent Sidereal Time (GAST).
 ///
 /// Given a date and time, this function calculates the rotation of the
 /// Earth, represented by the equatorial angle of the Greenwich prime meridian

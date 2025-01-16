@@ -1,6 +1,6 @@
 part of 'astronomy.dart';
 
-/// @brief A closest or farthest point in a body's orbit around its primary.
+/// A closest or farthest point in a body's orbit around its primary.
 ///
 /// For a planet orbiting the Sun, apsis is a perihelion or aphelion, respectively.
 /// For the Moon orbiting the Earth, apsis is a perigee or apogee, respectively.
@@ -154,7 +154,7 @@ class Apsis {
     throw 'Internal error: failed to find Neptune apsis.';
   }
 
-  /// @brief Finds the next perihelion or aphelion of a planet.
+  /// Finds the next perihelion or aphelion of a planet.
   ///
   /// Finds the date and time of a planet's perihelion (closest approach to the Sun)
   /// or aphelion (farthest distance from the Sun) after a given time.
@@ -250,7 +250,7 @@ class Apsis {
     throw "Internal error: should have found planetary apsis within 2 orbital periods.";
   }
 
-  /// @brief Finds the next planetary perihelion or aphelion event in a series.
+  /// Finds the next planetary perihelion or aphelion event in a series.
   ///
   /// This function requires an {@link Apsis} value obtained from a call
   /// to {@link SearchPlanetApsis} or `NextPlanetApsis`.

@@ -1,6 +1,6 @@
 part of 'astronomy.dart';
 
-/// @brief The viewing conditions of a body relative to the Sun.
+/// The viewing conditions of a body relative to the Sun.
 ///
 /// Represents the angular separation of a body from the Sun as seen from the Earth
 /// and the relative ecliptic longitudes between that body and the Earth as seen from the Sun.
@@ -25,7 +25,7 @@ part of 'astronomy.dart';
 ///      and the Sun's ecliptic longitude, both as seen from the center of the Earth.
 ///      This angle measures around the plane of the Earth's orbit (the ecliptic),
 ///      and ignores how far above or below that plane the body is.
-///      The ecliptic separation is measured in degrees and is always in the range [0, 180].
+///      The ecliptic separation is measured in degrees and is always in the range `[0, 180]`.
 ///
 /// @see {@link Elongation}
 class ElongationEvent {
@@ -37,7 +37,7 @@ class ElongationEvent {
   ElongationEvent(
       this.time, this.visibility, this.elongation, this.eclipticSeparation);
 
-  /// @brief Calculates the viewing conditions of a body relative to the Sun.
+  /// Calculates the viewing conditions of a body relative to the Sun.
   ///
   /// Calculates angular separation of a body from the Sun as seen from the Earth
   /// and the relative ecliptic longitudes between that body and the Earth as seen from the Sun.
@@ -71,7 +71,7 @@ class ElongationEvent {
     return ElongationEvent(time, vis, angle, lon);
   }
 
-  /// @brief Finds the next time Mercury or Venus reaches maximum elongation.
+  /// Finds the next time Mercury or Venus reaches maximum elongation.
   ///
   /// Searches for the next maximum elongation event for Mercury or Venus
   /// that occurs after the given start date. Calling with other values

@@ -1,6 +1,6 @@
 part of 'astronomy.dart';
 
-/// @brief When the seasons change for a given calendar year.
+/// When the seasons change for a given calendar year.
 ///
 /// Represents the dates and times of the two solstices
 /// and the two equinoxes in a given calendar year.
@@ -54,40 +54,38 @@ class SeasonInfo {
     this.decSolstice,
   );
 
-
-/// @brief Finds the equinoxes and solstices for a given calendar year.
-///
-/// @param {number | AstroTime} year
-///      The integer value or `AstroTime` object that specifies
-///      the UTC calendar year for which to find equinoxes and solstices.
-///
-/// @returns {SeasonInfo}
-static SeasonInfo seasons(dynamic year) {
-  AstroTime find(double targetLon, int month, int day) {
-    final startDate = DateTime.utc(year, month, day);
-    final time = searchSunLongitude(targetLon, startDate, 20);
-    if (time == null) {
-      throw Exception(
-          "Cannot find season change near ${startDate.toIso8601String()}");
+  /// Finds the equinoxes and solstices for a given calendar year.
+  ///
+  /// @param {number | AstroTime} year
+  ///      The integer value or `AstroTime` object that specifies
+  ///      the UTC calendar year for which to find equinoxes and solstices.
+  ///
+  /// @returns {SeasonInfo}
+  static SeasonInfo seasons(dynamic year) {
+    AstroTime find(double targetLon, int month, int day) {
+      final startDate = DateTime.utc(year, month, day);
+      final time = searchSunLongitude(targetLon, startDate, 20);
+      if (time == null) {
+        throw Exception(
+            "Cannot find season change near ${startDate.toIso8601String()}");
+      }
+      return time;
     }
-    return time;
+
+    if (year is DateTime && year.isUtc) {
+      year = year.year;
+    }
+
+    if (year is! int || year < -9007199254740991 || year > 9007199254740991) {
+      throw Exception(
+          "Cannot calculate seasons because year argument $year is neither a DateTime nor a safe integer.");
+    }
+
+    final marEquinox = find(0, 3, 10);
+    final junSolstice = find(90, 6, 10);
+    final sepEquinox = find(180, 9, 10);
+    final decSolstice = find(270, 12, 10);
+
+    return SeasonInfo(marEquinox, junSolstice, sepEquinox, decSolstice);
   }
-
-  if (year is DateTime && year.isUtc) {
-    year = year.year;
-  }
-
-  if (year is! int || year < -9007199254740991 || year > 9007199254740991) {
-    throw Exception(
-        "Cannot calculate seasons because year argument $year is neither a DateTime nor a safe integer.");
-  }
-
-  final marEquinox = find(0, 3, 10);
-  final junSolstice = find(90, 6, 10);
-  final sepEquinox = find(180, 9, 10);
-  final decSolstice = find(270, 12, 10);
-
-  return SeasonInfo(marEquinox, junSolstice, sepEquinox, decSolstice);
-}
-
 }

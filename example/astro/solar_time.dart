@@ -31,5 +31,5 @@ void main() {
   final observer = Observer(latitude, longitude, 0);
   final date = DateTime.now().toUtc();
   print(date);
-  print(trueSolarTime(observer, date));
+  print(trueSolarTime(observer, date).date.toUtc());
 }

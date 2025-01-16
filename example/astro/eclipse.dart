@@ -19,9 +19,22 @@ void main(List<String> args) {
   final latitude = 6.56784;
   final longitude = -1.5674;
 
-  final observer = Observer(latitude, longitude, 230);
-  List<EclipseInfo> eclipses = Eclipse.search(startTime: date, eclipses: Eclipses.all);
+  printLine("===============");
+  printLine("Global Eclipses");
+  printLine("===============");
+  List<EclipseInfo> eclipses =
+      Eclipse.search(startTime: date, eclipses: Eclipses.all);
 
+  for (var eclipse in eclipses) {
+    print(eclipse);
+    printLine();
+  }
+  printLine("==============");
+  printLine("Local Eclipses");
+  printLine("==============");
+  final observer = Observer(latitude, longitude, 230);
+  eclipses = Eclipse.search(
+      observer: observer, startTime: date, eclipses: Eclipses.all);
   for (var eclipse in eclipses) {
     print(eclipse);
     printLine();

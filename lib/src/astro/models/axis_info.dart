@@ -1,6 +1,6 @@
 part of '../astronomy.dart';
 
-/// @brief Information about a body's rotation axis at a given time.
+/// Information about a body's rotation axis at a given time.
 ///
 /// This structure is returned by {@link RotationAxis} to report
 /// the orientation of a body's rotation axis at a given moment in time.
@@ -63,7 +63,7 @@ class AxisInfo {
     return AxisInfo(equ.ra, equ.dec, spin, north);
   }
 
-  /// @brief Calculates information about a body's rotation axis at a given time.
+  /// Calculates information about a body's rotation axis at a given time.
   /// Calculates the orientation of a body's rotation axis, along with
   /// the rotation angle of its prime meridian, at a given moment in time.
   ///

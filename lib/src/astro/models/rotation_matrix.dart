@@ -3,7 +3,7 @@ part of '../astronomy.dart';
 class RotationMatrix {
   List<List<double>> rot;
 
-  /// @brief Creates a rotation matrix that can be used to transform one coordinate system to another.
+  /// Creates a rotation matrix that can be used to transform one coordinate system to another.
   ///
   /// This function verifies that the `rot` parameter is of the correct format:
   /// a `number[3][3]` array. It throws an exception if `rot` is not of that shape.
@@ -150,7 +150,7 @@ class RotationMatrix {
     return true;
   }
 
-  /// @brief Calculates the inverse of a rotation matrix.
+  /// Calculates the inverse of a rotation matrix.
   ///
   /// Given a rotation matrix that performs some coordinate transform,
   /// this function returns the matrix that reverses that transform.
@@ -168,7 +168,7 @@ class RotationMatrix {
     ]);
   }
 
-  /// @brief Creates a rotation based on applying one rotation followed by another.
+  /// Creates a rotation based on applying one rotation followed by another.
   ///
   /// Given two rotation matrices, returns a combined rotation matrix that is
   /// equivalent to rotating based on the first matrix, followed by the second.
@@ -219,7 +219,7 @@ class RotationMatrix {
     ]);
   }
 
-  /// @brief Creates an identity rotation matrix.
+  /// Creates an identity rotation matrix.
   ///
   /// Returns a rotation matrix that has no effect on orientation.
   /// This matrix can be the starting point for other operations,
@@ -236,7 +236,7 @@ class RotationMatrix {
     ]);
   }
 
-  /// @brief Re-orients a rotation matrix by pivoting it by an angle around one of its axes.
+  /// Re-orients a rotation matrix by pivoting it by an angle around one of its axes.
   ///
   /// Given a rotation matrix, a selected coordinate axis, and an angle in degrees,
   /// this function pivots the rotation matrix by that angle around that coordinate axis.
@@ -296,7 +296,7 @@ class RotationMatrix {
     return RotationMatrix(rot);
   }
 
-  /// @brief Calculates a rotation matrix from J2000 mean equator (EQJ) to J2000 mean ecliptic (ECL).
+  /// Calculates a rotation matrix from J2000 mean equator (EQJ) to J2000 mean ecliptic (ECL).
   ///
   /// This is one of the family of functions that returns a rotation matrix
   /// for converting from one orientation to another.
@@ -317,7 +317,7 @@ class RotationMatrix {
     ]);
   }
 
-  /// @brief Calculates a rotation matrix from J2000 mean ecliptic (ECL) to J2000 mean equator (EQJ).
+  /// Calculates a rotation matrix from J2000 mean ecliptic (ECL) to J2000 mean equator (EQJ).
   ///
   /// This is one of the family of functions that returns a rotation matrix
   /// for converting from one orientation to another.
@@ -338,7 +338,7 @@ class RotationMatrix {
     ]);
   }
 
-  /// @brief Calculates a rotation matrix from J2000 mean equator (EQJ) to equatorial of-date (EQD).
+  /// Calculates a rotation matrix from J2000 mean equator (EQJ) to equatorial of-date (EQD).
   ///
   /// This is one of the family of functions that returns a rotation matrix
   /// for converting from one orientation to another.
@@ -362,7 +362,7 @@ class RotationMatrix {
     return combineRotation(prec, nut);
   }
 
-  /// @brief Calculates a rotation matrix from J2000 mean equator (EQJ) to true ecliptic of date (ECT).
+  /// Calculates a rotation matrix from J2000 mean equator (EQJ) to true ecliptic of date (ECT).
   ///
   /// This is one of the family of functions that returns a rotation matrix
   /// for converting from one orientation to another.
@@ -381,7 +381,7 @@ class RotationMatrix {
     return combineRotation(rot, step);
   }
 
-  /// @brief Calculates a rotation matrix from true ecliptic of date (ECT) to J2000 mean equator (EQJ).
+  /// Calculates a rotation matrix from true ecliptic of date (ECT) to J2000 mean equator (EQJ).
   ///
   /// This is one of the family of functions that returns a rotation matrix
   /// for converting from one orientation to another.
@@ -400,7 +400,7 @@ class RotationMatrix {
     return combineRotation(rot, step);
   }
 
-  /// @brief Calculates a rotation matrix from equatorial of-date (EQD) to J2000 mean equator (EQJ).
+  /// Calculates a rotation matrix from equatorial of-date (EQD) to J2000 mean equator (EQJ).
   ///
   /// This is one of the family of functions that returns a rotation matrix
   /// for converting from one orientation to another.
@@ -419,7 +419,7 @@ class RotationMatrix {
     return combineRotation(nut, prec);
   }
 
-  /// @brief Calculates a rotation matrix from equatorial of-date (EQD) to horizontal (HOR).
+  /// Calculates a rotation matrix from equatorial of-date (EQD) to horizontal (HOR).
   ///
   /// This is one of the family of functions that returns a rotation matrix
   /// for converting from one orientation to another.
@@ -464,7 +464,7 @@ class RotationMatrix {
     ]);
   }
 
-  /// @brief Calculates a rotation matrix from horizontal (HOR) to equatorial of-date (EQD).
+  /// Calculates a rotation matrix from horizontal (HOR) to equatorial of-date (EQD).
   ///
   /// This is one of the family of functions that returns a rotation matrix
   /// for converting from one orientation to another.
@@ -484,7 +484,7 @@ class RotationMatrix {
     return inverseRotation(rot);
   }
 
-  /// @brief Calculates a rotation matrix from horizontal (HOR) to J2000 equatorial (EQJ).
+  /// Calculates a rotation matrix from horizontal (HOR) to J2000 equatorial (EQJ).
   ///
   /// This is one of the family of functions that returns a rotation matrix
   /// for converting from one orientation to another.
@@ -506,7 +506,7 @@ class RotationMatrix {
     return combineRotation(horToEqd, eqdToEqj);
   }
 
-  /// @brief Calculates a rotation matrix from J2000 mean equator (EQJ) to horizontal (HOR).
+  /// Calculates a rotation matrix from J2000 mean equator (EQJ) to horizontal (HOR).
   ///
   /// This is one of the family of functions that returns a rotation matrix
   /// for converting from one orientation to another.
@@ -533,7 +533,7 @@ class RotationMatrix {
     return inverseRotation(rot);
   }
 
-  /// @brief Calculates a rotation matrix from equatorial of-date (EQD) to J2000 mean ecliptic (ECL).
+  /// Calculates a rotation matrix from equatorial of-date (EQD) to J2000 mean ecliptic (ECL).
   ///
   /// This is one of the family of functions that returns a rotation matrix
   /// for converting from one orientation to another.
@@ -551,7 +551,7 @@ class RotationMatrix {
     return combineRotation(eqdToEqj, eqjToEcl);
   }
 
-  /// @brief Calculates a rotation matrix from J2000 mean ecliptic (ECL) to equatorial of-date (EQD).
+  /// Calculates a rotation matrix from J2000 mean ecliptic (ECL) to equatorial of-date (EQD).
   ///
   /// This is one of the family of functions that returns a rotation matrix
   /// for converting from one orientation to another.
@@ -568,7 +568,7 @@ class RotationMatrix {
     return inverseRotation(rot);
   }
 
-  /// @brief Calculates a rotation matrix from J2000 mean ecliptic (ECL) to horizontal (HOR).
+  /// Calculates a rotation matrix from J2000 mean ecliptic (ECL) to horizontal (HOR).
   ///
   /// This is one of the family of functions that returns a rotation matrix
   /// for converting from one orientation to another.
@@ -597,7 +597,7 @@ class RotationMatrix {
     return combineRotation(eclToEqd, eqdToHor);
   }
 
-  /// @brief Calculates a rotation matrix from horizontal (HOR) to J2000 mean ecliptic (ECL).
+  /// Calculates a rotation matrix from horizontal (HOR) to J2000 mean ecliptic (ECL).
   ///
   /// This is one of the family of functions that returns a rotation matrix
   /// for converting from one orientation to another.
@@ -617,7 +617,7 @@ class RotationMatrix {
     return inverseRotation(rot);
   }
 
-  /// @brief Calculates a rotation matrix from J2000 mean equator (EQJ) to galactic (GAL).
+  /// Calculates a rotation matrix from J2000 mean equator (EQJ) to galactic (GAL).
   ///
   /// This is one of the family of functions that returns a rotation matrix
   /// for converting from one orientation to another.
@@ -634,7 +634,7 @@ class RotationMatrix {
     ]);
   }
 
-  /// @brief Calculates a rotation matrix from galactic (GAL) to J2000 mean equator (EQJ).
+  /// Calculates a rotation matrix from galactic (GAL) to J2000 mean equator (EQJ).
   ///
   /// This is one of the family of functions that returns a rotation matrix
   /// for converting from one orientation to another.
@@ -651,7 +651,7 @@ class RotationMatrix {
     ]);
   }
 
-  /// @brief Calculates a rotation matrix from true ecliptic of date (ECT) to equator of date (EQD).
+  /// Calculates a rotation matrix from true ecliptic of date (ECT) to equator of date (EQD).
   ///
   /// This is one of the family of functions that returns a rotation matrix
   /// for converting from one orientation to another.
@@ -675,7 +675,7 @@ class RotationMatrix {
     ]);
   }
 
-  /// @brief Calculates a rotation matrix from equator of date (EQD) to true ecliptic of date (ECT).
+  /// Calculates a rotation matrix from equator of date (EQD) to true ecliptic of date (ECT).
   ///
   /// This is one of the family of functions that returns a rotation matrix
   /// for converting from one orientation to another.
@@ -699,7 +699,7 @@ class RotationMatrix {
     ]);
   }
 
-  /// @brief Calculates a rotation matrix from Jupiter's equatorial orientation (EQJ) to Jupiter's equatorial orientation (EQJ).
+  /// Calculates a rotation matrix from Jupiter's equatorial orientation (EQJ) to Jupiter's equatorial orientation (EQJ).
   ///
   /// This rotation matrix is used to convert coordinates between Jupiter's equatorial orientation (EQJ) and itself.
   ///

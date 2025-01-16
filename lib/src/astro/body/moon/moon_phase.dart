@@ -1,6 +1,6 @@
 part of '../../astronomy.dart';
 
-/// @brief Determines the moon's phase expressed as an ecliptic longitude.
+/// Determines the moon's phase expressed as an ecliptic longitude.
 ///
 /// @param {FlexibleDateTime} date
 ///      The date and time for which to calculate the moon's phase.
@@ -19,7 +19,7 @@ double moonPhase(dynamic date) {
   return pairLongitude(Body.Moon, Body.Sun, date);
 }
 
-/// @brief Searches for the date and time that the Moon reaches a specified phase.
+/// Searches for the date and time that the Moon reaches a specified phase.
 ///
 /// Lunar phases are defined in terms of geocentric ecliptic longitudes
 /// with respect to the Sun.  When the Moon and the Sun have the same ecliptic
@@ -83,7 +83,7 @@ AstroTime? searchMoonPhase(
       options: SearchOptions(dtToleranceSeconds: 0.1));
 }
 
-/// @brief A quarter lunar phase, along with when it occurs.
+/// A quarter lunar phase, along with when it occurs.
 ///
 /// @property {number} quarter
 ///      An integer as follows:
@@ -104,7 +104,7 @@ class MoonQuarter {
   String get quarter =>
       ['New Moon', 'First Quarter', 'Full Moon', 'Third Quarter'][quarterIndex];
 
-  /// @brief Finds the first quarter lunar phase after the specified date and time.
+  /// Finds the first quarter lunar phase after the specified date and time.
   ///
   /// The quarter lunar phases are: new moon, first quarter, full moon, and third quarter.
   /// To enumerate quarter lunar phases, call `SearchMoonQuarter` once,
@@ -127,7 +127,7 @@ class MoonQuarter {
     return MoonQuarter(quarter, time);
   }
 
-  /// @brief Finds the next quarter lunar phase in a series.
+  /// Finds the next quarter lunar phase in a series.
   ///
   /// Given a {@link MoonQuarter} object, finds the next consecutive
   /// quarter lunar phase. See remarks in {@link SearchMoonQuarter}

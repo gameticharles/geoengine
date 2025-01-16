@@ -27,7 +27,7 @@ void camera(Observer observer, AstroTime time) {
 
   // Get the Moon's horizontal coordinates, so we know how much to pivot azimuth and altitude.
   var moonHor = HorizontalCoordinates.horizon(
-      time, observer, moonEqu.ra, moonEqu.dec, null);
+      time, observer, moonEqu.ra, moonEqu.dec, RefractionType.airless);
   print(
       'Moon horizontal position: azimuth = ${moonHor.azimuth.toStringAsFixed(3)}, altitude = ${moonHor.altitude.toStringAsFixed(3)}');
 

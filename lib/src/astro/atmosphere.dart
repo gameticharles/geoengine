@@ -1,6 +1,6 @@
 part of 'astronomy.dart';
 
-/// @brief Information about idealized atmospheric variables at a given elevation.
+/// Information about idealized atmospheric variables at a given elevation.
 ///
 /// @property {number} pressure
 ///      Atmospheric pressure in pascals.
@@ -18,7 +18,7 @@ class AtmosphereInfo {
   AtmosphereInfo(this.pressure, this.temperature, this.density);
 }
 
-/// @brief Calculates U.S. Standard Atmosphere (1976) variables as a function of elevation.
+/// Calculates U.S. Standard Atmosphere (1976) variables as a function of elevation.
 ///
 /// This function calculates idealized values of pressure, temperature, and density
 /// using the U.S. Standard Atmosphere (1976) model.

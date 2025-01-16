@@ -48,7 +48,7 @@ AstroVector directionVector(
     dynamic time, Observer observer, double altitude, double azimuth) {
   // Convert horizontal angles to a horizontal unit vector.
   final hor = Spherical(altitude, azimuth, 1.0);
-  final hvec = AstroVector.vectorFromHorizon(hor, time, null);
+  final hvec = AstroVector.vectorFromHorizon(hor, time, RefractionType.airless);
 
   // Find the rotation matrix that converts horizontal vectors to equatorial vectors.
   final rot = RotationMatrix.rotationHORtoEQD(time, observer);
@@ -92,7 +92,7 @@ void intersect(
       'Solution: lat = ${obs.latitude.toStringAsFixed(6)}, lon = ${obs.longitude.toStringAsFixed(6)}, elv = ${obs.height.toStringAsFixed(3)} meters; error = ${dist.toStringAsFixed(3)} meters');
 }
 
-void demo() {
+void main() {
   final arguments = Platform.environment['args']?.split(' ') ?? [];
 
   if (arguments.length == 12) {
@@ -130,8 +130,4 @@ void demo() {
         'Usage: dart demo.dart lat1 lon1 elv1 az1 alt1 lat2 lon2 elv2 az2 alt2');
     exit(1);
   }
-}
-
-void main() {
-  demo();
 }

@@ -3,7 +3,7 @@ part of '../astronomy.dart';
 dynamic constelRot;
 dynamic epoch2000;
 
-/// @brief Reports the constellation that a given celestial point lies within.
+/// Reports the constellation that a given celestial point lies within.
 ///
 /// @property {string} symbol
 ///      3-character mnemonic symbol for the constellation, e.g. "Ori".
@@ -24,7 +24,7 @@ class ConstellationInfo {
 
   ConstellationInfo(this.symbol, this.name, this.ra1875, this.dec1875);
 
-  /// @brief Determines the constellation that contains the given point in the sky.
+  /// Determines the constellation that contains the given point in the sky.
   ///
   /// Given J2000 equatorial (EQJ) coordinates of a point in the sky,
   /// determines the constellation that contains that point.

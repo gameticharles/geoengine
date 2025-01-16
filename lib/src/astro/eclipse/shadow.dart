@@ -1,6 +1,6 @@
 part of '../astronomy.dart';
 
-/// @brief Represents the relative alignment of the Earth and another body, and their respective shadows.
+/// Represents the relative alignment of the Earth and another body, and their respective shadows.
 ///
 /// This is an internal data structure used to assist calculation of
 /// lunar eclipses, solar eclipses, and transits of Mercury and Venus.

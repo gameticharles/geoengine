@@ -1,6 +1,6 @@
 part of 'astronomy.dart';
 
-/// @brief Searches for the next local solar eclipse in a series.
+/// Searches for the next local solar eclipse in a series.
 ///
 /// After using {@link SearchLocalSolarEclipse} to find the first solar eclipse
 /// in a series, you can call this function to find the next consecutive solar eclipse.
@@ -26,7 +26,7 @@ class TransitInfo {
 
   TransitInfo(this.start, this.peak, this.finish, this.separation);
 
-  /// @brief Searches for the first transit of Mercury or Venus after a given date.
+  /// Searches for the first transit of Mercury or Venus after a given date.
   ///
   /// Finds the first transit of Mercury or Venus after a specified date.
   /// A transit is when an inferior planet passes between the Sun and the Earth
@@ -95,7 +95,7 @@ class TransitInfo {
     }
   }
 
-  /// @brief Searches for the next transit of Mercury or Venus in a series.
+  /// Searches for the next transit of Mercury or Venus in a series.
   ///
   /// After calling {@link SearchTransit} to find a transit of Mercury or Venus,
   /// this function finds the next transit after that.

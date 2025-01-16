@@ -13,7 +13,6 @@
 */
 
 import 'package:geoengine/src/astro/astronomy.dart';
-import 'dart:io';
 
 String pad(num number, int width) {
   String s = number.toStringAsFixed(0);
@@ -33,16 +32,6 @@ String formatDate(DateTime t) {
   var second = pad(date.second, 2);
   var millisecond = pad(date.millisecond, 3);
   return '$year-$month-$day $hour:$minute:$second.$millisecond UTC';
-}
-
-DateTime parseDate(String text) {
-  try {
-    final d = DateTime.parse(text);
-    return d;
-  } catch (e) {
-    stderr.writeln('ERROR: Not a valid date: "$text"');
-    exit(1);
-  }
 }
 
 void main() {

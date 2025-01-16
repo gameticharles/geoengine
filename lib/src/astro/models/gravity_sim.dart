@@ -8,7 +8,7 @@ class GravSimEndpoint {
   GravSimEndpoint(this.time, this.gravitators, this.bodies);
 }
 
-/// @brief A simulation of zero or more small bodies moving through the Solar System.
+/// A simulation of zero or more small bodies moving through the Solar System.
 ///
 /// This class calculates the movement of arbitrary small bodies,
 /// such as asteroids or comets, that move through the Solar System.

@@ -52,7 +52,8 @@ void solve(bool refract, Observer observer, AstroTime time, double azimuth,
   // Convert the angular horizontal coordinates (azimuth, altitude)
   // to a horizontal vector (north, west, zenith).
   final horSphere = Spherical(altitude, azimuth, 1);
-  var refractionOption = refract ? 'normal' : null;
+  var refractionOption =
+      refract ? RefractionType.normal : RefractionType.airless;
 
   final horVec =
       AstroVector.vectorFromHorizon(horSphere, time, refractionOption);

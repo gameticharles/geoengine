@@ -25,7 +25,7 @@ double NormalizeLongitude(double lon) {
   return lon;
 }
 
-/// @brief Lunar libration angles, returned by {@link Libration}.
+/// Lunar libration angles, returned by {@link Libration}.
 ///
 /// @property {number} eLat
 ///      Sub-Earth libration ecliptic latitude angle, in degrees.
@@ -57,7 +57,7 @@ class LibrationInfo {
   });
 }
 
-/// @brief Calculates the Moon's libration angles at a given moment in time.
+/// Calculates the Moon's libration angles at a given moment in time.
 ///
 /// Libration is an observed back-and-forth wobble of the portion of the
 /// Moon visible from the Earth. It is caused by the imperfect tidal locking

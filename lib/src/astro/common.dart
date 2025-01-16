@@ -37,7 +37,7 @@ num frac(num x) {
   return x - x.floorToDouble();
 }
 
-/// @brief Calculates the angle in degrees between two vectors.
+/// Calculates the angle in degrees between two vectors.
 ///
 /// Given a pair of vectors, this function returns the angle in degrees
 /// between the two vectors in 3D space.
@@ -76,7 +76,7 @@ double angleBetween(AstroVector a, AstroVector b) {
   return RAD2DEG * acos(dot);
 }
 
-/// @brief Returns the mean orbital period of a planet in days.
+/// Returns the mean orbital period of a planet in days.
 ///
 /// @param {Body} body
 ///      One of: Mercury, Venus, Earth, Mars, Jupiter, Saturn, Uranus, Neptune, or Pluto.
@@ -270,7 +270,7 @@ void setDeltaTFunction(DeltaTimeFunction func) {
 
 /// @ignore
 ///
-/// @brief Calculates Terrestrial Time (TT) from Universal Time (UT).
+/// Calculates Terrestrial Time (TT) from Universal Time (UT).
 ///
 /// @param {number} ut
 ///      The Universal Time expressed as a floating point number of days since the 2000.0 epoch.
@@ -352,7 +352,7 @@ List<double> spin(double angle, List<double> pos) {
   return [c * pos[0] + s * pos[1], c * pos[1] - s * pos[0], pos[2]];
 }
 
-/// @brief Calculates the amount of "lift" to an altitude angle caused by atmospheric refraction.
+/// Calculates the amount of "lift" to an altitude angle caused by atmospheric refraction.
 ///
 /// Given an altitude angle and a refraction option, calculates
 /// the amount of "lift" caused by atmospheric refraction.
@@ -372,14 +372,14 @@ List<double> spin(double angle, List<double> pos) {
 ///
 /// @returns {number}
 ///      The angular adjustment in degrees to be added to the altitude angle to correct for atmospheric lensing.
-double refraction(String? refraction, double altitude) {
+double refraction(RefractionType refraction, double altitude) {
   double refr;
 
   if (altitude < -90.0 || altitude > 90.0) {
     return 0.0; // No attempt to correct an invalid altitude
   }
 
-  if (refraction == 'normal' || refraction == 'jplhor') {
+  if (refraction.name == 'normal' || refraction.name == 'jplhor') {
     double hd = altitude;
     if (hd < -1.0) {
       hd = -1.0;
@@ -387,10 +387,10 @@ double refraction(String? refraction, double altitude) {
 
     refr = (1.02 / tan((hd + 10.3 / (hd + 5.11)) * DEG2RAD)) / 60.0;
 
-    if (refraction == 'normal' && altitude < -1.0) {
+    if (refraction.name == 'normal' && altitude < -1.0) {
       refr *= (altitude + 90.0) / 89.0;
     }
-  } else if (refraction == null) {
+  } else if (refraction.name == 'null') {
     refr = 0.0;
   } else {
     throw Exception('Invalid refraction option: $refraction');
@@ -668,7 +668,7 @@ AstroVector correctLightTravel(
   throw Exception('Light-travel time solver did not converge: dt = $dt');
 }
 
-/// @brief Converts a J2000 mean equator (EQJ) vector to a true ecliptic of date (ETC) vector and angles.
+/// Converts a J2000 mean equator (EQJ) vector to a true ecliptic of date (ETC) vector and angles.
 ///
 /// Given coordinates relative to the Earth's equator at J2000 (the instant of noon UTC
 /// on 1 January 2000), this function converts those coordinates to true ecliptic coordinates
@@ -696,7 +696,7 @@ EclipticCoordinates ecliptic(AstroVector eqj) {
       eqd, cos(tobl), sin(tobl));
 }
 
-/// @brief Calculates spherical ecliptic geocentric position of the Moon.
+/// Calculates spherical ecliptic geocentric position of the Moon.
 ///
 /// Given a time of observation, calculates the Moon's geocentric position
 /// in ecliptic spherical coordinates. Provides the ecliptic latitude and
@@ -803,7 +803,7 @@ InterpResult? quadInterp(
 }
 
 /**
- * @brief Options for the {@link Search} function.
+ * Options for the {@link Search} function.
  *
  * @typedef {object} SearchOptions
  *
@@ -827,7 +827,7 @@ InterpResult? quadInterp(
  * @property {number | undefined} iter_limit
  */
 
-/// @brief Finds the time when a function ascends through zero.
+/// Finds the time when a function ascends through zero.
 ///
 /// Search for next time <i>t</i> (such that <i>t</i> is between `t1` and `t2`)
 /// that `func(t)` crosses from a negative value to a non-negative value.
@@ -946,7 +946,7 @@ AstroTime? search(
   }
 }
 
-/// @brief Calculates the inverse of an atmospheric refraction angle.
+/// Calculates the inverse of an atmospheric refraction angle.
 ///
 /// Given an observed altitude angle that includes atmospheric refraction,
 /// calculates the negative angular correction to obtain the unrefracted
@@ -966,7 +966,7 @@ AstroTime? search(
 ///      The angular adjustment in degrees to be added to the
 ///      altitude angle to correct for atmospheric lensing.
 ///      This will be less than or equal to zero.
-double inverseRefraction(String? lRefraction, double bentAltitude) {
+double inverseRefraction(RefractionType lRefraction, double bentAltitude) {
   if (bentAltitude < -90.0 || bentAltitude > 90.0) {
     return 0.0; // No correction for invalid altitude range
   }

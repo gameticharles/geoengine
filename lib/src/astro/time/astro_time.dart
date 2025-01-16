@@ -2,7 +2,7 @@ part of '../astronomy.dart';
 
 typedef AstroTimeFunction = double Function(AstroTime t);
 
-/// @brief The date and time of an astronomical observation.
+/// The date and time of an astronomical observation.
 ///
 /// Objects of type `AstroTime` are used throughout the internals
 /// of the Astronomy library, and are included in certain return objects.
@@ -62,7 +62,7 @@ class AstroTime {
     throw 'Argument must be a DateTime object, an AstroTime object, or a numeric UTC Julian date.';
   }
 
-  /// @brief Creates an `AstroTime` value from a Terrestrial Time (TT) day value.
+  /// Creates an `AstroTime` value from a Terrestrial Time (TT) day value.
   ///
   /// This function can be used in rare cases where a time must be based
   /// on Terrestrial Time (TT) rather than Universal Time (UT).

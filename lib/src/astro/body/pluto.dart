@@ -280,6 +280,7 @@ List<BodyGravCalc>? getSegment(List<List<BodyGravCalc>?> cache, double tt) {
     ]);
   }
 
+  // ignore: collection_methods_unrelated_type
   if (!cache.contains(segIndex)) {
     final List<BodyGravCalc> seg = List<BodyGravCalc>.filled(
         plutoNSteps,

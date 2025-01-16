@@ -35,7 +35,7 @@ const double JUPITER_MEAN_RADIUS_KM = 69911.0;
 // The radii of Jupiter's four major moons are obtained from:
 // https://ssd.jpl.nasa.gov/?sat_phys_par
 
-/// @brief The mean radius of Jupiter's moon Io, expressed in kilometers.
+/// The mean radius of Jupiter's moon Io, expressed in kilometers.
 const double IO_RADIUS_KM = 1821.6;
 
 // The mean radius of Jupiter's moon Europa, expressed in kilometers.

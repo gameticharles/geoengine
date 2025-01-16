@@ -52,7 +52,7 @@ class SearchOptions {
 
 /// @ignore
 ///
-/// @brief The state of a body at an incremental step in a gravity simulation.
+/// The state of a body at an incremental step in a gravity simulation.
 ///
 /// This is an internal data structure used to represent the
 /// position, velocity, and acceleration vectors of a body
@@ -134,7 +134,7 @@ class GravSimT {
   GravSimT(this.bary, this.grav);
 }
 
-/// @brief Indicates whether a crossing through the ecliptic plane is ascending or descending.
+/// Indicates whether a crossing through the ecliptic plane is ascending or descending.
 ///
 /// `Invalid` is a placeholder for an unknown or missing node.
 /// `Ascending` indicates a body passing through the ecliptic plane from south to north.
@@ -164,7 +164,7 @@ class NodeEventKind {
   }
 }
 
-/// @brief Information about an ascending or descending node of a body.
+/// Information about an ascending or descending node of a body.
 ///
 /// This object is returned by {@link SearchMoonNode} and {@link NextMoonNode}
 /// to report information about the center of the Moon passing through the ecliptic plane.
@@ -266,7 +266,7 @@ class AscentInfo {
   }
 }
 
-/// @brief Horizontal position of a body upon reaching an hour angle.
+/// Horizontal position of a body upon reaching an hour angle.
 ///
 /// Returns information about an occurrence of a celestial body
 /// reaching a given hour angle as seen by an observer at a given

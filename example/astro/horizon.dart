@@ -27,7 +27,7 @@ Spherical horizontalCoords(
   final eclVec = AstroVector.vectorFromSphere(eclip, time);
   final horVec = AstroVector.rotateVector(rotEclHor, eclVec);
 
-  return Spherical.fromVector(horVec, 'normal');
+  return Spherical.fromVector(horVec, RefractionType.normal);
 }
 
 Map<String, dynamic> _search(
@@ -93,7 +93,6 @@ void findEclipticCrossings(Observer observer, AstroTime time) {
   }
 }
 
-
 void main() {
   var date = DateTime.now();
   final latitude = 6.56784;
@@ -102,6 +101,4 @@ void main() {
   final observer = Observer(latitude, longitude, 230);
 
   findEclipticCrossings(observer, AstroTime(date));
-
 }
-

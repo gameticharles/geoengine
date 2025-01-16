@@ -2,7 +2,7 @@
 
 part of 'astronomy.dart';
 
-/// @brief String constants that represent the solar system bodies supported by Astronomy Engine.
+/// String constants that represent the solar system bodies supported by Astronomy Engine.
 ///
 /// The following strings represent solar system bodies supported by various Astronomy Engine functions.
 /// Not every body is supported by every function; consult the documentation for each function
@@ -44,7 +44,7 @@ enum Body {
 
 enum PrecessDirection { From2000, Into2000 }
 
-/// @brief The different kinds of lunar/solar eclipses..
+/// The different kinds of lunar/solar eclipses..
 ///
 /// `Penumbral`: A lunar eclipse in which only the Earth's penumbra falls on the Moon. (Never used for a solar eclipse.)
 /// `Partial`: A partial lunar/solar eclipse.
@@ -77,7 +77,7 @@ enum Eclipses {
   all
 }
 
-/// @brief The two kinds of apsis: pericenter (closest) and apocenter (farthest).
+/// The two kinds of apsis: pericenter (closest) and apocenter (farthest).
 ///
 /// `Pericenter`: The body is at its closest distance to the object it orbits.
 /// `Apocenter`:  The body is at its farthest distance from the object it orbits.
@@ -93,7 +93,7 @@ enum ApsisKind {
 ///
 ///  A Full Moon or New Moon that takes place when the center of the Moon
 /// is farther than 405,000 kilometers (ca. 251,655 miles) from the center of Earth.
-/// 
+///
 /// source: https://en.wikipedia.org/wiki/Moon_phases, https://timeanddate.com
 enum SpecialMoon {
   /// When a Full Moon takes place when the Moon is near its closest approach
@@ -111,4 +111,20 @@ enum SpecialMoon {
   /// When there is a New Moon around the farthest point to Earth,
   /// it is known as a Micro New Moon.
   MicroNewMoon,
+}
+
+/// The different types of refraction correction supported by Astronomy Engine.
+///
+/// - `normal`: correct altitude for atmospheric refraction (recommended).
+/// - `jplhor`: for JPL Horizons compatibility testing only; not recommended for normal use.
+/// - `null`: no atmospheric refraction correction is performed.
+///
+/// @enum {string}
+enum RefractionType {
+  normal('normal'),
+  jplhor('jplhor'),
+  airless('null');
+
+  final String name;
+  const RefractionType(this.name);
 }

@@ -1,6 +1,6 @@
 part of '../astronomy.dart';
 
-/// @brief Holds spherical coordinates: latitude, longitude, distance.
+/// Holds spherical coordinates: latitude, longitude, distance.
 ///
 /// Spherical coordinates represent the location of
 /// a point using two angles and a distance.
@@ -18,7 +18,7 @@ class Spherical {
         lon = verifyNumber(lon),
         dist = verifyNumber(dist);
 
-  /// @brief Converts Cartesian coordinates to spherical coordinates.
+  /// Converts Cartesian coordinates to spherical coordinates.
   ///
   /// Given a Cartesian vector, returns latitude, longitude, and distance.
   ///
@@ -27,7 +27,8 @@ class Spherical {
   ///
   /// @returns {Spherical}
   ///      Spherical coordinates that are equivalent to the given vector.
-  static Spherical fromVector(AstroVector vector, String refraction1) {
+  static Spherical fromVector(AstroVector vector,
+      [RefractionType refractionType = RefractionType.airless]) {
     // Convert vector to spherical coordinates
     Spherical sphere = sphereFromVector(vector);
 
@@ -35,12 +36,12 @@ class Spherical {
     sphere.lon = toggleAzimuthDirection(sphere.lon);
 
     // Adjust latitude for refraction
-    sphere.lat += refraction(refraction1, sphere.lat);
+    sphere.lat += refraction(refractionType, sphere.lat);
 
     return sphere;
   }
 
-  /// @brief Converts Cartesian coordinates to spherical coordinates.
+  /// Converts Cartesian coordinates to spherical coordinates.
   ///
   /// Given a Cartesian vector, returns latitude, longitude, and distance.
   ///
@@ -72,7 +73,7 @@ class Spherical {
   }
 }
 
-/// @brief Holds right ascension, declination, and distance of a celestial object.
+/// Holds right ascension, declination, and distance of a celestial object.
 ///
 /// @property {number} ra
 ///      Right ascension in sidereal hours: (0, 24).
@@ -101,7 +102,7 @@ class EquatorialCoordinates {
     this.dist = verifyNumber(dist);
   }
 
-  /// @brief Given an equatorial vector, calculates equatorial angular coordinates.
+  /// Given an equatorial vector, calculates equatorial angular coordinates.
   ///
   /// @param {Vector} vec
   ///      A vector in an equatorial coordinate system.
@@ -119,7 +120,7 @@ class EquatorialCoordinates {
   }
 }
 
-/// @brief Represents the location of an object seen by an observer on the Earth.
+/// Represents the location of an object seen by an observer on the Earth.
 ///
 /// Holds azimuth (compass direction) and altitude (angle above/below the horizon)
 /// of a celestial object as seen by an observer at a particular location on the Earth's surface.
@@ -163,7 +164,7 @@ class HorizontalCoordinates {
     dec = verifyNumber(dec);
   }
 
-  /// @brief Converts equatorial coordinates to horizontal coordinates.
+  /// Converts equatorial coordinates to horizontal coordinates.
   ///
   /// Given a date and time, a geographic location of an observer on the Earth, and
   /// equatorial coordinates (right ascension and declination) of a celestial body,
@@ -203,7 +204,7 @@ class HorizontalCoordinates {
   /// @returns {HorizontalCoordinates}
   static HorizontalCoordinates horizon(
       dynamic date, Observer observer, double ra, double dec,
-      [String? refractionType]) {
+      [RefractionType refractionType = RefractionType.airless]) {
     final time = AstroTime(date);
 
     final double sinlat = sin(observer.latitude * DEG2RAD);
@@ -244,7 +245,7 @@ class HorizontalCoordinates {
     double outRa = ra;
     double outDec = dec;
 
-    if (refractionType != null) {
+    if (refractionType.name != 'null') {
       final double zd0 = zd;
       final double refr = refraction(refractionType, 90 - zd);
       zd -= refr;
@@ -274,7 +275,7 @@ class HorizontalCoordinates {
   }
 }
 
-/// @brief Ecliptic coordinates of a celestial body.
+/// Ecliptic coordinates of a celestial body.
 ///
 /// The origin and date of the coordinate system may vary depending on the caller's usage.
 /// In general, ecliptic coordinates are measured with respect to the mean plane of the Earth's

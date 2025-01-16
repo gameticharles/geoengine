@@ -93,7 +93,7 @@ class BodyPosition {
   }
 }
 
-/// @brief Returns the product of mass and universal gravitational constant of a Solar System body.
+/// Returns the product of mass and universal gravitational constant of a Solar System body.
 ///
 /// For problems involving the gravitational interactions of Solar System bodies,
 /// it is helpful to know the product GM, where G = the universal gravitational constant
@@ -175,7 +175,7 @@ Map<String, double>? userDefinedStar(Body body) {
   return (star != null && star["dist"]! > 0) ? star : null;
 }
 
-/// @brief Assign equatorial coordinates to a user-defined star.
+/// Assign equatorial coordinates to a user-defined star.
 ///
 /// Some Astronomy Engine functions allow their `body` parameter to
 /// be a user-defined fixed point in the sky, loosely called a "star".
@@ -287,7 +287,7 @@ AstroVector calcSolarSystemBarycenter(AstroTime time) {
   return ssb;
 }
 
-/// @brief Calculates a vector from the center of the Sun to the given body at the given time.
+/// Calculates a vector from the center of the Sun to the given body at the given time.
 ///
 /// Calculates heliocentric (i.e., with respect to the center of the Sun)
 /// Cartesian coordinates in the J2000 equatorial system of a celestial
@@ -344,7 +344,7 @@ AstroVector helioVector(Body body, dynamic date) {
   throw Exception('HelioVector: Unknown body "$body"');
 }
 
-/// @brief  Calculates heliocentric position and velocity vectors for the given body.
+///  Calculates heliocentric position and velocity vectors for the given body.
 ///
 /// Given a body and a time, calculates the position and velocity
 /// vectors for the center of that body at that time, relative to the center of the Sun.
@@ -431,7 +431,7 @@ StateVector helioState(Body body, dynamic date) {
   }
 }
 
-/// @brief Solve for light travel time correction of apparent position.
+/// Solve for light travel time correction of apparent position.
 ///
 /// When observing a distant object, for example Jupiter as seen from Earth,
 /// the amount of time it takes for light to travel from the object to the
@@ -520,7 +520,7 @@ AstroVector backdatePosition(
   return correctLightTravel((time) => bpos.Position(time), time);
 }
 
-/// @brief Calculates a vector from the center of the Earth to the given body at the given time.
+/// Calculates a vector from the center of the Earth to the given body at the given time.
 ///
 /// Calculates geocentric (i.e., with respect to the center of the Earth)
 /// Cartesian coordinates in the J2000 equatorial system of a celestial
@@ -570,7 +570,7 @@ AstroVector geoVector(
   }
 }
 
-/// @brief Calculates equatorial coordinates of a Solar System body at a given time.
+/// Calculates equatorial coordinates of a Solar System body at a given time.
 ///
 /// Returns topocentric equatorial coordinates (right ascension and declination)
 /// in one of two different systems: J2000 or true-equator-of-date.
@@ -636,7 +636,7 @@ EquatorialCoordinates equator(
   return vector2radec(datevect, time);
 }
 
-/// @brief Calculates the distance between a body and the Sun at a given time.
+/// Calculates the distance between a body and the Sun at a given time.
 ///
 /// Given a date and time, this function calculates the distance between
 /// the center of `body` and the center of the Sun.
@@ -670,7 +670,7 @@ double HelioDistance(Body body, dynamic date) {
   return helioVector(body, time).length();
 }
 
-/// @brief  Calculates barycentric position and velocity vectors for the given body.
+///  Calculates barycentric position and velocity vectors for the given body.
 ///
 /// Given a body and a time, calculates the barycentric position and velocity
 /// vectors for the center of that body at that time.
@@ -750,7 +750,7 @@ StateVector baryState(Body body, dynamic date) {
   throw Exception('BaryState: Unsupported body "$body"');
 }
 
-/// @brief Calculates the angular separation between the Sun and the given body.
+/// Calculates the angular separation between the Sun and the given body.
 ///
 /// Returns the full angle seen from
 /// the Earth, between the given body and the Sun.
@@ -779,7 +779,7 @@ double angleFromSun(Body body, dynamic date) {
   return angle;
 }
 
-/// @brief Calculates heliocentric ecliptic longitude of a body.
+/// Calculates heliocentric ecliptic longitude of a body.
 ///
 /// This function calculates the angle around the plane of the Earth's orbit
 /// of a celestial body, as seen from the center of the Sun.
@@ -881,7 +881,7 @@ double synodicPeriod(Body body) {
   return synodicPeriod;
 }
 
-/// @brief Returns one body's ecliptic longitude with respect to another, as seen from the Earth.
+/// Returns one body's ecliptic longitude with respect to another, as seen from the Earth.
 ///
 /// This function determines where one body appears around the ecliptic plane
 /// (the plane of the Earth's orbit around the Sun) as seen from the Earth,
@@ -927,7 +927,7 @@ double pairLongitude(Body body1, Body body2, dynamic date) {
   return NormalizeLongitude(eclip1.eLon - eclip2.eLon);
 }
 
-/// @brief Searches for when the Earth and a given body reach a relative ecliptic longitude separation.
+/// Searches for when the Earth and a given body reach a relative ecliptic longitude separation.
 ///
 /// Searches for the date and time the relative ecliptic longitudes of
 /// the specified body and the Earth, as seen from the Sun, reach a certain
@@ -1199,7 +1199,7 @@ AstroTime? internalSearchAltitude(
   }
 }
 
-/// @brief Searches for the next time a celestial body rises or sets as seen by an observer on the Earth.
+/// Searches for the next time a celestial body rises or sets as seen by an observer on the Earth.
 ///
 /// This function finds the next rise or set time of the Sun, Moon, or planet other than the Earth.
 /// Rise time is when the body first starts to be visible above the horizon.
@@ -1282,7 +1282,7 @@ AstroTime? searchRiseSet(Body body, Observer observer, double direction,
       bodyRadiusAuValue, altitude);
 }
 
-/// @brief Finds the next time the center of a body passes through a given altitude.
+/// Finds the next time the center of a body passes through a given altitude.
 ///
 /// Finds when the center of the given body ascends or descends through a given
 /// altitude angle, as seen by an observer at the specified location on the Earth.
@@ -1357,7 +1357,7 @@ AstroTime? searchAltitude(Body body, Observer observer, double direction,
       body, observer, direction, dateStart, limitDays, 0, altitude);
 }
 
-/// @brief Searches for the time when the center of a body reaches a specified hour angle as seen by an observer on the Earth.
+/// Searches for the time when the center of a body reaches a specified hour angle as seen by an observer on the Earth.
 ///
 /// The *hour angle* of a celestial body indicates its position in the sky with respect
 /// to the Earth's rotation. The hour angle depends on the location of the observer on the Earth.
@@ -1467,7 +1467,7 @@ HourAngleEvent searchHourAngle(
     // If the error is tolerable (less than 0.1 seconds), stop searching.
     if ((deltaSiderealHours.abs() * 3600) < 0.1) {
       var hor = HorizontalCoordinates.horizon(
-          time, observer, ofdate.ra, ofdate.dec, 'normal');
+          time, observer, ofdate.ra, ofdate.dec, RefractionType.normal);
       return HourAngleEvent(time, hor);
     }
 
@@ -1478,7 +1478,7 @@ HourAngleEvent searchHourAngle(
   }
 }
 
-/// @brief Finds the hour angle of a body for a given observer and time.
+/// Finds the hour angle of a body for a given observer and time.
 ///
 /// The *hour angle* of a celestial body indicates its position in the sky with respect
 /// to the Earth's rotation. The hour angle depends on the location of the observer on the Earth.
@@ -1529,7 +1529,7 @@ double hourAngle(Body body, dynamic date, Observer observer) {
   var equ2000 = equator(body, date, observer, false, true);
   var equOfDate = equator(body, date, observer, true, true);
   var hor = HorizontalCoordinates.horizon(
-      date, observer, equOfDate.ra, equOfDate.dec, 'normal');
+      date, observer, equOfDate.ra, equOfDate.dec, RefractionType.normal);
 
   return (
     ra: equ2000.ra,

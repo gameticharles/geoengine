@@ -1,5 +1,10 @@
 # CHANGE LOGS
 
+## 1.0.3
+
+* **[IMPROVEMENT]** Added keywords to the `pubspec.yaml`
+* **[BUG_FIX]** Fixed broken links and warnings.
+
 ## 1.0.2
 
 * **[IMPROVEMENT]** Fixed all the document links not working properly
