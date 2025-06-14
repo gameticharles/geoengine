@@ -69,6 +69,7 @@ class Levelling {
   /// A list of HPC (Height of Plane of Collimination) values calculated using the HPC method, or null if Rise and Fall method is used.
   List<dynamic> _hpc = [];
 
+  /// Add Levelling measurement data
   void addMeasurement(LevellingMeasurement measurement) {
     measurements.add(measurement);
   }

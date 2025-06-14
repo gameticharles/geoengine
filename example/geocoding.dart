@@ -55,7 +55,7 @@ void main(List<String> args) async {
   //   {'latitude': 10.73255, 'longitude': -1.05917},
   // ];
 
-  final geoData = await GeoData.readFile(
+  final geoData = await GeoDataFrame.readFile(
     'example/GH.txt',
     delimiter: '\t',
     hasHeader: false,
@@ -64,11 +64,11 @@ void main(List<String> args) async {
       'longitude': 5
     }, // Specify column names and indices
   );
-  print(geoData.rows.length);
+  //print(geoData.rows.length);
 
   var localGeocoder = Geocoder(
       strategyFactory: LocalStrategy.create(
-        entries: geoData.rows,
+        entries: geoData.toRows(),
         coordinatesColumnNames: (y: 'latitude', x: 'longitude'),
       ),
       config: {

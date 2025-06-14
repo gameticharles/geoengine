@@ -2,7 +2,7 @@ import 'package:geoengine/geoengine.dart';
 
 Future<void> main(List<String> args) async {
   // Read file
-  final geoData = await GeoData.readFile(
+  final geoData = await GeoDataFrame.readFile(
     'example/GH.txt',
     delimiter: '\t',
     hasHeader: false,
@@ -15,6 +15,13 @@ Future<void> main(List<String> args) async {
   // Get row count
   print(geoData.rows.length);
 
+  print(geoData.head(5));
+
+  // Rename Columns
+  geoData.rename({"Column 4": "latitude", "Column 5": "longitude"});
+
+  print(geoData.head(5));
+
   // Delete a row
   geoData.deleteRow(0);
 
@@ -22,18 +29,18 @@ Future<void> main(List<String> args) async {
   geoData.addColumn('newColumn', defaultValue: 'defaultValue');
 
   // Delete a column
-  geoData.deleteColumn('newColumn');
+  geoData.drop('newColumn');
 
   // Update a cell
-  geoData.updateCell(1, 'latitude', 23.45);
+  geoData.updateCell( 'latitude',1, 23.45);
 
   // Get a specific row
-  var row = geoData.getRow(1);
+  var row = geoData.getFeature(1);
   print(row);
 
   // Find rows based on a query
   var foundRows = geoData
-      .findRows((row) => row['latitude'] > 6.5 && row['longitude'] < 0.5);
+      .findFeatures((feature) => num.parse(feature.properties!['latitude'].toString()) > 6.5 && num.parse(feature.properties!['longitude'].toString()) < 0.5);
   print(foundRows.length);
 
   // // Export data to CSV

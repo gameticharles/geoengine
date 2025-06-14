@@ -22,7 +22,7 @@ void main() {
   final latitude = 6.56784;
   final longitude = -1.5674;
   final observer = Observer(latitude, longitude, 0);
-  final date = DateTime.now().toUtc();
+  final date = DateTime.now().subtract(Duration(hours: 0)).toUtc();
 
   AstroTime? sunrise = searchRiseSet(Body.Sun, observer, 1, date, 300);
   AstroTime? sunset = searchRiseSet(Body.Sun, observer, -1, date, 300);

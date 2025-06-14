@@ -10,6 +10,14 @@ class JulianDate extends DateTime {
   static const int millisecondsInSecond = 1000;
   static const int microsecondsInMillisecond = 1000;
 
+  // Common astronomical epochs
+  static final DateTime j2000Epoch = DateTime.utc(2000, 1, 1, 12);
+  static final DateTime b1950Epoch = DateTime.utc(1949, 12, 31, 22, 9, 0);
+  static final DateTime j1900Epoch = DateTime.utc(1899, 12, 31, 12);
+  
+  // Standard reference date for MJD
+  static final DateTime mjdReferenceDate = DateTime.utc(1858, 11, 17, 0, 0, 0);
+
   /// Returns a DateTime representation of the JulianDate.
   DateTime get dateTime => DateTime(
       year, month, day, hour, minute, second, millisecond, microsecond);
@@ -60,6 +68,23 @@ class JulianDate extends DateTime {
   /// Constructs a [JulianDate] instance with current date and time in the local time zone.
   factory JulianDate.now() {
     return JulianDate(DateTime.now());
+  }
+
+  /// Constructs a [JulianDate] instance with current date and time in UTC.
+  factory JulianDate.nowUtc() {
+    return JulianDate(DateTime.now().toUtc());
+  }
+
+  /// Creates a JulianDate instance from a Julian Date value relative to J2000 epoch.
+  factory JulianDate.fromJ2000(double daysSinceJ2000) {
+    double j2000JD = JulianDate(j2000Epoch).toJulianDate();
+    return JulianDate.fromJulianDate(j2000JD + daysSinceJ2000);
+  }
+
+  /// Creates a JulianDate instance from a Julian Date value relative to B1950 epoch.
+  factory JulianDate.fromB1950(double daysSinceB1950) {
+    double b1950JD = JulianDate(b1950Epoch).toJulianDate();
+    return JulianDate.fromJulianDate(b1950JD + daysSinceB1950);
   }
 
   /// Creates a JulianDate instance by converting from a reference date and DateTime.
@@ -154,6 +179,77 @@ class JulianDate extends DateTime {
         hoursInDay);
 
     return jd - 0.5;
+  }
+
+  /// Converts the Julian Date to days since J2000 epoch.
+  double toDaysSinceJ2000() {
+    double j2000JD = JulianDate(j2000Epoch).toJulianDate();
+    return toJulianDate() - j2000JD;
+  }
+
+  /// Converts the Julian Date to days since B1950 epoch.
+  double toDaysSinceB1950() {
+    double b1950JD = JulianDate(b1950Epoch).toJulianDate();
+    return toJulianDate() - b1950JD;
+  }
+
+  /// Converts the Julian Date to Terrestrial Time (TT).
+  /// TT is approximately 32.184 seconds ahead of International Atomic Time (TAI).
+  /// TAI is approximately 37 seconds ahead of UTC (as of 2023).
+  JulianDate toTerrestrialTime() {
+    // Approximate conversion - in a real implementation, you'd need a more accurate
+    // leap second table and conversion algorithm
+    const double ttMinusUtcSeconds = 69.184; // 32.184 + 37 (as of 2023)
+    return add(Duration(milliseconds: (ttMinusUtcSeconds * 1000).round()));
+  }
+
+  /// Returns the weekday (0 for Sunday, 1 for Monday, etc.) of the JulianDate.
+  int get julianWeekday {
+    return ((toJulianDate() + 1.5).toInt() % 7);
+  }
+
+  /// Adds the specified duration to this JulianDate and returns a new JulianDate.
+  @override
+  JulianDate add(Duration duration) {
+    DateTime newDateTime = dateTime.add(duration);
+    return JulianDate(newDateTime, referenceDate: referenceDate);
+  }
+
+  /// Subtracts the specified duration from this JulianDate and returns a new JulianDate.
+  @override
+  JulianDate subtract(Duration duration) {
+    DateTime newDateTime = dateTime.subtract(duration);
+    return JulianDate(newDateTime, referenceDate: referenceDate);
+  }
+
+  /// Adds the specified number of days to this JulianDate and returns a new JulianDate.
+  JulianDate addDays(double days) {
+    double newJD = toJulianDate() + days;
+    return JulianDate.fromJulianDate(newJD, referenceDate: referenceDate);
+  }
+
+  /// Formats the Julian Date as a string in standard astronomical notation.
+  /// Format: JD XXXXXXX.XXXXX
+  String formatJD({int decimals = 5}) {
+    return 'JD ${toJulianDate().toStringAsFixed(decimals)}';
+  }
+
+  /// Formats the Modified Julian Date as a string.
+  /// Format: MJD XXXXX.XXXXX
+  String formatMJD({int decimals = 5}) {
+    return 'MJD ${toModifiedJulianDate().toStringAsFixed(decimals)}';
+  }
+
+  /// Converts this JulianDate to UTC if it's in local time.
+  JulianDate toUtc() {
+    if (isUtc) return this;
+    return JulianDate(dateTime.toUtc(), referenceDate: referenceDate);
+  }
+
+  /// Converts this JulianDate to local time if it's in UTC.
+  JulianDate toLocal() {
+    if (!isUtc) return this;
+    return JulianDate(dateTime.toLocal(), referenceDate: referenceDate);
   }
 
   /// Validates the correctness of the month and day values
