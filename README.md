@@ -982,7 +982,7 @@ Calculations are also verified to be identical among all the supported programmi
 
 ## Documentation
 
-For detailed documentation and examples for each feature, please visit the [GeoEngine Documentation](link-to-documentation).
+For detailed documentation and examples for each feature, please visit the [GeoEngine Documentation]([link-to-documentation](https://github.com/gameticharles/geoengine/blob/main/doc/README.md)).
 
 ## Contributing
 
