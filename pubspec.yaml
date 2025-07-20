@@ -3,6 +3,8 @@ description: GeoEngine is a Dart library for geospatial analysis and geometry. I
 version: 1.0.3
 repository: https://github.com/gameticharles/geoengine
 
+documentation: "https://github.com/gameticharles/geoengine/blob/main/doc/README.md"
+
 environment:
   sdk: ^3.5.4
 
