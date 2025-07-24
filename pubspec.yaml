@@ -15,6 +15,7 @@ dependencies:
   mgrs_dart: ^2.0.0
   proj4dart: ^2.1.0
   xml2json: ^6.2.7
+  geoxml: ^2.6.2
   http: ^1.4.0
   kdtree: ^0.2.0
   r_tree: ^3.0.1
