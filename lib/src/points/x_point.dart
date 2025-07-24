@@ -226,7 +226,6 @@ Coordinate type: ${type == null ? '' : type!.name}
   }
 }
 
-
 // extension PointExtensions on Point {
 //   CoordinateType? get type => null;
 //   String? get status => null;

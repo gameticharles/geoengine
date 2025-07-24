@@ -32,15 +32,16 @@ Future<void> main(List<String> args) async {
   geoData.drop('newColumn');
 
   // Update a cell
-  geoData.updateCell( 'latitude',1, 23.45);
+  geoData.updateCell('latitude', 1, 23.45);
 
   // Get a specific row
   var row = geoData.getFeature(1);
   print(row);
 
   // Find rows based on a query
-  var foundRows = geoData
-      .findFeatures((feature) => num.parse(feature.properties!['latitude'].toString()) > 6.5 && num.parse(feature.properties!['longitude'].toString()) < 0.5);
+  var foundRows = geoData.findFeatures((feature) =>
+      num.parse(feature.properties!['latitude'].toString()) > 6.5 &&
+      num.parse(feature.properties!['longitude'].toString()) < 0.5);
   print(foundRows.length);
 
   // // Export data to CSV

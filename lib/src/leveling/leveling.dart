@@ -1,4 +1,4 @@
-library ;
+library;
 
 import 'dart:math';
 

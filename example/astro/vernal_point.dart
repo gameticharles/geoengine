@@ -11,7 +11,6 @@
 
 import 'package:geoengine/src/astro/astronomy.dart';
 
-
 double vernalPointLongitudeChange(dynamic time1, AstroTime time2) {
   print('time1 = $time1');
   print('time2 = $time2');

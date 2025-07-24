@@ -65,4 +65,3 @@ void main() {
     print('${formatDate(mq.time.date)} : ${mq.quarter}');
   }
 }
-

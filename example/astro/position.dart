@@ -60,4 +60,3 @@ void main() {
         '${body.name.padRight(8)} ${format(res.ra)} ${format(res.dec)} ${format(res.azimuth)} ${format(res.altitude)}');
   }
 }
-

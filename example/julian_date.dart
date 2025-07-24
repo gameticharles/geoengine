@@ -30,15 +30,17 @@ void main() {
 
   // Example 4: Using a custom reference date
   final customReference = DateTime.utc(2000, 1, 1);
-  final dateWithCustomRef = JulianDate(DateTime.now(), referenceDate: customReference);
+  final dateWithCustomRef =
+      JulianDate(DateTime.now(), referenceDate: customReference);
   print('Date with custom reference: ${dateWithCustomRef.dateTime}');
-  print('Modified Julian Date (custom reference): ${dateWithCustomRef.toModifiedJulianDate(referenceDate: customReference)}');
+  print(
+      'Modified Julian Date (custom reference): ${dateWithCustomRef.toModifiedJulianDate(referenceDate: customReference)}');
   print('');
 
   // Example 5: Date calculations and comparisons
   final date1 = JulianDate.fromDate(year: 2023, month: 10, day: 15);
   final date2 = JulianDate.fromDate(year: 2023, month: 10, day: 20);
-  
+
   print('Date 1: ${date1.dateTime}');
   print('Date 2: ${date2.dateTime}');
   print('Difference in days: ${date2.differenceInDays(date1)}');
@@ -59,7 +61,7 @@ void main() {
   final j2000 = JulianDate.fromDate(year: 2000, month: 1, day: 1, hour: 12);
   print('J2000 epoch: ${j2000.dateTime}');
   print('J2000 Julian Date: ${j2000.toJulianDate()}');
-  
+
   // Calculate days since J2000 epoch
   final daysSinceJ2000 = now.differenceInDays(j2000);
   print('Days since J2000 epoch: $daysSinceJ2000');

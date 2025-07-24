@@ -1,5 +1,12 @@
 # CHANGE LOGS
 
+## 1.0.4
+
+* **[IMPROVEMENT]** Changed license to MIT
+* **[BUG_FIX]** Fixed minor bugs.
+* **[IMPROVEMENT]** Connected the README to documentation
+* **[IMPROVEMENT]** Updated packages
+
 ## 1.0.3
 
 * **[IMPROVEMENT]** Added keywords to the `pubspec.yaml`

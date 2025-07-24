@@ -35,11 +35,11 @@ class LeastSquaresAdjustment {
   Matrix? _qxx;
   Matrix? _x;
   Matrix? _v;
-  double? _uv;
+  dynamic _uv;
   Matrix? _cx;
   Matrix? _cv;
   Matrix? _cl;
-  double? _standardDeviation;
+  dynamic _standardDeviation;
   EquationMethod method;
   late final LinearSystemMethod _linear;
   late final DecompositionMethod _decomposition;
@@ -126,7 +126,7 @@ class LeastSquaresAdjustment {
   Matrix get v => _v ??= (A * x) - B;
 
   /// Unit variance.
-  double get uv =>
+  dynamic get uv =>
       _uv ??= ((v.transpose() * W * v) / (A.rowCount - A.columnCount))[0][0];
 
   /// Variance-Covariance of the Adjusted Heights
@@ -139,11 +139,11 @@ class LeastSquaresAdjustment {
   Matrix get cl => _cl ??= A * cx * A.transpose();
 
   /// Standard deviation.
-  double get standardDeviation => _standardDeviation ??= sqrt(uv);
+  dynamic get standardDeviation => _standardDeviation ??= sqrt(uv);
 
   /// Compute standard error of the mean, which is the standard deviation
   /// divided by the square root of the number of observations.
-  double get standardError => standardDeviation / sqrt(A.rowCount);
+  dynamic get standardError => standardDeviation / sqrt(A.rowCount);
 
   /// Standard errors of the unknowns.
   List<dynamic> get standardErrorsOfUnknowns =>
@@ -174,9 +174,9 @@ class LeastSquaresAdjustment {
   /// ```
   ///
   /// @return A tuple containing the Chi-Square statistic and the degrees of freedom.
-  ({double chiSquared, int degreesOfFreedom}) chiSquareTest() {
+  ({dynamic chiSquared, int degreesOfFreedom}) chiSquareTest() {
     // Calculate the Chi-Square statistic
-    double chiSquared = (v.transpose() * W * v)[0][0];
+    dynamic chiSquared = (v.transpose() * W * v)[0][0];
 
     // Calculate the degrees of freedom
     int degreesOfFreedom = A.rowCount - A.columnCount;
@@ -201,14 +201,16 @@ class LeastSquaresAdjustment {
     var cov = nInv.subMatrix(rowRange: '0:1', colRange: '0:1');
 
     return ErrorEllipse(
-        sigmaX2: cov[0][0], sigmaY2: cov[1][1], sigmaXY: cov[0][1]);
+        sigmaX2: (cov[0][0] as Complex).toDouble(),
+        sigmaY2: (cov[1][1] as Complex).toDouble(),
+        sigmaXY: (cov[0][1] as Complex).toDouble());
   }
 
   /// Rejection criterion for outlier detection, using the specified confidence level.
   dynamic get rejectionCriterion {
     // Convert confidence level to z-value using the standard normal distribution
-    double zValue = ZScore.computeZScore(confidenceLevel);
-    return zValue * standardDeviation;
+    num zValue = ZScore.computeZScore(confidenceLevel);
+    return standardDeviation * zValue;
   }
 
   /// List of boolean values indicating whether each observation is an outlier (true) or not (false).

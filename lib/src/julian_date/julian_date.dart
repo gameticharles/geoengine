@@ -14,7 +14,7 @@ class JulianDate extends DateTime {
   static final DateTime j2000Epoch = DateTime.utc(2000, 1, 1, 12);
   static final DateTime b1950Epoch = DateTime.utc(1949, 12, 31, 22, 9, 0);
   static final DateTime j1900Epoch = DateTime.utc(1899, 12, 31, 12);
-  
+
   // Standard reference date for MJD
   static final DateTime mjdReferenceDate = DateTime.utc(1858, 11, 17, 0, 0, 0);
 

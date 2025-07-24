@@ -7,7 +7,6 @@
 [![Null Safety](https://img.shields.io/badge/null-safety-brightgreen)](https://dart.dev/null-safety)
 [![likes](https://img.shields.io/pub/likes/geoengine)](https://pub.dartlang.org/packages/geoengine/score)
 [![points](https://img.shields.io/pub/points/geoengine)](https://pub.dartlang.org/packages/geoengine/score)
-[![popularity](https://img.shields.io/pub/popularity/geoengine)](https://pub.dartlang.org/packages/geoengine/score)
 [![sdk version](https://badgen.net/pub/sdk-version/geoengine)](https://pub.dartlang.org/packages/geoengine)
 
 [![Last Commits](https://img.shields.io/github/last-commit/gameticharles/geoengine?ogo=github&logoColor=white)](https://github.com/gameticharles/geoengine/commits/master)
