@@ -1007,6 +1007,4 @@ Charles Gameti: [gameticharles@GitHub][github_cg].
 
 ## License
 
-GeoEngine is licensed under the [Apache License - Version 2.0][apache_license].
-
-[apache_license]: https://www.apache.org/licenses/LICENSE-2.0.txt
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
