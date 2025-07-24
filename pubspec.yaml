@@ -11,7 +11,7 @@ environment:
 # Add regular dependencies here.
 dependencies:
   advance_math: ^5.3.4
-  dartframe: 0.5.5
+  dartframe: ^0.5.5
   mgrs_dart: ^2.0.0
   proj4dart: ^2.1.0
   xml2json: ^6.2.7
