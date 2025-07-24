@@ -34,9 +34,9 @@ void main() {
       expect(distVY!.valueSI,
           closeTo(969828, 5)); // Slightly different, ~969.828km
 
-      var distNYLA_VY =
+      var distNylaVy =
           newYork.distanceTo(losAngeles, method: DistanceMethod.vincenty);
-      expect(distNYLA_VY!.valueInUnits(LengthUnits.kilometers),
+      expect(distNylaVy!.valueInUnits(LengthUnits.kilometers),
           closeTo(3944.2, 1)); // Approx 3944 km
     });
 

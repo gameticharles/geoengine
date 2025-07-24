@@ -89,7 +89,7 @@ class JulianDate extends DateTime {
 
   /// Creates a JulianDate instance by converting from a reference date and DateTime.
   factory JulianDate.fromReferenceDate(
-      {required referenceDate, required DateTime dateTime}) {
+      {required DateTime referenceDate, required DateTime dateTime}) {
     double jdReference = JulianDate(referenceDate).toJulianDate();
     double jd = JulianDate(dateTime).toJulianDate();
     double jdDifference = jd - jdReference;
@@ -241,12 +241,14 @@ class JulianDate extends DateTime {
   }
 
   /// Converts this JulianDate to UTC if it's in local time.
+  @override
   JulianDate toUtc() {
     if (isUtc) return this;
     return JulianDate(dateTime.toUtc(), referenceDate: referenceDate);
   }
 
   /// Converts this JulianDate to local time if it's in UTC.
+  @override
   JulianDate toLocal() {
     if (!isUtc) return this;
     return JulianDate(dateTime.toLocal(), referenceDate: referenceDate);

@@ -465,7 +465,7 @@ class LatLng extends PointX implements lat_lng.LatLng {
   ///
   /// [mgrsString]: UPPERCASE coordinate string is expected in MGRS
   /// Return an object literal with easting, northing, zoneLetter, zoneNumber and accuracy (in meters) properties
-  static fromMGRS(String mgrsString) {
+  static LatLng fromMGRS(String mgrsString) {
     var ll = mgrs_dart.Mgrs.toPoint(mgrsString);
     return LatLng(ll[1], ll[0]);
   }

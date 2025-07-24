@@ -100,19 +100,19 @@ class LocalStrategy implements GeocoderStrategy {
     };
   }
 
-  distance(a, b) {
+  dynamic distance(dynamic a, dynamic b) {
     return pow(a[coordinatesColumnNames.x] - b[coordinatesColumnNames.x], 2) +
         pow(a[coordinatesColumnNames.y] - b[coordinatesColumnNames.y], 2);
   }
 
-  euclideanDistanceMap(Map<dynamic, dynamic> a, Map<dynamic, dynamic> b) {
+  dynamic euclideanDistanceMap(Map<dynamic, dynamic> a, Map<dynamic, dynamic> b) {
     return sqrt(pow(a[coordinatesColumnNames.x]! - b[coordinatesColumnNames.x]!,
                 2) +
             pow(a[coordinatesColumnNames.y]! - b[coordinatesColumnNames.y]!, 2))
         .toDouble();
   }
 
-  geodeticDistance(Map<dynamic, dynamic> a, Map<dynamic, dynamic> b) {
+  double geodeticDistance(Map<dynamic, dynamic> a, Map<dynamic, dynamic> b) {
     return LatLng(a[coordinatesColumnNames.y]!, a[coordinatesColumnNames.x]!)
         .distanceTo(
             LatLng(b[coordinatesColumnNames.y]!, b[coordinatesColumnNames.x]!))!

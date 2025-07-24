@@ -719,7 +719,7 @@ EclipticCoordinates ecliptic(AstroVector eqj) {
 ///      The date and time for which to calculate the Moon's position.
 ///
 /// @returns {Spherical}
-Spherical eclipticGeoMoon(date) {
+Spherical eclipticGeoMoon(dynamic date) {
   var time = AstroTime(date);
   var moon = Moon(time);
 

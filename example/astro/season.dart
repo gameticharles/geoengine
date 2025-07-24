@@ -18,7 +18,7 @@ void displayEvent(String name, AstroTime? evt) {
   print('${name.padRight(17)} : $text');
 }
 
-isSafeInteger(int? value) {
+bool isSafeInteger(int? value) {
   const int minSafeInteger = -9007199254740991; // -(2^53 - 1)
   const int maxSafeInteger = 9007199254740991; // 2^53 - 1
 
@@ -26,6 +26,7 @@ isSafeInteger(int? value) {
   if (value != null) {
     return value >= minSafeInteger && value <= maxSafeInteger;
   }
+  return false;
 }
 
 void main() {
