@@ -1,5 +1,9 @@
 # CHANGE LOGS
 
+## 1.0.5
+
+* **[IMPROVEMENT]** Updated packages
+
 ## 1.0.4
 
 * **[IMPROVEMENT]** Changed license to MIT
