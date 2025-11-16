@@ -1,4 +1,6 @@
-import '../../../geoengine.dart';
+import '../../coordinate_systems/points/points.dart';
+import 'strategies/request.dart';
+import 'strategies/strategy.dart';
 
 /// A class to perform geocoding operations using different strategies.
 ///

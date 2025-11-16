@@ -1,4 +1,4 @@
-part of '../../geoengine.dart';
+part of 'distance_bearing.dart';
 
 /// Calculates geodetic distance between two [LatLng] points using
 /// various algorithms.

@@ -19,7 +19,7 @@
 [![Github watchers](https://img.shields.io./github/watchers/gameticharles/geoengine)](https://github.com/gameticharles/geoengine/MyBadges)
 [![Issues](https://img.shields.io./github/issues-raw/gameticharles/geoengine)](https://github.com/gameticharles/geoengine/issues)
 
-GeoEngine is a comprehensive Dart library designed for geospatial and geomatic calculations. It provides a wide range of functionalities including distance calculations, coordinate conversions, geocoding, polygon operations, geodetic network analysis, and much more.
+GeoEngine is a comprehensive Dart library designed for geospatial and geomatic calculations. It provides a wide range of functionalities including distance calculations, coordinate conversions, geocoding, polygon operations, geodetic network analysis, Geodataframe, Geoseries and much more.
 
 Astronomy: GeoEngine also provides a comprehensive astronomy library for calculating celestial coordinates, moon phases, and eclipses. Predicts lunar phases, eclipses, transits, oppositions, conjunctions, equinoxes, solstices, rise/set times, and other events. Provides vector and angular coordinate transforms among equatorial, ecliptic, horizontal, and galactic orientations.
 

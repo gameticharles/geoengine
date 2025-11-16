@@ -29,4 +29,10 @@ Below is a list of available documentation sections for each module:
 -   **[Levelling](./levelling/README.md)**
     -   Instructions on using the `Levelling` class for processing levelling survey data, calculating reduced levels, adjusting for misclosure, and performing checks.
 
+-   **[GeoDataFrame](./doc/geodata_frame/geodataframe.md)** 
+    -  Working with geospatial data, spatial operations, and coordinate transformations
+        - **[GeoSeries](./doc/geodata_frame/geoseries.md)**: Geometry-aware Series operations and spatial analysis methods
+        - **[Spatial Operations](./doc/geodata_frame/spatial_operations.md)**: Advanced spatial analysis including joins, overlays, and spatial indexing
+
+
 Please refer to the individual README files linked above for detailed information on each module.

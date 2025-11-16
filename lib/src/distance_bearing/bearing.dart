@@ -1,4 +1,4 @@
-part of '../../geoengine.dart';
+part of 'distance_bearing.dart';
 
 /// Represents the bearing (direction) between two points, measured in degrees from the North.
 ///

@@ -1,4 +1,4 @@
-part of '../../../geoengine.dart';
+part of '../coordinate_reference_systems.dart';
 
 class LinearUnit extends Info {
   /// Number of meters per unit.

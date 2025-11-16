@@ -1,5 +1,12 @@
 # CHANGE LOGS
 
+## 1.0.6
+
+* **[IMPROVEMENT]** Changed license to MIT
+* **[BUG_FIX]** Fixed minor bugs.
+* **[FEATURE]** Added GeoSeries and GeoDataFrame
+* **[IMPROVEMENT]** Updated packages
+
 ## 1.0.5
 
 * **[IMPROVEMENT]** Updated packages

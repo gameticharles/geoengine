@@ -1,4 +1,4 @@
-part of '../../geoengine.dart';
+part of 'coordinate_reference_systems.dart';
 
 /// A meridian used to take longitude measurements from.
 class PrimeMeridian extends Info {

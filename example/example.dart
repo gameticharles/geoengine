@@ -26,6 +26,7 @@ void main() {
 
   // Create a random point
   final LatLng pp = LatLng(6.65412, -1.54651, 200);
+  print(pp);
 
   // Set up converter
   CoordinateConversion transCoordinate = CoordinateConversion();

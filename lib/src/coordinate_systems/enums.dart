@@ -1,4 +1,4 @@
-part of '../../geoengine.dart';
+part of 'coordinate_reference_systems.dart';
 
 ///Enum for the types of datum-to-datum conversions
 enum ConversionType {

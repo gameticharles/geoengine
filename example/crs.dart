@@ -4,6 +4,8 @@ import 'dart:io';
 
 import 'package:geoengine/geoengine.dart';
 
+List<CRS> crsList = [];
+
 void main(List<String> args) {
   test1();
   test2();
@@ -19,6 +21,9 @@ void test1() {
   final crsList = (jsonData['CRS'] as List<dynamic>)
       .map((json) => CRS.fromJson(json))
       .toList();
+
+  //print the total lenght
+  print(crsList.length);
 
   final uniqueEllipsoids = <Ellipsoid>{};
 
@@ -36,16 +41,6 @@ void test1() {
 }
 
 void test2() {
-  // Read the JSON data from the file
-  final file = File('assets/data/PreDefinedCRSTable.json');
-  final jsonString = file.readAsStringSync();
-  final jsonData = json.decode(jsonString);
-
-  // Extract ellipsoids from the WKT strings
-  final crsList = (jsonData['CRS'] as List<dynamic>)
-      .map((json) => CRS.fromJson(json))
-      .toList();
-
   final wktStrings = crsList.map((crs) => crs.wktString).toList();
   final uniqueEllipsoids = extractEllipsoidsFromWKTStrings(wktStrings);
 
@@ -122,4 +117,80 @@ Ellipsoid? extractEllipsoidFromWKTString(String wktString) {
   }
 
   return null;
+}
+
+/// A list to hold predefined CRS objects once loaded.
+List<CRS>? _predefinedCRS;
+
+class CRS {
+  final String crsName;
+  final int isFavorite;
+  final String wktID;
+  final String wktString;
+
+  CRS({
+    required this.crsName,
+    required this.isFavorite,
+    required this.wktID,
+    required this.wktString,
+  });
+
+  static CRS fromJson(Map<String, dynamic> json) {
+    return CRS(
+      crsName: json['CRSName'],
+      isFavorite: json['IsFavorite'],
+      wktID: json['WKTID'],
+      wktString: json['WKTString'],
+    );
+  }
+
+  /// Reads a predefined list of CRS objects from a JSON file.
+  ///
+  /// This function reads a JSON file containing an array of CRS definitions
+  /// under the "CRS" key. It parses this data and populates a static list
+  /// for later use by functions like `getByWktId`.
+  ///
+  /// [filePath] The path to the JSON file. Defaults to 'assets/data/PreDefinedCRSTable.json'.
+  ///
+  /// Returns a `Future<List<CRS>>` containing all the CRS objects from the file.
+  static Future<List<CRS>> readPredefinedList(
+      {String filePath = 'assets/data/PreDefinedCRSTable.json'}) async {
+    if (_predefinedCRS != null) {
+      return _predefinedCRS!;
+    }
+
+    final file = File(filePath);
+    if (!await file.exists()) {
+      throw FileSystemException("CRS data file not found at", filePath);
+    }
+
+    final jsonString = await file.readAsString();
+    final jsonData = json.decode(jsonString);
+
+    final crsList = (jsonData['CRS'] as List<dynamic>)
+        .map((json) => CRS.fromJson(json))
+        .toList();
+
+    _predefinedCRS = crsList;
+    return crsList;
+  }
+
+  /// Gets a CRS object by its WKTID from the predefined list.
+  ///
+  /// You must call `readPredefinedList()` at least once before using this method.
+  ///
+  /// [wktId] The Well-Known Text ID of the CRS to find (e.g., "EPSG:4326").
+  ///
+  /// Returns the matching `CRS` object, or `null` if not found or if the
+  /// predefined list has not been loaded.
+  static CRS? getByWktId(String wktId) {
+    if (_predefinedCRS == null) {
+      return null;
+    }
+    try {
+      return _predefinedCRS!.firstWhere((crs) => crs.wktID == wktId);
+    } catch (e) {
+      return null;
+    }
+  }
 }

@@ -971,7 +971,7 @@ double obscuration(double a, double b, double c) {
 EclipseKind eclipseKindFromUmbra(double k) {
   // The umbra radius tells us what kind of eclipse the observer sees.
   // If the umbra radius is positive, this is a total eclipse. Otherwise, it's annular.
-  // HACK: I added a tiny bias (14 meters) to match Espenak test data.
+  // Note: I added a tiny bias (14 meters) to match Espenak test data.
   return (k > 0.014) ? EclipseKind.Total : EclipseKind.Annular;
 }
 
@@ -992,7 +992,7 @@ double solarEclipseObscuration(AstroVector hm, AstroVector lo) {
   final obscuration1 =
       obscuration(sunRadius, moonRadius, sunMoonSeparation * DEG2RAD);
 
-  // HACK: In marginal cases, we need to clamp obscuration to less than 1.0.
+  // Note: In marginal cases, we need to clamp obscuration to less than 1.0.
   // This function is never called for total eclipses, so it should never return 1.0.
   return min(0.9999, obscuration1);
 }

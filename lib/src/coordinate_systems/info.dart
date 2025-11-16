@@ -1,4 +1,4 @@
-part of '../../geoengine.dart';
+part of 'coordinate_reference_systems.dart';
 
 /// The Info object defines the standard information
 /// stored with spatial reference objects.
@@ -26,8 +26,8 @@ abstract class Info {
   /// Initializes a new instance of Info.
   Info({
     required this.name,
-    required this.authority,
-    required this.authorityCode,
+    this.authority = 'EPSG',
+    this.authorityCode = 0,
     this.alias,
     this.abbreviation,
     this.remarks,

@@ -1,0 +1,147 @@
+import 'dart:math' as math;
+
+import '../../points/points.dart';
+import '../classes/proj_params.dart';
+import '../classes/projection.dart';
+import '../common/utils.dart' as utils;
+import '../constants/values.dart' as consts;
+
+class AlbersProjection extends Projection {
+  static final List<String> names = [
+    'Albers_Conic_Equal_Area',
+    'Albers',
+    'aea',
+  ];
+
+  late double e3;
+  late double ns0;
+  late double c;
+  late double rh;
+  late double long0;
+  late double x0;
+  late double y0;
+
+  AlbersProjection.init(ProjParams params) : super.init(params) {
+    var lat1 = params.lat1!;
+    var lat2 = params.lat2!;
+    long0 = params.long0;
+    x0 = params.x0!;
+    y0 = params.y0!;
+
+    if ((lat1 + lat2).abs() < consts.EPSLN) {
+      return;
+    }
+    var temp = b / a;
+    es = 1 - (math.pow(temp, 2) as double);
+    e3 = math.sqrt(es);
+
+    var sin_po = math.sin(lat1);
+    var cos_po = math.cos(lat1);
+    // var t1 = sin_po;
+    var con = sin_po;
+    var ms1 = utils.msfnz(e3, sin_po, cos_po);
+    var qs1 = utils.qsfnz(e3, sin_po);
+
+    sin_po = math.sin(lat2);
+    cos_po = math.cos(lat2);
+    // var t2 = sin_po;
+    var ms2 = utils.msfnz(e3, sin_po, cos_po);
+    var qs2 = utils.qsfnz(e3, sin_po);
+
+    sin_po = math.sin(params.lat0!);
+    cos_po = math.cos(params.lat0!);
+    // var t3 = sin_po;
+    var qs0 = utils.qsfnz(e3, sin_po);
+
+    if ((lat1 - lat2).abs() > consts.EPSLN) {
+      ns0 = (ms1 * ms1 - ms2 * ms2) / (qs2 - qs1);
+    } else {
+      ns0 = con;
+    }
+    c = ms1 * ms1 + ns0 * qs1;
+    rh = a * math.sqrt(c - ns0 * qs0) / ns0;
+  }
+
+  /// Albers Conical Equal Area forward equations--mapping lat,long to x,y
+  @override
+  Point forward(Point p) {
+    var lon = p.x;
+    var lat = p.y;
+
+    var sin_phi = math.sin(lat);
+    // var cos_phi = math.cos(lat);
+
+    var qs = utils.qsfnz(e3, sin_phi);
+    var rh1 = a * math.sqrt(c - ns0 * qs) / ns0;
+    var theta = ns0 * utils.adjust_lon(lon - long0);
+    var x = rh1 * math.sin(theta) + x0;
+    var y = rh - rh1 * math.cos(theta) + y0;
+
+    p.x = x;
+    p.y = y;
+    return p;
+  }
+
+  @override
+  Point inverse(Point p) {
+    double rh1;
+    double con;
+    double theta;
+    double lat;
+
+    p.x -= x0;
+    p.y = rh - p.y + y0;
+    if (ns0 >= 0) {
+      rh1 = math.sqrt(p.x * p.x + p.y * p.y);
+      con = 1;
+    } else {
+      rh1 = -math.sqrt(p.x * p.x + p.y * p.y);
+      con = -1;
+    }
+    theta = 0;
+    if (rh1 != 0) {
+      theta = math.atan2(con * p.x, con * p.y);
+    }
+    con = rh1 * ns0 / a;
+    if (sphere != null && sphere!) {
+      lat = math.asin((c - con * con) / (2 * ns0));
+    } else {
+      final qs = (c - con * con) / ns0;
+      lat = _phi1z(e3, qs);
+    }
+
+    final lon = utils.adjust_lon(theta / ns0 + long0);
+    p.x = lon;
+    p.y = lat;
+    return p;
+  }
+
+  /// Function to compute phi1, the latitude for the inverse of the
+  /// Albers Conical Equal-Area projection.
+  double _phi1z(double eccent, double qs) {
+    var phi = utils.asinz(0.5 * qs);
+    if (eccent < consts.EPSLN) {
+      return phi;
+    }
+
+    var eccnts = eccent * eccent;
+    for (var i = 1; i <= 25; i++) {
+      final sinphi = math.sin(phi);
+      final cosphi = math.cos(phi);
+      final con = eccent * sinphi;
+      final com = 1 - con * con;
+      final dphi = 0.5 *
+          com *
+          com /
+          cosphi *
+          (qs / (1 - eccnts) -
+              sinphi / com +
+              0.5 / eccent * math.log((1 - con) / (1 + con)));
+      phi = phi + dphi;
+      if (dphi.abs() <= 1e-7) {
+        return phi;
+      }
+    }
+    throw Exception("Shouldn't reach");
+  }
+}

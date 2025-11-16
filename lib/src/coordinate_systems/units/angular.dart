@@ -1,4 +1,4 @@
-part of '../../../geoengine.dart';
+part of '../coordinate_reference_systems.dart';
 
 /// Definition of angular units.
 class AngularUnit extends Info {

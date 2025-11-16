@@ -1,6 +1,28 @@
-// ignore_for_file: implementation_imports
+part of 'coordinate_reference_systems.dart';
 
-part of '../../geoengine.dart';
+/// Convert a point from radians to degrees.
+///
+/// [point]: The input point in radians.
+/// Returns the converted point in degrees.
+Point convertR2D(Point point) {
+  return Point.withZ(
+    x: toDegrees(point.x),
+    y: toDegrees(point.y),
+    z: point.z ?? 0.0,
+  );
+}
+
+/// Convert a point from degrees to radians.
+///
+/// [point]: The input point in degrees.
+/// Returns the converted point in radians.
+Point convertD2R(Point point) {
+  return Point.withZ(
+    x: toRadians(point.x),
+    y: toRadians(point.y),
+    z: point.z ?? 0,
+  );
+}
 
 class CoordinateConversion {
   CoordinateConversion();
@@ -11,30 +33,6 @@ class CoordinateConversion {
   /// Returns true if the type is either `consts.PJD_3PARAM` or `consts.PJD_7PARAM`, otherwise false.
   bool checkParams(int type) {
     return (type == consts.PJD_3PARAM || type == consts.PJD_7PARAM);
-  }
-
-  /// Convert a point from radians to degrees.
-  ///
-  /// [point]: The input point in radians.
-  /// Returns the converted point in degrees.
-  Point convertR2D(Point point) {
-    return Point.withZ(
-      x: toDegrees(point.x),
-      y: toDegrees(point.y),
-      z: point.z ?? 0.0,
-    );
-  }
-
-  /// Convert a point from degrees to radians.
-  ///
-  /// [point]: The input point in degrees.
-  /// Returns the converted point in radians.
-  Point convertD2R(Point point) {
-    return Point.withZ(
-      x: toRadians(point.x),
-      y: toRadians(point.y),
-      z: point.z ?? 0,
-    );
   }
 
   /// Compute the convergence at a given point.
@@ -285,10 +283,10 @@ class CoordinateConversion {
     point = projection.forward(convertD2R(point));
 
     // Convert from meters to CRS units conversion
-    if (projection.to_meter != null) {
+    if (projection.toMeter != null) {
       point = Point.withZ(
-          x: point.x / projection.to_meter!,
-          y: point.y / projection.to_meter!,
+          x: point.x / projection.toMeter!,
+          y: point.y / projection.toMeter!,
           z: point.z ?? 0.0);
     }
 
@@ -303,10 +301,10 @@ class CoordinateConversion {
   Point projectedToGeodetic(
       {required Point point, required Projection projection}) {
     // Convert from CRS units conversion to meters
-    if (projection.to_meter != null) {
+    if (projection.toMeter != null) {
       point = Point.withZ(
-          x: point.x * projection.to_meter!,
-          y: point.y * projection.to_meter!,
+          x: point.x * projection.toMeter!,
+          y: point.y * projection.toMeter!,
           z: point.z ?? 0.0);
     }
 
@@ -391,9 +389,9 @@ class CoordinateConversion {
       //z: result.z,
       z: conversion.name.contains('Geodetic') ||
               conversion.name.contains('Geocentric') ||
-              projDst.to_meter == null
+              projDst.toMeter == null
           ? result.z!
-          : result.z! / projDst.to_meter!,
+          : result.z! / projDst.toMeter!,
       crs: projDst,
       crsCode: '',
       name: projDst.projName,

@@ -1,0 +1,77 @@
+import 'dart:math' as math;
+
+import '../../points/points.dart';
+import '../classes/projection.dart';
+import '../common/utils.dart' as utils;
+import '../constants/values.dart' as consts;
+
+const MAX_ITER = 20;
+
+class GaussProjection extends Projection {
+  static final List<String> names = ['gauss'];
+
+  late double lat0;
+  late double long0;
+  late double rc;
+  late double C;
+  late double phic0;
+  late double ratexp;
+  late double K;
+  late double x0;
+  late double y0;
+
+  GaussProjection.init(super.params)
+      : lat0 = params.lat0!,
+        long0 = params.long0,
+        x0 = params.x0!,
+        y0 = params.y0!,
+        super.init() {
+    var sphi = math.sin(lat0);
+    var cphi = math.cos(lat0);
+    cphi *= cphi;
+    rc = math.sqrt(1 - es) / (1 - es * sphi * sphi);
+    C = math.sqrt(1 + es * cphi * cphi / (1 - es));
+    phic0 = math.asin(sphi / C);
+    ratexp = 0.5 * C * e;
+    K = math.tan(0.5 * phic0 + consts.FORTPI) /
+        (math.pow(math.tan(0.5 * lat0 + consts.FORTPI), C) *
+            utils.srat(e * sphi, ratexp));
+  }
+
+  @override
+  Point forward(Point p) {
+    var lon = p.x;
+    var lat = p.y;
+
+    p.y = 2 *
+            math.atan(K *
+                math.pow(math.tan(0.5 * lat + consts.FORTPI), C) *
+                utils.srat(e * math.sin(lat), ratexp)) -
+        consts.HALF_PI;
+    p.x = C * lon;
+    return p;
+  }
+
+  @override
+  Point inverse(Point p) {
+    var DEL_TOL = 1e-14;
+    var lon = p.x / C;
+    var lat = p.y;
+    var num = math.pow(math.tan(0.5 * lat + consts.FORTPI) / K, 1 / C);
+    for (var i = 0; i < MAX_ITER; i++) {
+      lat = 2 * math.atan(num * utils.srat(e * math.sin(p.y), -0.5 * e)) -
+          consts.HALF_PI;
+      if ((lat - p.y).abs() < DEL_TOL) {
+        break;
+      }
+      p.y = lat;
+    }
+    // convergence failed
+    // if (!i) {
+    //   return null;
+    // }
+    p.x = lon;
+    p.y = lat;
+    return p;
+  }
+}

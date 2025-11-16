@@ -1,4 +1,4 @@
-part of '../../geoengine.dart';
+part of 'coordinate_reference_systems.dart';
 
 /// Multiple Regression Equation Params
 class MultipleRegressionEquationParams {
