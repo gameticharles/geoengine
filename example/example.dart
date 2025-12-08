@@ -1,4 +1,4 @@
-import 'package:advance_math/advance_math.dart';
+import 'package:advance_math/advance_math.dart' hide Ellipsoid;
 import 'package:geoengine/geoengine.dart';
 
 void main() {
