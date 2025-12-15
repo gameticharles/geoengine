@@ -1,5 +1,9 @@
 # CHANGE LOGS
 
+## 1.0.8
+
+- **[IMPROVEMENT]** Updated packages
+
 ## 1.0.7
 
 - **[IMPROVEMENT]** Updated packages
