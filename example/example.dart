@@ -2,6 +2,10 @@ import 'package:advance_math/advance_math.dart' hide Ellipsoid;
 import 'package:geoengine/geoengine.dart';
 
 void main() {
+  print(dms2Degree(50, 03, 59)); // Output: 50.06638888888889
+  print(dms2Degree(-50, 03, 59)); // Output: 50.06638888888889
+  print(degree2DMS(50.06638888888889)); // Output: [50, 3, 59.0]
+  print(degree2DMS(-50.06638888888889)); // Output: [-50, 3, 59.0]
   print(percentage2Degrees(0.75)); // Output: 180
   print(percentage2radians(0.75)); // Output: 3.141592653589793
   var utm = UTM(

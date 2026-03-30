@@ -1008,13 +1008,13 @@ double horizonDipAngle(Observer observer, double metersAboveGround) {
   double phi = observer.latitude * DEG2RAD;
   double sinphi = sin(phi);
   double cosphi = cos(phi);
-  double c = 1.0 / hypot(cosphi, sinphi * EARTH_FLATTENING);
+  double c = 1.0 / math.hypot(cosphi, sinphi * EARTH_FLATTENING);
   double s = c * (EARTH_FLATTENING * EARTH_FLATTENING);
   double htKm = (observer.height - metersAboveGround) /
       1000.0; // height of ground above sea level
   double ach = EARTH_EQUATORIAL_RADIUS_KM * c + htKm;
   double ash = EARTH_EQUATORIAL_RADIUS_KM * s + htKm;
-  double radiusM = 1000.0 * hypot(ach * cosphi, ash * sinphi);
+  double radiusM = 1000.0 * math.hypot(ach * cosphi, ash * sinphi);
 
   // Correct refraction of a ray of light traveling tangent to the Earth's surface.
   // Based on: https://www.largeformatphotography.info/sunmooncalc/SMCalc.js
@@ -1145,7 +1145,8 @@ AstroTime? internalSearchAltitude(
     final ofdate = equator(body, time, observer, true, true);
     final hor =
         HorizontalCoordinates.horizon(time, observer, ofdate.ra, ofdate.dec);
-    final altitude = hor.altitude + toDegrees(asin(bodyRadiusAu / ofdate.dist));
+    final altitude =
+        hor.altitude + math.toDegrees(asin(bodyRadiusAu / ofdate.dist));
     return direction * (altitude - targetAltitude);
   }
 

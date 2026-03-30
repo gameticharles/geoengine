@@ -231,7 +231,7 @@ class HorizontalCoordinates {
     final double pn = p[0] * un[0] + p[1] * un[1] + p[2] * un[2];
     final double pw = p[0] * uw[0] + p[1] * uw[1] + p[2] * uw[2];
 
-    var proj = hypot(pn, pw);
+    var proj = math.hypot(pn, pw);
 
     double az;
     if (proj > 0) {
@@ -258,7 +258,7 @@ class HorizontalCoordinates {
         for (int j = 0; j < 3; ++j) {
           pr.add(((p[j] - coszd0 * uz[j]) / sinzd0) * sinzd + uz[j] * coszd);
         }
-        proj = hypot(pr[0], pr[1]);
+        proj = math.hypot(pr[0], pr[1]);
         if (proj > 0) {
           outRa = RAD2HOUR * atan2(pr[1], pr[0]);
           if (outRa < 0) {

@@ -1046,7 +1046,7 @@ GlobalSolarEclipseInfo geoidIntersect(ShadowInfo shadow) {
     final pz = (u * v.z - e.z) * EARTH_FLATTENING;
 
     // Convert cartesian coordinates into geodetic latitude/longitude.
-    final proj = hypot(px, py) * EARTH_FLATTENING_SQUARED;
+    final proj = math.hypot(px, py) * EARTH_FLATTENING_SQUARED;
     if (proj == 0.0) {
       latitude = (pz > 0.0) ? 90.0 : -90.0;
     } else {

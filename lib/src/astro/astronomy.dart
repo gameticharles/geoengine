@@ -28,7 +28,8 @@
 
 library;
 
-import 'package:advance_math/advance_math.dart';
+import 'package:advance_math/advance_math.dart' as math;
+import 'dart:math';
 
 part 'constant.dart';
 part 'common.dart';
