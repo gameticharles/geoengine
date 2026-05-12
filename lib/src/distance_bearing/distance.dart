@@ -94,13 +94,14 @@ class Distance extends Length {
 
     int iterLimit = 100;
     do {
-      sinLambda = sin(lambda);
-      cosLambda = cos(lambda);
+      sinLambda = sin(lambda).toDouble();
+      cosLambda = cos(lambda).toDouble();
       sinSigma = sqrt((cosU2 * sinLambda) * (cosU2 * sinLambda) +
-          (cosU1 * sinU2 - sinU1 * cosU2 * cosLambda) *
-              (cosU1 * sinU2 - sinU1 * cosU2 * cosLambda));
+              (cosU1 * sinU2 - sinU1 * cosU2 * cosLambda) *
+                  (cosU1 * sinU2 - sinU1 * cosU2 * cosLambda))
+          .toDouble();
       cosSigma = sinU1 * sinU2 + cosU1 * cosU2 * cosLambda;
-      sigma = atan2(sinSigma, cosSigma);
+      sigma = atan2(sinSigma, cosSigma).toDouble();
       sinAlpha = cosU1 * cosU2 * sinLambda / sinSigma;
       cos2Alpha = 1 - sinAlpha * sinAlpha;
       cos2SigmaM = cosSigma - 2 * sinU1 * sinU2 / cos2Alpha;

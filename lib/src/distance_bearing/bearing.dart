@@ -111,7 +111,7 @@ class Bearing extends Angle {
       y = point2.y - point1.y;
     }
 
-    double initialBearing = atan2(x, y);
+    double initialBearing = atan2(x, y).toDouble();
     initialBearing = (toDegrees(initialBearing) + 360) % 360;
 
     return Bearing(initialBearing);

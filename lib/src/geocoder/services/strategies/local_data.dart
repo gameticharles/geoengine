@@ -101,8 +101,9 @@ class LocalStrategy implements GeocoderStrategy {
   }
 
   dynamic distance(dynamic a, dynamic b) {
-    return pow(a[coordinatesColumnNames.x] - b[coordinatesColumnNames.x], 2) +
-        pow(a[coordinatesColumnNames.y] - b[coordinatesColumnNames.y], 2);
+    final dx = a[coordinatesColumnNames.x] - b[coordinatesColumnNames.x];
+    final dy = a[coordinatesColumnNames.y] - b[coordinatesColumnNames.y];
+    return dx * dx + dy * dy;
   }
 
   dynamic euclideanDistanceMap(
