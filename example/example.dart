@@ -32,6 +32,13 @@ void main() {
   final LatLng pp = LatLng(6.65412, -1.54651, 200);
   print(pp);
 
+  print("pp.toMGRS(): ${pp.toMGRS()}");
+  print("pp.toMGRS(precision: 1): ${pp.toMGRS(1)}");
+  print("pp.toMGRS(precision: 2): ${pp.toMGRS(2)}");
+  print("pp.toMGRS(precision: 3): ${pp.toMGRS(3)}");
+  print("pp.toMGRS(precision: 4): ${pp.toMGRS(4)}");
+  print("pp.toMGRS(precision: 5): ${pp.toMGRS(5)}");
+
   // Set up converter
   CoordinateConversion transCoordinate = CoordinateConversion();
 

@@ -221,8 +221,8 @@ class MGRS {
     }
 
     // truncate to required precision
-    var eRounded = (easting / pow(10, 5 - digits / 2)).floor();
-    var nRounded = (northing / pow(10, 5 - digits / 2)).floor();
+    var eRounded = (Complex(easting) / pow(10, 5 - digits / 2)).floor();
+    var nRounded = (Complex(northing) / pow(10, 5 - digits / 2)).floor();
 
     // ensure leading zeros
     var zPadded = zone.toString().padLeft(2, '0');

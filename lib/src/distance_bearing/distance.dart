@@ -23,9 +23,10 @@ class Distance extends Length {
     double dlat = lat2 - lat1;
     double dlon = lon2 - lon1;
 
-    double a =
-        pow(sin(dlat / 2), 2) + cos(lat1) * cos(lat2) * pow(sin(dlon / 2), 2);
-    num c = 2 * atan2(sqrt(a), sqrt(1 - a));
+    double sinDlat = sin(dlat / 2);
+    double sinDlon = sin(dlon / 2);
+    double a = sinDlat * sinDlat + cos(lat1) * cos(lat2) * sinDlon * sinDlon;
+    num c = (Complex(2) * atan2(sqrt(a), sqrt(1 - a))).toNum();
 
     return Length(m: R * c);
   }
