@@ -364,7 +364,7 @@ void main() {
         98.050
       ];
       for (int i = 0; i < expectedAdjustedRLs.length; i++) {
-        expect(levelling.reducedLevels[i],
+        expect(levelling.adjustedRLs![i],
             closeTo(expectedAdjustedRLs[i], 0.0001));
       }
     });
@@ -398,13 +398,13 @@ void main() {
         98.050
       ];
       for (int i = 0; i < expectedAdjustedRLs.length; i++) {
-        expect(levelling.reducedLevels[i],
+        expect(levelling.adjustedRLs![i],
             closeTo(expectedAdjustedRLs[i], 0.0001));
       }
     });
     test('Arithmetic Check Result', () {
       final levelling = setupLevelling(LevellingMethod.riseFall);
-      expect(levelling.arithmeticCheckResult,
+      expect(levelling.arithmeticCheckResult.toString(),
           contains("Arithmetic Checks are OK."));
     });
   });

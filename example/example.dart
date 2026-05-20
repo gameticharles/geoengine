@@ -28,10 +28,18 @@ void main() {
   print(Ellipsoid.wgs84.toGeoServer());
   print(Ellipsoid.wgs84.toJSON());
 
+  final st = "30N XL 16342 2803";
+  final m = MGRS.parse(st);
+  print("String: $st");
+  print("MGRS: $m");
+  print("MGRS to LatLng: ${m.toLatLng()} ");
+  print("MGRS to UTM: ${m.toUTM()} ");
+
   // Create a random point
-  final LatLng pp = LatLng(6.65412, -1.54651, 200);
+  final LatLng pp = LatLng(5.0139158, -1.4945928, 200);
   print(pp);
 
+  print("pp.toUtm(): ${pp.toUTM()}");
   print("pp.toMGRS(): ${pp.toMGRS()}");
   print("pp.toMGRS(precision: 1): ${pp.toMGRS(1)}");
   print("pp.toMGRS(precision: 2): ${pp.toMGRS(2)}");

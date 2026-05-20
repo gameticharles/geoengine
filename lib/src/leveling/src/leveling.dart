@@ -51,6 +51,9 @@ class Levelling {
   double get allowableMisclose =>
       _allowableMisclose ??= _getAllowableMisclose();
 
+  /// The list of adjusted reduced levels, or null if not computed or not applicable.
+  List<double>? get adjustedRLs => _adjustedRLs;
+
   /// Indicates whether the work is accepted or not.
   bool? get isWorkAccepted => _isWorkAccepted();
 
@@ -188,7 +191,7 @@ class Levelling {
     }
 
     var correction = -1 * _misclose!;
-    var adjustmentPerStation = correction / _numberSTN;
+    var adjustmentPerStation = correction / numberSTN;
 
     int countBS = 0;
     _adjustedRLs = List.from(_reducedLevels!); // Copy the list
@@ -219,12 +222,13 @@ class Levelling {
       computeReducedLevels();
     }
 
-    return _reducedLevels!.last - closingTBM!;
+    _misclose = _reducedLevels!.last - closingTBM!;
+    return _misclose;
   }
 
   /// Calculate the allowable misclose
   double _getAllowableMisclose() {
-    return accuracy * sqrt(_numberSTN);
+    return accuracy * sqrt(numberSTN);
   }
 
   /// Check if work is accepted or not

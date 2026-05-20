@@ -94,25 +94,30 @@ class ErrorEllipse {
     double lambda1 = 0.5 * (sigmaX2 + sigmaY2 + delta);
     double lambda2 = 0.5 * (sigmaX2 + sigmaY2 - delta);
 
-    _a = sigmaO * sqrt(lambda1);
-    _b = sigmaO * sqrt(lambda2);
+    _a = sigmaO * (sqrt(lambda1) as Complex).toDouble();
+    _b = sigmaO * (sqrt(lambda2) as Complex).toDouble();
 
-    _theta = 0.5 * atan2(2 * sigmaXY, sigmaX2 - sigmaY2) * (180 / pi);
+    _theta = 0.5 *
+        (atan2(2 * sigmaXY, sigmaX2 - sigmaY2) as Complex).toDouble() *
+        (180 / pi);
     _bearing = (90 - _theta) % 360;
 
-    _sx = sigmaO * sqrt(sigmaX2);
-    _sy = sigmaO * sqrt(sigmaY2);
+    _sx = sigmaO * (sqrt(sigmaX2) as Complex).toDouble();
+    _sy = sigmaO * (sqrt(sigmaY2) as Complex).toDouble();
 
     _area = pi * _a * _b;
 
-    _eccentricity = sqrt(1 - pow(_b / _a, 2));
+    _eccentricity =
+        (sqrt(Complex(1) - (pow(_b, 2) / pow(_a, 2))) as Complex).toDouble();
 
     _aspectRatio = _a / _b;
   }
 
   /// Computes delta (a helper method for eigenvalue calculations).
   double _computeDelta() {
-    return sqrt(pow((sigmaX2 - sigmaY2), 2) + 4 * pow(sigmaXY, 2));
+    return (sqrt(pow((sigmaX2 - sigmaY2), 2) + Complex(4) * pow(sigmaXY, 2))
+            as Complex)
+        .toDouble();
   }
 
   /// Updates ellipse parameters dynamically by changing input variances or covariance.
