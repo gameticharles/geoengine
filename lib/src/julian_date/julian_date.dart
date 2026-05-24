@@ -171,12 +171,12 @@ class JulianDate extends DateTime {
         32045;
 
     // Add fractional part of the day
-    jd += ((hour +
-            minute / minutesInHour +
-            second / secondsInMinute +
-            millisecond / millisecondsInSecond +
-            microsecond / microsecondsInMillisecond) /
-        hoursInDay);
+    var milliseconds = millisecond + microsecond / microsecondsInMillisecond;
+    var seconds = second + milliseconds / millisecondsInSecond;
+    var minutes = minute + seconds / secondsInMinute;
+    var hours = hour + minutes / minutesInHour;
+
+    jd += hours / hoursInDay;
 
     return jd - 0.5;
   }
