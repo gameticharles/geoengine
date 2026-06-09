@@ -10,7 +10,7 @@ environment:
 
 # Add regular dependencies here.
 dependencies:
-  advance_math: ^5.5.5
+  advance_math: ^5.7.1
   dartframe: ^0.8.10
   mgrs_dart: ^2.0.0
   xml2json: ^6.2.7
@@ -20,7 +20,7 @@ dependencies:
   kdtree: ^0.2.0
   r_tree: ^3.0.2
   latlng: ^2.0.7
-  meta: ^1.17.0
+  meta: ^1.18.3
 
 dev_dependencies:
   benchmark_harness: ^2.4.0

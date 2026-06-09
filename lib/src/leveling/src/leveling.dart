@@ -29,13 +29,11 @@ class Levelling {
   double? _misclose;
   ArithmeticCheckResult? _arithmeticCheckResult;
   List<double>? _adjustedRLs;
-  int _numberSTN = 0;
   double? _allowableMisclose;
   List<double> _adjustments = [];
 
   /// The number of stations used in the survey.
-  int get numberSTN =>
-      _numberSTN = measurements.where((d) => d.bs != null).length;
+  int get numberSTN => measurements.where((d) => d.bs != null).length;
 
   /// The misclosure of the levelling survey, or null if not computed yet.
   double? get misclose => _misclose ??= _computeMisclose();

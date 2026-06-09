@@ -1,5 +1,17 @@
 # CHANGE LOGS
 
+## 1.1.1
+
+- **[IMPROVEMENT]** Updated packages
+- **[BUG_FIX]** Fixed the fractional part of the day calculation in `toJulianDate()` (the fractional part of the day was calculated wrongly).
+
+## 1.1.0
+
+- **[BUG_FIX]** Fixed type handling/safety in `Bearing`, `Distance`, and `ErrorEllipse`.
+- **[BUG_FIX]** Fixed misclosure calculation and adjusted reduced levels mapping in `Levelling`.
+- **[IMPROVEMENT]** Added `adjustedRLs` getter to `Levelling`.
+- **[IMPROVEMENT]** Updated packages.
+
 ## 1.0.10
 
 - **[IMPROVEMENT]** Updated packages
