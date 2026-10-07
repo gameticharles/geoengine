@@ -105,7 +105,9 @@ class UTMZones {
   /// Returns the hemisphere letter "N" for northern hemisphere and "S" for southern hemisphere.
   String getHemisphere(String latZone) {
     String hemisphere = "N";
-    if (_negativeLetters.contains(latZone)) {
+    String letter =
+        latZone.isNotEmpty ? latZone[latZone.length - 1].toUpperCase() : latZone;
+    if (_negativeLetters.contains(letter) || letter == 'S') {
       hemisphere = "S";
     }
     return hemisphere;

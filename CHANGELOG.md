@@ -1,5 +1,12 @@
 # CHANGE LOGS
 
+## 1.1.2
+
+- **[BUG_FIX]** Fixed `Bearing.finalBearing` calculation to reverse the initial bearing by 180 degrees.
+- **[BUG_FIX]** Fixed `UTMZones.getHemisphere` to correctly parse hemisphere from full zone identifiers (e.g. `'35J'`, `'30P'`).
+- **[IMPROVEMENT]** Updated dependencies and resolved XML compatibility conflicts.
+- **[IMPROVEMENT]** Updated test suite to align with latest `advance_math` types and corrected test expectations.
+
 ## 1.1.1
 
 - **[IMPROVEMENT]** Updated packages

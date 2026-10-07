@@ -131,7 +131,7 @@ class Bearing extends Angle {
     // Final bearing is simply the initial bearing from point2 to point1 reversed by 180 degrees
     var finalBb = initialBearing(point2, point1);
 
-    return Bearing(finalBb.deg);
+    return Bearing((finalBb.deg + 180) % 360);
   }
 
   @override
